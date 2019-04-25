@@ -1,0 +1,142 @@
+
+cluster_path=cluster/openshift-origin
+
+cluster_br_list="br-int br-r1"
+
+server_list="master-1 infra-1 node-1 node-2"
+
+vm_cpu[master-1]=4
+vm_ram[master-1]=32768
+vm_disk[master-1]=80G
+vm_os[master-1]=centos
+vm_image_type[master-1]=volume
+vm_address_list[master-1]="10.6.8.1        10.6.11.1"
+vm_netmask_list[master-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[master-1]="10.6.8.254      null"
+vm_nic_list[master-1]="br=br-int br=br-r1"
+
+vm_cpu[infra-1]=6
+vm_ram[infra-1]=65535
+vm_disk[infra-1]=100G
+vm_os[infra-1]=centos
+vm_image_type[infra-1]=volume
+vm_address_list[infra-1]="10.6.8.2        10.6.11.2"
+vm_netmask_list[infra-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[infra-1]="10.6.8.254      null"
+vm_nic_list[infra-1]="br=br-int br=br-r1"
+
+vm_cpu[node-1]=4
+vm_ram[node-1]=16384
+vm_disk[node-1]=80G
+vm_os[node-1]=centos
+vm_image_type[node-1]=volume
+vm_address_list[node-1]="10.6.8.3        10.6.11.3"
+vm_netmask_list[node-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[node-1]="10.6.8.254      null"
+vm_nic_list[node-1]="br=br-int br=br-r1"
+
+vm_cpu[node-2]=4
+vm_ram[node-2]=16384
+vm_disk[node-2]=80G
+vm_os[node-2]=centos
+vm_image_type[node-2]=volume
+vm_address_list[node-2]="10.6.8.4        10.6.11.4"
+vm_netmask_list[node-2]="255.255.255.0   255.255.255.0"
+vm_gateway_list[node-2]="10.6.8.254      null"
+vm_nic_list[node-2]="br=br-int br=br-r1"
+
+
+launch_builder()
+{
+    local arr=(${vm_address_list[master-1]})
+    local host=${arr[0]}
+
+    echo "Launch builder..."
+    copy_ssh_key $host
+
+    ssh $host yum install -y git python-netaddr
+    ssh $host yum install -y epel-release
+    # EPEL installs Ansible-2.7.10. Due to issue
+    # https://github.com/openshift/openshift-ansible/issues/11497
+    # install ansible-2.7.9
+    #ssh $host yum install -y ansible
+    ssh $host yum install -y python-pip
+    ssh $host pip install ansible==2.7.9
+    ssh $host git clone -b release-3.9 \
+            https://github.com/openshift/openshift-ansible.git
+}
+
+delete_builder()
+{
+    echo "Delete builder..."
+}
+
+install_network_manager()
+{
+    local server
+
+    echo "Install NetworkManager..."
+    for server in $server_list; do
+        arr=(${vm_address_list[$server]})
+        host=${arr[0]}
+        ssh $host yum install -y NetworkManager
+        ssh $host systemctl enable NetworkManager
+        ssh $host systemctl start NetworkManager
+    done
+}
+
+build_hosts()
+{
+    local server
+    local hosts="127.0.0.1  localhost.poc  localhost\n"
+
+    for server in $server_list; do
+        arr=(${vm_address_list[$server]})
+        hosts+="${arr[0]}  $server.poc  $server\n"
+    done
+    for server in $server_list; do
+        arr=(${vm_address_list[$server]})
+        ssh ${arr[0]} "echo -e \"$hosts\" > /etc/hosts"
+    done
+}
+
+pre_deployment()
+{
+    echo "Pre-Deployment"
+    install_network_manager
+    build_hosts
+}
+
+run_playbook()
+{
+    local arr=(${vm_address_list[master-1]})
+    local host=${arr[0]}
+
+    echo "Run playbook......"
+    scp $cluster_path/openshift-origin.yaml $host:./openshift-ansible/inventory/
+    ssh $host sed -i \
+            -e "s/__registry_username__/$registry_username/" \
+            -e "s/__registry_password__/$registry_password/" \
+            -e "s/__container_tag__/$contrail_release/" \
+            ./openshift-ansible/inventory/openshift-origin.yaml
+
+    ssh $host "cd openshift-ansible; \
+            ansible-playbook -i inventory/openshift-origin.yaml \
+            playbooks/prerequisites.yml"
+    check_playbook_result
+    if (( $? )); then return 1; fi
+
+    ssh $host "cd openshift-ansible; \
+            ansible-playbook -i inventory/openshift-origin.yaml \
+            playbooks/deploy_cluster.yml"
+    check_playbook_result
+    if (( $? )); then return 1; fi
+}
+
+post_deployment()
+{
+    return 0
+    echo "Post-Deployment"
+    configure_haproxy
+}
+

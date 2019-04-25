@@ -1,0 +1,79 @@
+[OSEv3:children]
+masters
+nodes
+etcd
+openshift_ca
+
+[OSEv3:vars]
+ansible_ssh_user=root
+ansible_become=yes
+debug_level=2
+deployment_type=origin
+#deployment_type=openshift-enterprise
+openshift_release=v3.9
+containerized=false
+openshift_install_examples=true
+openshift_master_identity_providers=[{'name': 'htpasswd_auth', 'login': 'true', 'challenge': 'true', 'kind': 'HTPasswdPasswordIdentityProvider', 'filename': '/etc/origin/master/htpasswd'}]
+osm_cluster_network_cidr=10.32.0.0/12
+openshift_portal_net=10.96.0.0/12
+openshift_use_dnsmasq=true
+openshift_clock_enabled=true
+openshift_hosted_manage_registry=true
+#openshift_hosted_manage_registry=false
+openshift_hosted_manage_router=true
+#openshift_hosted_manage_router=false
+openshift_web_console_install=false
+openshift_web_console_contrail_install=true
+#openshift_web_console_nodeselector={'region': 'infra'}
+openshift_enable_service_catalog=false
+openshift_use_openshift_sdn=false
+os_sdn_network_plugin_name='cni'
+openshift_disable_check=disk_availability,package_version,docker_storage
+
+openshift_use_contrail=true
+nested_mode_contrail=false
+contrail_version=5.0
+contrail_container_tag=__container_tag__
+#contrail_registry=10.84.29.96:5100
+#openshift_docker_insecure_registries=10.84.29.96:5100
+contrail_registry=hub.juniper.net/contrail
+contrail_registry_username=__registry_username__
+contrail_registry_password=__registry_password__
+vrouter_physical_interface=eth0
+vrouter_gateway=10.6.8.254
+ntpserver=10.6.8.254
+
+# contrail_vars
+# Below variables are used by contrail kubemanager to configure the cluster.
+# All values are defaults and can be modified.
+
+#kubernetes_api_server=10.84.13.52
+#kubernetes_api_port=8080
+#kubernetes_api_secure_port=8443
+#cluster_name=myk8s
+#cluster_project={}
+#cluster_network={}
+#pod_subnets=10.32.0.0/12
+#ip_fabric_subnets=10.64.0.0/12
+#service_subnets=10.96.0.0/12
+#ip_fabric_forwarding=false
+#ip_fabric_snat=false
+#public_fip_pool={}
+#vnc_endpoint_ip=20.1.1.1
+#vnc_endpoint_port=8082
+
+[masters]
+10.6.8.1 openshift_hostname=master-1
+
+[etcd]
+10.6.8.1 openshift_hostname=master-1
+
+[nodes]
+10.6.8.1 openshift_hostname=master-1
+10.6.8.2 openshift_hostname=infra-1 openshift_node_labels="{'region': 'infra'}"
+10.6.8.3 openshift_hostname=node-1
+10.6.8.4 openshift_hostname=node-2
+
+[openshift_ca]
+10.6.8.1 openshift_hostname=master-1
+

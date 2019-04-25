@@ -1,0 +1,686 @@
+
+image_path=/opt/vm-image
+instance_path=/var/lib/libvirt/instance
+volume_pool=lv
+
+image_cirros=cirros-0.4.0-x86_64-disk.img
+image_centos=CentOS-7-x86_64-GenericCloud-1805.qcow2
+image_vqfx_re=vqfx-re.qcow2
+image_vqfx_pfe=vqfx-pfe.qcow2
+image_vmx_re=vmx-re.qcow2
+image_vmx_re_hdd=vmx-re-hdd.qcow2
+image_vmx_re_usb=metadata-usb-re.img
+image_vmx_pfe=vFPC-20180829.img
+
+source poc.conf
+source utils/vm.func
+source hypervisor/hypervisor.func
+source underlay/$poc_underlay.func
+source cluster/$poc_cluster/$poc_cluster.func
+
+
+get_host_os()
+{
+    cat /etc/os-release | awk -F \" "/^NAME/"'{print $2}'
+}
+
+host_os=$(get_host_os)
+
+create_bridge()
+{
+    local name=$1
+    local output
+
+    ip -br link show dev $name > /dev/null 2>&1
+    if (( $? )); then
+        echo "Create bridge $name..."
+        brctl addbr $name
+        ip link set dev $name up
+        if [ "$name" == "br-int" ]; then
+            ip addr add 10.6.8.254/24 dev br-int
+        fi
+        if [ "$name" == "br-r1" ]; then
+            ip addr add 10.6.11.100/24 dev br-r1
+        fi
+    fi
+
+}
+
+delete_bridge()
+{
+    local name=$1
+    local port
+
+    echo "Delete bridge $name..."
+    ip -br link show dev $name > /dev/null 2>&1
+    if (( $? == 0 )); then
+        port=$(brctl show $name | awk "/$name/"'{print $4'})
+        if [ "$port" == "" ]; then
+            ip link set dev $name down 
+            brctl delbr $name
+        fi
+    fi
+}
+
+create_veth()
+{
+    local name=$1
+    local output
+    local a
+
+    echo "Create veth $name..."
+    IFS=','; a=(${name}); unset IFS
+    ip link add ${a[0]} type veth peer name ${a[1]}
+    ip link set dev ${a[0]} up
+    ip link set dev ${a[1]} up
+}
+
+delete_veth()
+{
+    local name=$1
+    local a
+
+    echo "Delete veth $name..."
+    IFS=','; a=(${name}); unset IFS
+    ip -br link show dev ${a[0]} > /dev/null 2>&1
+    if (( $? == 0 )); then
+        ip link delete ${a[0]}
+    fi
+}
+
+create_underlay_link()
+{
+    local name
+
+    echo "Create underlay links..."
+    for name in $underlay_br_list; do
+        create_bridge $name
+    done
+    for name in $underlay_veth_list; do
+        create_veth $name
+    done
+}
+
+delete_underlay_link()
+{
+    local name
+
+    echo "Delete underlay links..."
+    for name in $underlay_br_list; do
+        delete_bridge $name
+    done
+    for name in $underlay_veth_list; do
+        delete_veth $name
+    done
+}
+
+create_cluster_link()
+{
+    local name
+
+    echo "Create cluster links..."
+    for name in $cluster_br_list; do
+        create_bridge $name
+    done
+}
+
+delete_cluster_link()
+{
+    local name
+
+    echo "Delete cluster links..."
+    for name in $cluster_br_list; do
+        delete_bridge $name
+    done
+}
+
+enable_snat()
+{
+    local dev
+    local cidr
+    local addr
+
+    echo "Enable SNAT..."
+    # Take the device of default route.
+    dev=$(ip route list exact 0/0 | awk '{print $5}')
+
+    iptables -t nat -S | grep $dev > /dev/null 2>&1
+    if (( $? )); then
+        cidr=$(ip -f inet -br addr show dev $dev | awk '{print $3}')
+        IFS='/'; a=(${cidr}); unset IFS
+        addr=${a[0]}
+        iptables -t nat -A POSTROUTING -o $dev -j SNAT --to $addr
+    fi
+}
+
+disable_snat()
+{
+    local args
+
+    echo "Disable SNAT..."
+    iptables -t nat -S | grep SNAT > /dev/null 2>&1
+    if (( $? == 0 )); then
+        args=$(iptables -t nat -S | awk "/SNAT/"'{$1="-D"; print $0}')
+        iptables -t nat $args
+    fi
+}
+
+build_dhcp_conf()
+{
+    local list
+    local arr
+    local addr
+
+    echo "Build /etc/dhcp/dhcpd.conf."
+    cat << __EOF__ > /etc/dhcp/dhcpd.conf
+subnet 10.6.8.0 netmask 255.255.255.0 {
+        option routers                  10.6.8.254;
+        option subnet-mask              255.255.255.0;
+        option broadcast-address        10.6.8.255;
+
+__EOF__
+
+    list=$(virsh list --all | awk "/-re/"'{print $2}')
+    for name in $list; do
+        mac=$(virsh domiflist $name | awk "/br-int/"'{print $5}')
+        arr=(${vm_address_list[$name]})
+        addr=${arr[0]}
+        cat << __EOF__ >> /etc/dhcp/dhcpd.conf
+        host $name {
+                hardware ethernet $mac;
+                fixed-address $addr;
+        }
+__EOF__
+    done
+    echo } >> /etc/dhcp/dhcpd.conf
+
+    echo "Restart DHCP server."
+    if [ "$host_os" == "CentOS Linux" ]; then
+        systemctl restart dhcpd
+    elif [ "$host_os" == "Ubuntu" ]; then
+        systemctl restart isc-dhcp-server
+    fi
+}
+
+initialize_vqfx()
+{
+    local arr=(${vm_address_list[$1-re]})
+    local host=${arr[0]}
+    local idx
+    local sets
+
+    echo "Initialize $1."
+#    key_pub=$(cat /root/.ssh/id_rsa.pub)
+#    sshpass -p Juniper ssh $host "cli -c 'configure; \
+#set system host-name $1; \
+#set system root-authentication ssh-rsa \"$key_pub\"; \
+#delete interfaces; \
+#set interfaces em0 unit 0 family inet address $host/24; \
+#set interfaces em1 unit 0 family inet address 169.254.0.2/24; \
+#commit'"
+
+    sets="set system host-name $1; \
+          delete interfaces; \
+          set interfaces em0 unit 0 family inet address $host/24; \
+          set interfaces em1 unit 0 family inet address 169.254.0.2/24;"
+    for idx in {0..7}; do
+        mac=$(virsh domiflist $1-re | awk "/-xe$idx/"'{print $5}')
+        if [ $mac ]; then
+            sets+="set interfaces xe-0/0/$idx mac $mac;"
+        fi
+    done
+    ssh $host "cli -c 'configure; $sets; commit'"
+}
+
+initialize_vmx()
+{
+    local arr=(${vm_address_list[$1-re]})
+    local host=${arr[0]}
+    local idx
+    local sets
+
+    echo "Initialize $1."
+#    key_pub=$(cat /root/.ssh/id_rsa.pub)
+#    sshpass -p Juniper ssh $host "cli -c 'configure; \
+#set system host-name $1; \
+#set system root-authentication ssh-rsa \"$key_pub\"; \
+#delete interfaces; \
+#set interfaces fxp0 unit 0 family inet address $host/24; \
+#commit'"
+
+    sets="set system host-name $1; \
+          delete interfaces; \
+          set interfaces fxp0 unit 0 family inet address $host/24;"
+    for idx in {0..7}; do
+        mac=$(virsh domiflist $1-pfe | awk "/-ge$idx/"'{print $5}')
+        if [ $mac ]; then
+            sets+="set interfaces ge-0/0/$idx mac $mac;"
+        fi
+    done
+    ssh $host "cli -c 'configure; $sets; commit'"
+}
+
+add_license_vmx()
+{
+    local arr=(${vm_address_list[$1-re]})
+    local host=${arr[0]}
+    local license="E435890758 aeaqic aiagij cpabsc idycyi giydco bqgiyd \
+                              sdapoz gvqlkk ovxgs4 dfojcx mylma4 uhfs7p \
+                              etdlfc ex2i5k 4mo4fa ew2xbz ujzbol 4fl44z \
+                              ya3md2 drdgjf preowc 5ubrju kyq"
+
+    ssh $host "echo $license > license"
+    ssh $host "cli -c 'request system license add license'"
+}
+
+launch_vmx()
+{
+    local name=$1
+
+    echo "Launch vMX $name..."
+    launch_vm $name-re
+    launch_vm $name-pfe
+    wait_for_host $name-re
+    initialize_vmx $name
+    add_license_vmx $name
+}
+
+launch_vmx_all()
+{
+    local name
+
+    for name in $vmx_list; do
+        launch_vmx $name
+    done
+}
+
+delete_vmx()
+{
+    local name=$1
+
+    echo "Delete vMX $name..."
+    delete_vm $name-re
+    rm -f $instance_path/$name-re-hdd.qcow2 \
+            $instance_path/$name-re-usb.qcow2
+    delete_vm $name-pfe
+}
+
+delete_vmx_all()
+{
+    for name in $vmx_list; do
+        delete_vmx $name
+    done
+}
+
+launch_vqfx()
+{
+    local name=$1
+
+    echo "Launch vQFX $name..."
+    launch_vm $name-re
+    launch_vm $name-pfe
+    wait_for_host $name-re
+    initialize_vqfx $name
+}
+
+launch_vqfx_all()
+{
+    local name
+
+    for name in $vqfx_list; do
+        launch_vqfx $name
+    done
+}
+
+delete_vqfx()
+{
+    local name=$1
+
+    echo "Delete vQFX $name..."
+    delete_vm $name-re
+    delete_vm $name-pfe
+}
+
+delete_vqfx_all()
+{
+    for name in $vqfx_list; do
+        delete_vqfx $name
+    done
+}
+
+configure_vmx()
+{
+    local name=$(echo $1 | sed "s/-/_/g")
+
+    echo "Configure vMX $name..."
+    configure_$name
+}
+
+configure_vmx_all()
+{
+    local name
+
+    for name in $vmx_list; do
+        configure_vmx $name
+    done
+}
+
+configure_vqfx()
+{
+    local name=$(echo $1 | sed "s/-/_/g")
+
+    echo "Configure vQFX $name..."
+    configure_$name
+}
+
+configure_vqfx_all()
+{
+    local name
+
+    for name in $vqfx_list; do
+        configure_vqfx $name
+    done
+}
+
+launch_bms_all()
+{
+    local name
+
+    for name in $bms_list; do
+        launch_vm $name
+    done
+}
+
+delete_bms_all()
+{
+    local name
+
+    for name in $bms_list; do
+        delete_vm $name
+    done
+}
+
+build_underlay()
+{
+    create_underlay_link
+    enable_snat
+    launch_vqfx_all
+    launch_vmx_all
+    launch_bms_all
+    configure_vqfx_all
+    configure_vmx_all
+}
+
+delete_underlay()
+{
+    delete_bms_all
+    delete_vmx_all
+    delete_vqfx_all
+    disable_snat
+    delete_underlay_link
+}
+
+check_playbook_result()
+{
+    local rc_list
+    local rc
+
+    rc_list=$(tail -n 80 poc.log | grep -A 30 "PLAY RECAP" | \
+            awk "/failed/"'{print $6}')
+    for rc in $rc_list; do
+        if [ "$rc" != "failed=0" ]; then return 1; fi
+    done
+}
+
+copy_ssh_key()
+{
+    scp ~/.ssh/id_rsa ~/.ssh/id_rsa.pub ~/.ssh/config $1:/root/.ssh/
+}
+
+configure_haproxy()
+{
+    local dev
+    local cidr
+
+    echo "# Configure HAProxy..."
+    dev=$(ip route list exact 0/0 | awk '{print $5}')
+    cidr=$(ip -f inet -br addr show dev $dev | awk '{print $3}')
+    IFS='/'; a=(${cidr}); unset IFS
+
+    rm -f /etc/haproxy/haproxy.cfg 
+    cp $cluster_path/haproxy.cfg /etc/haproxy/haproxy.cfg 
+    sed -i -e "s/__address__/${a[0]}/" /etc/haproxy/haproxy.cfg
+    systemctl restart haproxy
+}
+
+build_cluster()
+{
+    local name
+
+    create_cluster_link
+    enable_snat
+    for name in $server_list; do
+        launch_vm $name
+        check_vm $name
+        if (( $? )); then return 1; fi
+    done
+    for name in $server_list; do
+        wait_for_host $name
+    done
+    launch_builder
+    pre_deployment
+    run_playbook
+    if (( $? )); then return 1; fi
+    post_deployment
+}
+
+delete_cluster()
+{
+    local name
+
+    for name in $server_list; do
+        delete_vm $name
+    done
+    delete_builder
+    disable_snat
+    delete_cluster_link
+}
+
+help()
+{
+    echo "$0 help"
+    echo "setup-hypervisor"
+    echo "build-underlay"
+    echo "delete-underlay"
+    echo "build-cluster"
+    echo "delete-cluster"
+    echo "rebuild-cluster"
+    echo "create-underlay-link"
+    echo "delete-underlay-link"
+    echo "create-cluster-link"
+    echo "delete-cluster-link"
+    echo "enable-snat"
+    echo "disable-snat"
+    echo "launch-vm"
+    echo "delete-vm"
+    echo "launch-vqfx"
+    echo "configure-vqfx"
+    echo "delete-vqfx"
+    echo "launch-vmx"
+    echo "configure-vmx"
+    echo "delete-vmx"
+    echo "launch-bms"
+    echo "delete-bms"
+    echo "launch-builder"
+    echo "delete-builder"
+    echo "install-command"
+    echo "launch-command"
+    echo "delete-command"
+}
+
+test()
+{
+    echo "Test"
+}
+
+main()
+{
+    local start_date=$(date)
+    local end_date
+
+    exec > >(tee poc.log)
+    exec 2>&1
+    echo "==== $1 Start $start_date ===="
+
+    case "$1" in
+        test)
+            test
+            ;;
+        setup-hypervisor)
+            hv_setup
+            ;;
+        create-underlay-link)
+            create_underlay_link
+            ;;
+        delete-underlay-link)
+            delete_underlay_link
+            ;;
+        create-cluster-link)
+            create_cluster_link
+            ;;
+        delete-cluster-link)
+            delete_cluster_link
+            ;;
+        enable-snat)
+            enable_snat
+            ;;
+        disable-snat)
+            disable_snat
+            ;;
+        launch-vm)
+            shift
+            launch_vm "$@"
+            ;;
+        delete-vm)
+            shift
+            delete_vm "$@"
+            ;;
+        launch-vmx)
+            shift
+            if [ $1 ]; then
+                launch_vmx "$@"
+            else
+                launch_vmx_all
+            fi
+            ;;
+        configure-vmx)
+            shift
+            if [ $1 ]; then
+                configure_vmx "$@"
+            else
+                configure_vmx_all
+            fi
+            ;;
+        delete-vmx)
+            shift
+            if [ $1 ]; then
+                delete_vmx "$@"
+            else
+                delete_vmx_all
+            fi
+            ;;
+        launch-vqfx)
+            shift
+            if [ $1 ]; then
+                launch_vqfx "$@"
+            else
+                launch_vqfx_all
+            fi
+            ;;
+        configure-vqfx)
+            shift
+            if [ $1 ]; then
+                configure_vqfx "$@"
+            else
+                configure_vqfx_all
+            fi
+            ;;
+        delete-vqfx)
+            shift
+            if [ $1 ]; then
+                delete_vqfx "$@"
+            else
+                delete_vqfx_all
+            fi
+            ;;
+        launch-bms)
+            shift
+            if [ $1 ]; then
+                launch_vm "$@"
+            else
+                launch_bms_all
+            fi
+            ;;
+        delete-bms)
+            shift
+            if [ $1 ]; then
+                delete_vm "$@"
+            else
+                delete_bms_all
+            fi
+            ;;
+        launch-builder)
+            launch_builder
+            ;;
+        delete-builder)
+            delete_builder
+            ;;
+        build-underlay)
+            build_underlay
+            ;;
+        delete-underlay)
+            delete_underlay
+            ;;
+        build-cluster)
+            build_cluster
+            ;;
+        delete-cluster)
+            delete_cluster
+            ;;
+        rebuild-cluster)
+            delete_cluster
+            build_cluster
+            ;;
+        install-command)
+            install_command
+            ;;
+        launch-command)
+            launch_command
+            ;;
+        delete-command)
+            delete_command
+            ;;
+        rebuild-fabric)
+            rebuild_fabric
+            ;;
+        configure-poc)
+            configure_poc
+            ;;
+        *)
+            help
+            ;;
+    esac
+
+    rc=$?
+    echo "==== $1 Start $start_date ===="
+    echo "==== $1 End   $(date) ===="
+    if (( $rc )); then
+        echo "==== FAILED! ===="
+    else
+        echo "==== SUCCEEDED! ===="
+    fi
+}
+
+main "$@"
+exit 0
+

@@ -1,0 +1,9 @@
+
+underlay_br_list="br-int br-r1"
+
+underlay_veth_list=""
+
+vqfx_list=""
+vmx_list=""
+bms_list=""
+
