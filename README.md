@@ -39,7 +39,7 @@ Here are prerequisites for the hypervisor.
   * At least one NIC that has public/internet access.
 
 * Host OS
-  * CentOS 7.5 is validated.
+  * CentOS 7.5 and Ubuntu 16.04.3 are validated.
 
 * Disk partition
   * Use logical volume.
