@@ -1,5 +1,5 @@
 
-cluster_path=cluster/openstack-2x
+cluster_path=cluster/openstack-x2
 
 cluster_br_list="br-int br-r1 br-r2"
 
@@ -104,37 +104,12 @@ load_playbook()
     ssh $host "rm -f cad.tgz"
 }
 
-load_config_a()
-{
-    local arr=(${vm_address_list[contrail-a]})
-    local host=${arr[0]}
-
-    scp $cluster_path/instances-a.yaml \
-            $host:./contrail-ansible-deployer/config/instances.yaml
-}
-
-load_config_b()
-{
-    local arr=(${vm_address_list[contrail-a]})
-    local host=${arr[0]}
-
-    scp $cluster_path/instances-b.yaml \
-            $host:./contrail-ansible-deployer/config/instances.yaml
-}
-
 run_playbook()
 {
     local arr=(${vm_address_list[contrail-a]})
     local host=${arr[0]}
 
     echo "Run playbook......"
-    ssh $host sed -i \
-            -e "s/__registry_username__/$registry_username/" \
-            -e "s/__registry_password__/$registry_password/" \
-            -e "s/__container_tag__/$contrail_release-$openstack-release/" \
-            -e "s/__openstack_release__/$openstack_release/" \
-            ./contrail-ansible-deployer/config/instances.yaml
-
     ssh $host "cd contrail-ansible-deployer; \
             ansible-playbook -i inventory -e orchestrator=openstack \
             playbooks/configure_instances.yml"
@@ -156,10 +131,13 @@ run_playbook()
 
 deploy()
 {
+    local arr=(${vm_address_list[contrail-a]})
+    local host=${arr[0]}
+
     load_playbook
-    load_config_a
+    upload_instances_yaml $host instances-a.yaml
     run_playbook
-    load_config_b
+    upload_instances_yaml $host instances-b.yaml
     run_playbook
 }
 

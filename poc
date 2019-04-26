@@ -420,6 +420,22 @@ delete_underlay()
     delete_underlay_link
 }
 
+upload_instances_yaml()
+{
+    local host=$1
+    local src=$2
+
+    if [ -z "$src" ]; then src=instances.yaml; fi
+    scp $cluster_path/$src \
+            $host:./contrail-ansible-deployer/config/instances.yaml
+    ssh $host sed -i \
+            -e "s/__registry_username__/$registry_username/" \
+            -e "s/__registry_password__/$registry_password/" \
+            -e "s/__container_tag__/$contrail_release-$openstack_release/" \
+            -e "s/__openstack_release__/$openstack_release/" \
+            ./contrail-ansible-deployer/config/instances.yaml
+}
+
 check_playbook_result()
 {
     local rc_list

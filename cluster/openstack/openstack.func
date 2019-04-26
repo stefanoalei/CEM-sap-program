@@ -89,13 +89,7 @@ run_playbook()
     local host=${arr[0]}
 
     echo "Run playbook......"
-    scp $cluster_path/instances.yaml $host:./contrail-ansible-deployer/config/
-    ssh $host sed -i \
-            -e "s/__registry_username__/$registry_username/" \
-            -e "s/__registry_password__/$registry_password/" \
-            -e "s/__container_tag__/$contrail_release-$openstack-release/" \
-            -e "s/__openstack_release__/$openstack_release/" \
-            ./contrail-ansible-deployer/config/instances.yaml
+    upload_instances_yaml $host
 
     ssh $host "cd contrail-ansible-deployer; \
             ansible-playbook -i inventory -e orchestrator=openstack \
