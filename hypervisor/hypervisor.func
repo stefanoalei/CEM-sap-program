@@ -6,22 +6,22 @@ hv_get_os()
 
 host_os=$(hv_get_os)
 
-hv_install_packages()
+hv_install_packages_centos()
 {
-    echo "# Install packages..."
-    if [ "$host_os" == "CentOS Linux" ]; then
-        yum install -y bridge-utils qemu-kvm libvirt virt-install \
-                libguestfs-tools libguestfs-xfs \
-                haproxy sshpass dhcp bind bind-utils ntp
-        systemctl enable libvirtd
-        systemctl start libvirtd
-    elif [ "$host_os" == "Ubuntu" ]; then
-        apt-get install -y bridge-utils qemu-kvm libvirt-bin virtinst \
-                libguestfs-tools \
-                haproxy sshpass isc-dhcp-server
-    else
-        echo "ERROR: OS \"$host_os\" is not supported!"
-    fi
+    echo "# Install CentOS packages..."
+    yum install -y bridge-utils qemu-kvm libvirt virt-install \
+            libguestfs-tools libguestfs-xfs \
+            haproxy sshpass dhcp bind bind-utils ntp
+    systemctl enable libvirtd
+    systemctl start libvirtd
+}
+
+hv_install_packages_ubuntu()
+{
+    echo "# Install Ubuntu packages..."
+    apt-get install -y bridge-utils qemu-kvm libvirt-bin virtinst \
+            libguestfs-tools \
+            haproxy sshpass isc-dhcp-server bind9 ntp
 }
 
 hv_configure_libvirt()
@@ -33,6 +33,7 @@ hv_configure_libvirt()
 
 hv_configure_named()
 {
+    local svc=$1
     local server_list
     local server
     local forwarders=""
@@ -53,12 +54,14 @@ options {
         dnssec-validation yes;
 };
 __EOF__
-
-    systemctl restart named
+    systemctl enable $svc
+    systemctl restart $svc
 }
 
 hv_configure_ntp()
 {
+    local svc=$1
+
     echo "# Configure ntpd..."
     if [ $ntp_server ]; then
         cat << __EOF__ > /etc/ntp.conf
@@ -73,7 +76,8 @@ fudge 127.127.1.0 stratum 8
 restrict 0.0.0.0
 __EOF__
     fi
-    systemctl restart ntpd
+    systemctl enabled $svc
+    systemctl restart $svc
 }
 
 hv_configure_haproxy()
@@ -89,6 +93,7 @@ hv_configure_haproxy()
     rm -f /etc/haproxy/haproxy.cfg 
     cp hypervisor/haproxy.cfg /etc/haproxy/haproxy.cfg 
     sed -i -e "s/__address__/${a[0]}/" /etc/haproxy/haproxy.cfg
+    systemctl enable haproxy
     systemctl restart haproxy
 }
 
@@ -109,7 +114,7 @@ __EOF__
 hv_generate_ssh_key()
 {
     echo "# Generate SSH key..."
-    #ssh-keygen -q -t rsa -f ~/.ssh/id_rsa -N "" -C contrail-virtual-fabric
+    #ssh-keygen -q -t rsa -f ~/.ssh/id_rsa -N "" -C contrail-poc
     cp hypervisor/id_rsa ~/.ssh/
     cp hypervisor/id_rsa.pub ~/.ssh/
     cp hypervisor/config ~/.ssh/
@@ -138,12 +143,12 @@ hv_enable_ipv4_forward()
     fi
 }
 
-hv_setup()
+hv_setup_centos()
 {
-    hv_install_packages
+    hv_install_packages_centos
     hv_configure_libvirt
-    hv_configure_named
-    hv_configure_ntp
+    hv_configure_named named
+    hv_configure_ntp ntpd
     mkdir -p /var/lib/libvirt/instance
     hv_enable_nested_virt
     hv_create_volume_pool
@@ -151,5 +156,31 @@ hv_setup()
     hv_enable_ipv4_forward
     systemctl stop firewalld
     systemctl disable firewalld
+}
+
+hv_setup_ubuntu()
+{
+    hv_install_packages_ubuntu
+    hv_configure_libvirt
+    hv_configure_named bind9
+    hv_configure_ntp ntp
+    mkdir -p /var/lib/libvirt/instance
+    hv_enable_nested_virt
+    hv_create_volume_pool
+    hv_generate_ssh_key
+    hv_enable_ipv4_forward
+    systemctl stop firewalld
+    systemctl disable firewalld
+}
+
+hv_setup()
+{
+    if [ "$host_os" == "CentOS Linux" ]; then
+        hv_setup_centos
+    elif [ "$host_os" == "Ubuntu" ]; then
+        hv_setup_ubuntu
+    else
+        echo "ERROR: OS \"$host_os\" is not supported!"
+    fi
 }
 
