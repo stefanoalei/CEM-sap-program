@@ -62,8 +62,6 @@ launch_builder()
     #ssh $host yum install -y ansible
     ssh $host yum install -y python-pip
     ssh $host pip install ansible==2.7.9
-    ssh $host git clone -b release-3.9 \
-            https://github.com/openshift/openshift-ansible.git
 }
 
 delete_builder()
@@ -107,6 +105,16 @@ pre_deployment()
     build_hosts
 }
 
+load_playbook()
+{
+    local arr=(${vm_address_list[master-1]})
+    local host=${arr[0]}
+
+    echo "Download playbook..."
+    ssh $host git clone -b release-3.9 \
+            https://github.com/openshift/openshift-ansible.git
+}
+
 run_playbook()
 {
     local arr=(${vm_address_list[master-1]})
@@ -131,6 +139,12 @@ run_playbook()
             playbooks/deploy_cluster.yml"
     check_playbook_result
     if (( $? )); then return 1; fi
+}
+
+deploy()
+{
+    load_playbook
+    run_playbook
 }
 
 post_deployment()

@@ -1,4 +1,4 @@
-# Contrail Virtual Fabric
+# Contrail POC
 # Cluster - Contrail Fabric Management
 
 # Topology

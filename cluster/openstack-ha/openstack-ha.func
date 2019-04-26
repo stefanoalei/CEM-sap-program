@@ -109,7 +109,7 @@ pre_deployment()
     echo "Pre-Deployment"
 }
 
-run_playbook()
+load_playbook()
 {
     local arr=(${vm_address_list[contrail-1]})
     local host=${arr[0]}
@@ -122,6 +122,12 @@ run_playbook()
     scp $contrail_playbook $host:./cad.tgz
     ssh $host "tar -xzf cad.tgz"
     ssh $host "rm -f cad.tgz"
+}
+
+run_playbook()
+{
+    local arr=(${vm_address_list[contrail-1]})
+    local host=${arr[0]}
 
     echo "Run playbook......"
     scp $cluster_path/instances.yaml $host:./contrail-ansible-deployer/config/
@@ -149,6 +155,12 @@ run_playbook()
             playbooks/install_contrail.yml"
     check_playbook_result
     if (( $? )); then return 1; fi
+}
+
+deploy()
+{
+    load_playbook
+    run_playbook
 }
 
 setup_openstack()

@@ -1,0 +1,209 @@
+
+cluster_path=cluster/openstack-2x
+
+cluster_br_list="br-int br-r1 br-r2"
+
+server_list="contrail-a openstack-a compute-a
+        contrail-b openstack-b compute-b"
+
+vm_cpu[contrail-a]=5
+vm_ram[contrail-a]=49152
+vm_disk[contrail-a]=80G
+vm_os[contrail-a]=centos
+vm_image_type[contrail-a]=volume
+vm_address_list[contrail-a]="10.6.8.1        10.6.11.1"
+vm_netmask_list[contrail-a]="255.255.255.0   255.255.255.0"
+vm_gateway_list[contrail-a]="10.6.8.254      null"
+vm_nic_list[contrail-a]="br=br-int br=br-r1"
+
+vm_cpu[openstack-a]=5
+vm_ram[openstack-a]=49152
+vm_disk[openstack-a]=80G
+vm_os[openstack-a]=centos
+vm_image_type[openstack-a]=volume
+vm_address_list[openstack-a]="10.6.8.2        10.6.11.2"
+vm_netmask_list[openstack-a]="255.255.255.0   255.255.255.0"
+vm_gateway_list[openstack-a]="10.6.8.254      null"
+vm_nic_list[openstack-a]="br=br-int br=br-r1"
+
+vm_cpu[compute-a]=3
+vm_ram[compute-a]=16384
+vm_disk[compute-a]=40G
+vm_os[compute-a]=centos
+vm_image_type[compute-a]=volume
+vm_address_list[compute-a]="10.6.8.3        10.6.11.3"
+vm_netmask_list[compute-a]="255.255.255.0   255.255.255.0"
+vm_gateway_list[compute-a]="10.6.8.254      null"
+vm_nic_list[compute-a]="br=br-int br=br-r1"
+vm_spec_arg[compute-a]="--cpu host"
+
+vm_cpu[contrail-b]=5
+vm_ram[contrail-b]=49152
+vm_disk[contrail-b]=80G
+vm_os[contrail-b]=centos
+vm_image_type[contrail-b]=volume
+vm_address_list[contrail-b]="10.6.8.11       10.6.21.1"
+vm_netmask_list[contrail-b]="255.255.255.0   255.255.255.0"
+vm_gateway_list[contrail-b]="10.6.8.254      null"
+vm_nic_list[contrail-b]="br=br-int br=br-r2"
+
+vm_cpu[openstack-b]=5
+vm_ram[openstack-b]=49152
+vm_disk[openstack-b]=80G
+vm_os[openstack-b]=centos
+vm_image_type[openstack-b]=volume
+vm_address_list[openstack-b]="10.6.8.12       10.6.21.2"
+vm_netmask_list[openstack-b]="255.255.255.0   255.255.255.0"
+vm_gateway_list[openstack-b]="10.6.8.254      null"
+vm_nic_list[openstack-b]="br=br-int br=br-r2"
+
+vm_cpu[compute-b]=3
+vm_ram[compute-b]=16384
+vm_disk[compute-b]=40G
+vm_os[compute-b]=centos
+vm_image_type[compute-b]=volume
+vm_address_list[compute-b]="10.6.8.13       10.6.21.3"
+vm_netmask_list[compute-b]="255.255.255.0   255.255.255.0"
+vm_gateway_list[compute-b]="10.6.8.254      null"
+vm_nic_list[compute-b]="br=br-int br=br-r2"
+vm_spec_arg[compute-b]="--cpu host"
+
+
+launch_builder()
+{
+    local arr=(${vm_address_list[contrail-a]})
+    local host=${arr[0]}
+
+    echo "Launch builder..."
+    copy_ssh_key $host
+    ssh $host yum install -y ansible git
+}
+
+delete_builder()
+{
+    echo "Delete builder..."
+}
+
+pre_deployment()
+{
+    echo "Pre-Deployment"
+}
+
+load_playbook()
+{
+    local arr=(${vm_address_list[contrail-a]})
+    local host=${arr[0]}
+
+    echo "Clean up playbook..."
+    ssh $host "rm -fr contrail-ansible-deployer"
+    ssh $host "rm -fr contrail-kolla-ansible"
+
+    echo "Upload playbook..."
+    scp $contrail_playbook $host:./cad.tgz
+    ssh $host "tar -xzf cad.tgz"
+    ssh $host "rm -f cad.tgz"
+}
+
+load_config_a()
+{
+    local arr=(${vm_address_list[contrail-a]})
+    local host=${arr[0]}
+
+    scp $cluster_path/instances-a.yaml \
+            $host:./contrail-ansible-deployer/config/instances.yaml
+}
+
+load_config_b()
+{
+    local arr=(${vm_address_list[contrail-a]})
+    local host=${arr[0]}
+
+    scp $cluster_path/instances-b.yaml \
+            $host:./contrail-ansible-deployer/config/instances.yaml
+}
+
+run_playbook()
+{
+    local arr=(${vm_address_list[contrail-a]})
+    local host=${arr[0]}
+
+    echo "Run playbook......"
+    ssh $host sed -i \
+            -e "s/__registry_username__/$registry_username/" \
+            -e "s/__registry_password__/$registry_password/" \
+            -e "s/__container_tag__/$contrail_release-$openstack-release/" \
+            -e "s/__openstack_release__/$openstack_release/" \
+            ./contrail-ansible-deployer/config/instances.yaml
+
+    ssh $host "cd contrail-ansible-deployer; \
+            ansible-playbook -i inventory -e orchestrator=openstack \
+            playbooks/configure_instances.yml"
+    check_playbook_result
+    if (( $? )); then return 1; fi
+
+    ssh $host "cd contrail-ansible-deployer; \
+            ansible-playbook -i inventory/ \
+            playbooks/install_openstack.yml"
+    check_playbook_result
+    if (( $? )); then return 1; fi
+
+    ssh $host "cd contrail-ansible-deployer; \
+            ansible-playbook -i inventory/ -e orchestrator=openstack \
+            playbooks/install_contrail.yml"
+    check_playbook_result
+    if (( $? )); then return 1; fi
+}
+
+deploy()
+{
+    load_playbook
+    load_config_a
+    run_playbook
+    load_config_b
+    run_playbook
+}
+
+setup_openstack_a()
+{
+    local arr=(${vm_address_list[openstack-a]})
+    local host=${arr[0]}
+
+    scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
+    ssh $host "docker exec kolla_toolbox \
+      bash -c \"source /var/lib/kolla/config_files/admin-openrc.sh; \
+        openstack flavor create \
+          --id 1 --disk 1 --ram 512 --vcpus 1 --public m1.tiny\""
+    ssh $host "docker exec kolla_toolbox \
+      bash -c \"source /var/lib/kolla/config_files/admin-openrc.sh; \
+        openstack image create \
+          --container-format bare --disk-format qcow2 --public \
+          --file /var/lib/kolla/config_files/$image_cirros cirros\""
+    ssh $host "rm -f /etc/kolla/kolla-toolbox/$image_cirros"
+}
+
+setup_openstack_b()
+{
+    local arr=(${vm_address_list[openstack-a]})
+    local host=${arr[0]}
+
+    scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
+    ssh $host "docker exec kolla_toolbox \
+      bash -c \"source /var/lib/kolla/config_files/admin-openrc.sh; \
+        openstack flavor create \
+          --id 1 --disk 1 --ram 512 --vcpus 1 --public m1.tiny\""
+    ssh $host "docker exec kolla_toolbox \
+      bash -c \"source /var/lib/kolla/config_files/admin-openrc.sh; \
+        openstack image create \
+          --container-format bare --disk-format qcow2 --public \
+          --file /var/lib/kolla/config_files/$image_cirros cirros\""
+    ssh $host "rm -f /etc/kolla/kolla-toolbox/$image_cirros"
+}
+
+post_deployment()
+{
+    echo "Post-Deployment"
+    configure_haproxy
+    setup_openstack_a
+    setup_openstack_b
+}
+

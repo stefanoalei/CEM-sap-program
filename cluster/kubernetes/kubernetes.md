@@ -1,4 +1,4 @@
-# Contrail Virtual Fabric
+# Contrail POC
 # Cluster - Kubernetes
 
 # Topology

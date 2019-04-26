@@ -469,7 +469,7 @@ build_cluster()
     done
     launch_builder
     pre_deployment
-    run_playbook
+    deploy
     if (( $? )); then return 1; fi
     post_deployment
 }
