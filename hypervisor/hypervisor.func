@@ -27,8 +27,11 @@ hv_install_packages_ubuntu()
 hv_configure_libvirt()
 {
     echo "# Configure libvirt..."
-    virsh net-destroy default
-    virsh net-undefine default
+    virsh net-info default > /dev/null 2>&1
+    if (( $? == 0 )); then
+        virsh net-destroy default
+        virsh net-undefine default
+    fi
 }
 
 hv_configure_named()
@@ -76,7 +79,7 @@ fudge 127.127.1.0 stratum 8
 restrict 0.0.0.0
 __EOF__
     fi
-    systemctl enabled $svc
+    systemctl enable $svc
     systemctl restart $svc
 }
 
@@ -122,13 +125,18 @@ hv_generate_ssh_key()
 
 hv_create_volume_pool()
 {
-    if [ $volume_dev ]; then
-        echo "Create volume pool on device $volume_dev..."
-        virsh pool-define-as --name lv --type logical --source-dev $volume_dev
-        virsh pool-build lv
-        virsh pool-start lv
-        virsh pool-autostart lv
+    if [ -z $volume_dev ]; then
+        return 0
     fi
+    echo "Create volume pool on device $volume_dev..."
+    virsh pool-info lv > /dev/null 2>&1
+    if (( $? == 0 )); then
+        return 0
+    fi
+    virsh pool-define-as --name lv --type logical --source-dev $volume_dev
+    virsh pool-build lv
+    virsh pool-start lv
+    virsh pool-autostart lv
 }
 
 hv_enable_ipv4_forward()
@@ -169,8 +177,8 @@ hv_setup_ubuntu()
     hv_create_volume_pool
     hv_generate_ssh_key
     hv_enable_ipv4_forward
-    systemctl stop firewalld
-    systemctl disable firewalld
+    #systemctl stop ufw
+    #systemctl disable ufw
 }
 
 hv_setup()
