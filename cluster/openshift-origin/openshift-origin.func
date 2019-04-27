@@ -110,9 +110,14 @@ load_playbook()
     local arr=(${vm_address_list[master-1]})
     local host=${arr[0]}
 
-    echo "Download playbook..."
-    ssh $host git clone -b release-3.9 \
-            https://github.com/openshift/openshift-ansible.git
+    #echo "Download playbook..."
+    #ssh $host git clone -b release-3.9 \
+    #        https://github.com/openshift/openshift-ansible.git
+
+    echo "Upload playbook..."
+    ssh $host "rm -fr openshift-ansible"
+    scp $openshift_playbook $host:./playbook.tgz
+    ssh $host "tar -xzf playbook.tgz; rm -f playbook.tgz"
 }
 
 run_playbook()

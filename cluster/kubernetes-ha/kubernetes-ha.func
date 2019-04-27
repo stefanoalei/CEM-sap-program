@@ -102,9 +102,8 @@ load_playbook()
     local host=${arr[0]}
 
     echo "Upload playbook..."
-    scp $contrail_playbook $host:./cad.tgz
-    ssh $host "tar -xzf cad.tgz"
-    ssh $host "rm -f cad.tgz"
+    scp $contrail_playbook $host:./playbook.tgz
+    ssh $host "tar -xzf playbook.tgz; rm -f playbook.tgz"
 }
 
 run_playbook()
