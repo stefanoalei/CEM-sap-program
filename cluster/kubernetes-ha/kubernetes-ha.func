@@ -96,47 +96,13 @@ pre_deployment()
     echo "Pre-Deployment"
 }
 
-load_playbook()
-{
-    local arr=(${vm_address_list[master-1]})
-    local host=${arr[0]}
-
-    echo "Upload playbook..."
-    scp $contrail_playbook $host:./playbook.tgz
-    ssh $host "tar -xzf playbook.tgz; rm -f playbook.tgz"
-}
-
-run_playbook()
-{
-    local arr=(${vm_address_list[master-1]})
-    local host=${arr[0]}
-
-    echo "Run playbook......"
-    upload_instances_yaml $host
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory -e orchestrator=kubernetes \
-            playbooks/configure_instances.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory -e orchestrator=kubernetes \
-            playbooks/install_k8s.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory/ -e orchestrator=openstack \
-            playbooks/install_contrail.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-}
-
 deploy()
 {
-    load_playbook
-    run_playbook
+    local arr=(${vm_address_list[master-1]})
+    local host=${arr[0]}
+
+    load_playbook $contrail_playbook $host
+    run_playbook_kubernetes $host
 }
 
 post_deployment()

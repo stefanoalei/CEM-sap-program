@@ -105,7 +105,7 @@ pre_deployment()
     build_hosts
 }
 
-load_playbook()
+deploy()
 {
     local arr=(${vm_address_list[master-1]})
     local host=${arr[0]}
@@ -114,42 +114,8 @@ load_playbook()
     #ssh $host git clone -b release-3.9 \
     #        https://github.com/openshift/openshift-ansible.git
 
-    echo "Upload playbook..."
-    ssh $host "rm -fr openshift-ansible"
-    scp $openshift_playbook $host:./playbook.tgz
-    ssh $host "tar -xzf playbook.tgz; rm -f playbook.tgz"
-}
-
-run_playbook()
-{
-    local arr=(${vm_address_list[master-1]})
-    local host=${arr[0]}
-
-    echo "Run playbook......"
-    scp $cluster_path/openshift-origin.yaml $host:./openshift-ansible/inventory/
-    ssh $host sed -i \
-            -e "s/__registry_username__/$registry_username/" \
-            -e "s/__registry_password__/$registry_password/" \
-            -e "s/__container_tag__/$contrail_release/" \
-            ./openshift-ansible/inventory/openshift-origin.yaml
-
-    ssh $host "cd openshift-ansible; \
-            ansible-playbook -i inventory/openshift-origin.yaml \
-            playbooks/prerequisites.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-
-    ssh $host "cd openshift-ansible; \
-            ansible-playbook -i inventory/openshift-origin.yaml \
-            playbooks/deploy_cluster.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-}
-
-deploy()
-{
-    load_playbook
-    run_playbook
+    load_playbook $openshift_playbook $host
+    run_playbook_openshift $host
 }
 
 post_deployment()

@@ -89,52 +89,16 @@ pre_deployment()
     echo "Pre-Deployment"
 }
 
-load_playbook()
-{
-    local arr=(${vm_address_list[contrail-a]})
-    local host=${arr[0]}
-
-    echo "Upload playbook..."
-    ssh $host "rm -fr contrail-ansible-deployer; rm -fr contrail-kolla-ansible"
-    scp $contrail_playbook $host:./playbook.tgz
-    ssh $host "tar -xzf playbook.tgz; rm -f playbook.tgz"
-}
-
-run_playbook()
-{
-    local arr=(${vm_address_list[contrail-a]})
-    local host=${arr[0]}
-
-    echo "Run playbook......"
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory -e orchestrator=openstack \
-            playbooks/configure_instances.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory/ \
-            playbooks/install_openstack.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory/ -e orchestrator=openstack \
-            playbooks/install_contrail.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-}
-
 deploy()
 {
     local arr=(${vm_address_list[contrail-a]})
     local host=${arr[0]}
 
-    load_playbook
+    load_playbook $contrail_playbook $host
     upload_instances_yaml $host instances-a.yaml
-    run_playbook
+    run_playbook_openstack $host
     upload_instances_yaml $host instances-b.yaml
-    run_playbook
+    run_playbook_openstack $host
 }
 
 setup_openstack_a()
