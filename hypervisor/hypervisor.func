@@ -123,7 +123,7 @@ hv_generate_ssh_key()
     cp hypervisor/id_rsa.pub ~/.ssh/
     cp hypervisor/config ~/.ssh/
     chmod 600 ~/.ssh/id_rsa
-    chmod 600 ~/.ssh/id_rsa.pub
+    chmod 644 ~/.ssh/id_rsa.pub
 }
 
 hv_create_volume_pool()
