@@ -556,6 +556,53 @@ run_playbook_openshift()
     if (( $? )); then return 1; fi
 }
 
+install_command()
+{
+    local host=$1
+
+    scp $cluster_path/contrail-command $host:.
+    ssh $host sed -i \
+        -e "s/__registry_username__/$registry_username/" \
+        -e "s/__registry_password__/$registry_password/" \
+        -e "s/__container_tag__/$contrail_release/" \
+        ./contrail-command
+
+    ssh $host "./contrail-command install"
+}
+
+launch_command()
+{
+    local host=$1
+
+    scp $cluster_path/command_servers.yml $host:.
+    ssh $host sed -i \
+        -e "s/__registry_username__/$registry_username/" \
+        -e "s/__registry_password__/$registry_password/" \
+        -e "s/__container_tag__/$contrail_release/" \
+        ./command_servers.yml
+    scp $cluster_path/instances.yaml $host:.
+    ssh $host sed -i \
+        -e "s/__registry_username__/$registry_username/" \
+        -e "s/__registry_password__/$registry_password/" \
+        -e "s/__container_tag__/$contrail_release-$openstack_release/" \
+        -e "s/__openstack_release__/$openstack_release/" \
+        ./instances.yaml
+    ssh $host "./contrail-command launch"
+}
+ 
+delete_command()
+{
+    local host=$1
+
+    scp $cluster_path/contrail-command $host:.
+    ssh $host sed -i \
+        -e "s/__registry_username__/$registry_username/" \
+        -e "s/__registry_password__/$registry_password/" \
+        -e "s/__contrail_command_tag__/$contrail_command_tag/" \
+        ./contrail-command
+    ssh $host "./contrail-command delete"
+}
+ 
 build_cluster()
 {
     local name
