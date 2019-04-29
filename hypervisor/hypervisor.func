@@ -118,6 +118,7 @@ hv_generate_ssh_key()
 {
     echo "# Generate SSH key..."
     #ssh-keygen -q -t rsa -f ~/.ssh/id_rsa -N "" -C contrail-poc
+    mkdir -p ~/.ssh
     cp hypervisor/id_rsa ~/.ssh/
     cp hypervisor/id_rsa.pub ~/.ssh/
     cp hypervisor/config ~/.ssh/
