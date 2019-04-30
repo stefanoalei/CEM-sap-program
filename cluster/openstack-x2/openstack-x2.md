@@ -34,14 +34,14 @@
 ```
                   vCPU    memory(GB)    disk(GB)    OS
 contrail-a          4        48             80      CentOS 7.5-1805
-openstack-a         4        48             80      CentOS 7.5-1805
-command-a           2        16             40      CentOS 7.5-1805
-compute-a           3         8             40      CentOS 7.5-1805
+openstack-a         4        48             60      CentOS 7.5-1805
+command-a           2        16             30      CentOS 7.5-1805
+compute-a           3         8             30      CentOS 7.5-1805
 contrail-b          4        48             80      CentOS 7.5-1805
-openstack-b         4        48             80      CentOS 7.5-1805
-command-b           2        16             40      CentOS 7.5-1805
-compute-b           3         8             40      CentOS 7.5-1805
+openstack-b         4        48             60      CentOS 7.5-1805
+command-b           2        16             30      CentOS 7.5-1805
+compute-b           3         8             30      CentOS 7.5-1805
 ----------------------------------------------------------------
-Total              26       240            480
+Total              26       240            400
 ```
 
