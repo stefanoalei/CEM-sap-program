@@ -1,5 +1,5 @@
 # Contrail POC
-# Underlay - Gateway to Gateway
+# Underlay - Gateway x2
 
 # Topology
 
