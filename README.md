@@ -15,9 +15,9 @@ Pick cluster and underlay to build the POC.
   * Contrail Fabric Management
 * [IP Fabric HA](underlay/fabric-ha.md)
   * Contrail Fabric Management HA
-* [Gateway to Gateway](underlay/gateway-gateway.md)
+* [Gateway x2](underlay/gateway-x2.md)
   * Contrail gateway to corp gateway.
-  * Contrail gateway to Contrail gateway (DC-DC).
+  * Contrail gateway to Contrail gateway (DCI).
   * Remote compute.
 
 
