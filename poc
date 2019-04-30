@@ -573,14 +573,17 @@ install_command()
 launch_command()
 {
     local host=$1
+    local command_conf=$2
+    local cluster_conf=$3
 
-    scp $cluster_path/command_servers.yml $host:.
+    scp $cluster_path/$command_conf $host:./command_servers.yml
     ssh $host sed -i \
         -e "s/__registry_username__/$registry_username/" \
         -e "s/__registry_password__/$registry_password/" \
         -e "s/__container_tag__/$contrail_release/" \
+        -e "s/__address__/$host/" \
         ./command_servers.yml
-    scp $cluster_path/instances.yaml $host:.
+    scp $cluster_path/$cluster_conf $host:./instances.yaml
     ssh $host sed -i \
         -e "s/__registry_username__/$registry_username/" \
         -e "s/__registry_password__/$registry_password/" \
@@ -802,13 +805,16 @@ main()
             build_cluster
             ;;
         install-command)
-            install_command
+            shift
+            install_command "$@"
             ;;
         launch-command)
-            launch_command
+            shift
+            launch_command "$@"
             ;;
         delete-command)
-            delete_command
+            shift
+            delete_command "$@"
             ;;
         rebuild-fabric)
             rebuild_fabric

@@ -3,8 +3,8 @@ cluster_path=cluster/openstack-x2
 
 cluster_br_list="br-int br-r1 br-r2"
 
-server_list="contrail-a openstack-a compute-a command-a
-        contrail-b openstack-b compute-b command-b"
+server_list="contrail-a openstack-a compute-a
+        contrail-b openstack-b compute-b"
 
 vm_cpu[contrail-a]=4
 vm_ram[contrail-a]=49152
@@ -118,7 +118,7 @@ pre_deployment()
 
 deploy()
 {
-    local arr=(${vm_address_list[contrail-a]})
+    local arr=(${vm_address_list[command-a]})
     local host=${arr[0]}
 
     load_playbook $contrail_playbook $host
@@ -174,9 +174,9 @@ post_deployment()
     setup_openstack_b
     arr=(${vm_address_list[command-a]})
     install_command ${arr[0]}
-    launch_command ${arr[0]}
+    launch_command ${arr[0]} command_servers.yml instances-a.yaml
     arr=(${vm_address_list[command-b]})
     install_command ${arr[0]}
-    launch_command ${arr[0]}
+    launch_command ${arr[0]} command_servers.yml instances-b.yaml
 }
 

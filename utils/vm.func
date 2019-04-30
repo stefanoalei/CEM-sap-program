@@ -353,7 +353,7 @@ launch_vm()
 
     virsh domstate $name > /dev/null 2>&1
     if (( $? == 0 )); then
-        echo "VM %name exists."
+        echo "VM $name exists."
         return 0
     fi
     echo "Launch $name..."
