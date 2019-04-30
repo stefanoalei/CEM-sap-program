@@ -16,16 +16,6 @@ vm_netmask_list[contrail-a]="255.255.255.0   255.255.255.0"
 vm_gateway_list[contrail-a]="10.6.8.254      null"
 vm_nic_list[contrail-a]="br=br-int br=br-r1"
 
-vm_cpu[command-a]=2
-vm_ram[command-a]=16384
-vm_disk[command-a]=30G
-vm_os[command-a]=centos
-vm_image_type[command-a]=volume
-vm_address_list[command-a]="10.6.8.9        10.6.11.9"
-vm_netmask_list[command-a]="255.255.255.0   255.255.255.0"
-vm_gateway_list[command-a]="10.6.8.254      null"
-vm_nic_list[contrail-a]="br=br-int br=br-r1"
-
 vm_cpu[openstack-a]=4
 vm_ram[openstack-a]=49152
 vm_disk[openstack-a]=60G
@@ -47,6 +37,16 @@ vm_gateway_list[compute-a]="10.6.8.254      null"
 vm_nic_list[compute-a]="br=br-int br=br-r1"
 vm_spec_arg[compute-a]="--cpu host"
 
+vm_cpu[command-a]=2
+vm_ram[command-a]=16384
+vm_disk[command-a]=30G
+vm_os[command-a]=centos
+vm_image_type[command-a]=volume
+vm_address_list[command-a]="10.6.8.9        10.6.11.9"
+vm_netmask_list[command-a]="255.255.255.0   255.255.255.0"
+vm_gateway_list[command-a]="10.6.8.254      null"
+vm_nic_list[command-a]="br=br-int br=br-r1"
+
 vm_cpu[contrail-b]=4
 vm_ram[contrail-b]=49152
 vm_disk[contrail-b]=80G
@@ -55,16 +55,6 @@ vm_image_type[contrail-b]=volume
 vm_address_list[contrail-b]="10.6.8.11       10.6.21.1"
 vm_netmask_list[contrail-b]="255.255.255.0   255.255.255.0"
 vm_gateway_list[contrail-b]="10.6.8.254      null"
-vm_nic_list[contrail-b]="br=br-int br=br-r2"
-
-vm_cpu[command-b]=2
-vm_ram[command-b]=16384
-vm_disk[command-b]=30G
-vm_os[command-b]=centos
-vm_image_type[command-b]=volume
-vm_address_list[command-b]="10.6.8.19       10.6.21.9"
-vm_netmask_list[command-b]="255.255.255.0   255.255.255.0"
-vm_gateway_list[command-b]="10.6.8.254      null"
 vm_nic_list[contrail-b]="br=br-int br=br-r2"
 
 vm_cpu[openstack-b]=4
@@ -87,6 +77,16 @@ vm_netmask_list[compute-b]="255.255.255.0   255.255.255.0"
 vm_gateway_list[compute-b]="10.6.8.254      null"
 vm_nic_list[compute-b]="br=br-int br=br-r2"
 vm_spec_arg[compute-b]="--cpu host"
+
+vm_cpu[command-b]=2
+vm_ram[command-b]=16384
+vm_disk[command-b]=30G
+vm_os[command-b]=centos
+vm_image_type[command-b]=volume
+vm_address_list[command-b]="10.6.8.19       10.6.21.9"
+vm_netmask_list[command-b]="255.255.255.0   255.255.255.0"
+vm_gateway_list[command-b]="10.6.8.254      null"
+vm_nic_list[command-b]="br=br-int br=br-r2"
 
 
 launch_builder()
