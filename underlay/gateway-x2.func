@@ -49,9 +49,9 @@ vm_ram[ext-host]=2048
 vm_disk[ext-host]=20G
 vm_os[ext-host]=centos
 vm_image_type[ext-host]=volume
-vm_address_list[ext-host]="10.6.8.9        10.6.21.10"
+vm_address_list[ext-host]="10.6.8.9        10.6.12.10"
 vm_netmask_list[ext-host]="255.255.255.0   255.255.255.0"
-vm_gateway_list[ext-host]="null            10.6.21.254"
+vm_gateway_list[ext-host]="null            10.6.12.254"
 vm_nic_list[ext-host]="br=br-int br=br-r2"
 
 #####################################################
@@ -83,7 +83,7 @@ configure_vmx_2()
     ssh $host "cli -c 'configure; \
 set interfaces lo0 unit 0 family inet address 10.6.0.41/32; \
 set interfaces ge-0/0/0 unit 0 family inet address 10.6.30.1/31; \
-set interfaces ge-0/0/1 unit 0 family inet address 10.6.21.254/24; \
+set interfaces ge-0/0/1 unit 0 family inet address 10.6.12.254/24; \
 set routing-options route-distinguisher-id 10.6.0.41; \
 set routing-options autonomous-system 64041; \
 set protocols bgp group ext type external; \
