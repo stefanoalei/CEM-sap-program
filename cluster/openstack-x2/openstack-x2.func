@@ -148,7 +148,7 @@ setup_openstack_a()
 
 setup_openstack_b()
 {
-    local arr=(${vm_address_list[openstack-a]})
+    local arr=(${vm_address_list[openstack-b]})
     local host=${arr[0]}
 
     scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
