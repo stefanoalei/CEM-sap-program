@@ -42,9 +42,11 @@ Here are prerequisites for the hypervisor.
   * CentOS 7.5 and Ubuntu 16.04.3 are validated.
 
 * Disk partition
+  * This has to be done during host OS installation.
   * Use logical volume.
-  * Make single root `/` LV, don't create separate home `/home` LV.
-  * For better disk performance, reserve a partition for libvirt volume.
+  * Make single root `/` LV.
+  * Don't create separate home `/home` LV.
+  * Optionally, for better disk performance, reserve a partition (1TB) for libvirt volume.
 
 * Kernel
   * Upgrade kernel and reboot, after installation.
@@ -68,7 +70,7 @@ git clone https://github.com/tonyliu0592/contrail-poc.git
 
 * Setup the hypervisor.
 ```
-cd contrail-virtual-fabric
+cd contrail-poc
 poc setup-hypervisor
 ```
 
