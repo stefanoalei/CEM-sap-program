@@ -14,7 +14,7 @@ underlay_veth_list="
 
 vqfx_list="vqfx-spine-1 vqfx-leaf-1 vqfx-leaf-2"
 vmx_list="vmx-1 vmx-2"
-bms_list="bms-12 bms-22 bms-21 bms-22"
+bms_list="bms-11 bms-12 bms-21 bms-22"
 
 #####################################################
 vm_cpu[vqfx-spine-1-re]=1
