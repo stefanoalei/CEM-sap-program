@@ -37,20 +37,20 @@ instances:
       vrouter:
         VROUTER_GATEWAY: 10.6.11.254
       openstack_compute:
-  csn-b:
-    provider: bms
-    ip: 10.6.8.13
-    roles:
-      vrouter:
-        TSN_EVPN_MODE: True
-        TSN_NODES: 10.6.12.3
-  compute-b:
-    provider: bms
-    ip: 10.6.8.14
-    roles:
-      vrouter:
-        VROUTER_GATEWAY: 10.6.12.254
-      openstack_compute:
+#  csn-b:
+#    provider: bms
+#    ip: 10.6.8.13
+#    roles:
+#      vrouter:
+#        TSN_EVPN_MODE: True
+#        TSN_NODES: 10.6.12.3
+#  compute-b:
+#    provider: bms
+#    ip: 10.6.8.14
+#    roles:
+#      vrouter:
+#        VROUTER_GATEWAY: 10.6.12.254
+#      openstack_compute:
 global_configuration:
   CONTAINER_REGISTRY: hub.juniper.net/contrail
   CONTAINER_REGISTRY_USERNAME: __registry_username__
