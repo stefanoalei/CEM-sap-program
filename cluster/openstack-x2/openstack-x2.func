@@ -193,9 +193,9 @@ post_deployment()
     setup_openstack_b
     arr=(${vm_address_list[command-a]})
     install_command ${arr[0]}
-    launch_command ${arr[0]} instances-a.yaml
+    launch_command ${arr[0]} command_servers.yml instances-a.yaml
     arr=(${vm_address_list[command-b]})
     install_command ${arr[0]}
-    launch_command ${arr[0]} instances-b.yaml
+    launch_command ${arr[0]} command_servers.yml instances-b.yaml
 }
 

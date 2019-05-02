@@ -561,7 +561,7 @@ install_command()
     local host=$1
 
     echo "Install Contrail Command..."
-    scp cluster/contrail-command/contrail-command $host:.
+    scp $cluster_path/contrail-command $host:.
     ssh $host sed -i \
         -e "s/__registry_username__/$registry_username/" \
         -e "s/__registry_password__/$registry_password/" \
@@ -574,10 +574,11 @@ install_command()
 launch_command()
 {
     local host=$1
-    local cluster_conf=$2
+    local command_conf=$2
+    local cluster_conf=$3
 
     echo "Launch Contrail Command..."
-    scp cluster/contrail-command/command_servers.yml $host:./command_servers.yml
+    scp $cluster_path/$command_conf $host:./command_servers.yml
     ssh $host sed -i \
         -e "s/__registry_username__/$registry_username/" \
         -e "s/__registry_password__/$registry_password/" \
@@ -599,7 +600,7 @@ delete_command()
     local host=$1
 
     echo "Delete Contrail Command..."
-    scp cluster/contrail-command/contrail-command $host:.
+    scp $cluster_path/contrail-command $host:.
     ssh $host sed -i \
         -e "s/__registry_username__/$registry_username/" \
         -e "s/__registry_password__/$registry_password/" \
