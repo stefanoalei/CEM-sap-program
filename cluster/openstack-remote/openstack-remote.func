@@ -4,7 +4,7 @@ cluster_path=cluster/openstack-remote
 cluster_br_list="br-int br-r1 br-r2"
 
 #server_list="contrail openstack csn-a csn-b compute-a compute-b"
-server_list="contrail openstack csn-a"
+server_list="contrail openstack csn-a compute-a"
 
 vm_cpu[contrail]=4
 vm_ram[contrail]=49152
