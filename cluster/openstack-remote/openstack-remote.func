@@ -154,6 +154,6 @@ post_deployment()
     #add_static_route
     arr=(${vm_address_list[command]})
     install_command ${arr[0]}
-    launch_command ${arr[0]} command_servers.yml instances.yaml
+    launch_command ${arr[0]} instances.yaml
 }
 
