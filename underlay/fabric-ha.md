@@ -81,14 +81,14 @@
 # Resource
 ```
                   vCPU    memory(GB)    disk(GB)    OS
-vqfx-leaf-1-re      1         1           4         Junos 18.4R1.8
-vqfx-leaf-1-pfe     1         2           4         Junos 18.4R1.8
-vqfx-leaf-2-re      1         1           4         Junos 18.4R1.8
-vqfx-leaf-2-pfe     1         2           4         Junos 18.4R1.8
-vqfx-spine-1-re     1         1           4         Junos 18.4R1.8
-vqfx-spine-1-pfe    1         2           4         Junos 18.4R1.8
-vqfx-spine-2-re     1         1           4         Junos 18.4R1.8
-vqfx-spine-2-pfe    1         2           4         Junos 18.4R1.8
+vqfx-leaf-1-re      1         1           4         Junos 18.1R1.9
+vqfx-leaf-1-pfe     1         2           4         Junos 18.1R1.9
+vqfx-leaf-2-re      1         1           4         Junos 18.1R1.9
+vqfx-leaf-2-pfe     1         2           4         Junos 18.1R1.9
+vqfx-spine-1-re     1         1           4         Junos 18.1R1.9
+vqfx-spine-1-pfe    1         2           4         Junos 18.1R1.9
+vqfx-spine-2-re     1         1           4         Junos 18.1R1.9
+vqfx-spine-2-pfe    1         2           4         Junos 18.1R1.9
 vmx-1-vcp           1         1           4         Junos 18.3R1.9
 vmx-1-vfp           4         2           4         Junos 18.3R1.9
 vmx-2-vcp           1         1           4         Junos 18.3R1.9

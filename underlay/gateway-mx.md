@@ -59,8 +59,8 @@
 ```
                   vCPU    memory(GB)    disk(GB)    OS
 ext-host           1         2             20      CentOS 7.5-1805
-vqfx-leaf-1-re     1         1                     Junos 18.4R1.8
-vqfx-leaf-1-pfe    1         2                     Junos 18.4R1.8
+vqfx-leaf-1-re     1         1                     Junos 18.1R1.9
+vqfx-leaf-1-pfe    1         2                     Junos 18.1R1.9
 vmx-1-re           1         1                     Junos 18.3R1.9
 vmx-1-pfe          4         2                     Junos 18.3R1.9
 ----------------------------------------------------------------
