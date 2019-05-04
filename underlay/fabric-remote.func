@@ -38,7 +38,7 @@ vm_os[vqfx-leaf-1-re]=vqfx-re
 vm_image_type[vqfx-leaf-1-re]=file
 vm_address_list[vqfx-leaf-1-re]="10.6.8.11"
 vm_nic_list[vqfx-leaf-1-re]="br=br-int dir=l1-re-em1 br=br-dummy
-  dir=l1-xe0 dir=l1-xe1 br=br-r1"
+  dir=l1-xe0 dir=l1-xe1 dir=l1-xe2 br=br-r1"
 
 vm_cpu[vqfx-leaf-1-pfe]=1
 vm_ram[vqfx-leaf-1-pfe]=2048
@@ -153,7 +153,7 @@ configure_vmx_2()
     local host=${arr[0]}
 
     ssh $host "cli -c 'configure; \
-set interfaces lo0 unit 0 family inet address 10.6.0.31/32; \
+set interfaces lo0 unit 0 family inet address 10.6.0.41/32; \
 set interfaces ge-0/0/0 unit 0 family inet address 10.6.40.1/31; \
 set interfaces ge-0/0/1 unit 0 family inet address 10.6.50.0/31; \
 set routing-options route-distinguisher-id 10.6.0.41; \
