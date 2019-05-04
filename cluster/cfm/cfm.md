@@ -28,12 +28,12 @@
 # Resource
 ```
                   vCPU    memory(GB)    disk(GB)    OS
-command             2        32            100      CentOS 7.5-1805
+command             2        32             80      CentOS 7.5-1805
 openstack           4        64            100      CentOS 7.5-1805
 contrail            4        64            100      CentOS 7.5-1805
-csn                 1        16             80      CentOS 7.5-1805
-compute             4        32             80      CentOS 7.5-1805
+csn                 1        16             40      CentOS 7.5-1805
+compute             4        32             60      CentOS 7.5-1805
 ----------------------------------------------------------------
-Total              15       208            460
+Total              15       208            380
 ```
 
