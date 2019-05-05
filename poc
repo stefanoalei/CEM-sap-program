@@ -223,12 +223,12 @@ initialize_vqfx()
           delete interfaces; \
           set interfaces em0 unit 0 family inet address $host/24; \
           set interfaces em1 unit 0 family inet address 169.254.0.2/24;"
-    for idx in {0..7}; do
-        mac=$(virsh domiflist $1-re | awk "/-xe$idx/"'{print $5}')
-        if [ $mac ]; then
-            sets+="set interfaces xe-0/0/$idx mac $mac;"
-        fi
-    done
+#    for idx in {0..7}; do
+#        mac=$(virsh domiflist $1-re | awk "/-xe$idx/"'{print $5}')
+#        if [ $mac ]; then
+#            sets+="set interfaces xe-0/0/$idx mac $mac;"
+#        fi
+#    done
     ssh $host "cli -c 'configure; $sets; commit'"
 }
 
@@ -251,12 +251,12 @@ initialize_vmx()
     sets="set system host-name $1; \
           delete interfaces; \
           set interfaces fxp0 unit 0 family inet address $host/24;"
-    for idx in {0..7}; do
-        mac=$(virsh domiflist $1-pfe | awk "/-ge$idx/"'{print $5}')
-        if [ $mac ]; then
-            sets+="set interfaces ge-0/0/$idx mac $mac;"
-        fi
-    done
+#    for idx in {0..7}; do
+#        mac=$(virsh domiflist $1-pfe | awk "/-ge$idx/"'{print $5}')
+#        if [ $mac ]; then
+#            sets+="set interfaces ge-0/0/$idx mac $mac;"
+#        fi
+#    done
     ssh $host "cli -c 'configure; $sets; commit'"
 }
 
