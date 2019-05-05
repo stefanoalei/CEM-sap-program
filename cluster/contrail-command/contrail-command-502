@@ -32,7 +32,7 @@ launch_with_new_cluster()
 launch()
 {
     docker login hub.juniper.net \
-      --username __registry_username__
+      --username __registry_username__ \
       --password __registry_password__
     docker pull $image
 
