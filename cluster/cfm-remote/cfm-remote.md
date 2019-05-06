@@ -1,5 +1,5 @@
 # Contrail POC
-# Cluster - OpenStack Remote
+# Cluster - Contrail Fabric Management Remote
 
 # Topology
 
@@ -32,13 +32,13 @@
 ```
                   vCPU    memory(GB)    disk(GB)    OS
 command             2        32            80      CentOS 7.5-1805
-openstack           4        48            100     CentOS 7.5-1805
-contrail            4        48            100     CentOS 7.5-1805
+openstack           5        48            100     CentOS 7.5-1805
+contrail            5        48            100     CentOS 7.5-1805
 csn-a               1         8            40      CentOS 7.5-1805
 csn-b               1         8            40      CentOS 7.5-1805
 compute             2        16            40      CentOS 7.5-1805
 compute             2        16            40      CentOS 7.5-1805
 ----------------------------------------------------------------
-Total              16       176            440
+Total              18       176            440
 ```
 

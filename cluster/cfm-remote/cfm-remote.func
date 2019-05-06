@@ -1,12 +1,12 @@
 
-cluster_path=cluster/openstack-remote
+cluster_path=cluster/cfm-remote
 
 cluster_br_list="br-int br-r1 br-r2"
 
 #server_list="contrail openstack csn-a csn-b compute-a compute-b"
 server_list="contrail openstack csn-a compute-a"
 
-vm_cpu[contrail]=4
+vm_cpu[contrail]=5
 vm_ram[contrail]=49152
 vm_disk[contrail]=100G
 vm_os[contrail]=centos
@@ -16,7 +16,7 @@ vm_netmask_list[contrail]="255.255.255.0   255.255.255.0"
 vm_gateway_list[contrail]="10.6.8.254      null"
 vm_nic_list[contrail]="br=br-int br=br-r1"
 
-vm_cpu[openstack]=4
+vm_cpu[openstack]=5
 vm_ram[openstack]=49152
 vm_disk[openstack]=100G
 vm_os[openstack]=centos

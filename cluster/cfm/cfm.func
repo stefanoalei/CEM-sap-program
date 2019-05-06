@@ -186,8 +186,8 @@ post_deployment()
     setup_openstack
     #configure_poc
     add_static_route
-    arr=(${vm_address_list[command]})
-    install_command ${arr[0]}
-    launch_command ${arr[0]} instances.yaml
+    #arr=(${vm_address_list[command]})
+    #install_command ${arr[0]}
+    #launch_command ${arr[0]} instances.yaml
 }
 

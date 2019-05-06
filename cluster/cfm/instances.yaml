@@ -36,7 +36,8 @@ instances:
       vrouter:
       openstack_compute:
 global_configuration:
-  CONTAINER_REGISTRY: hub.juniper.net/contrail
+  CONTAINER_REGISTRY: __registry_url__
+  REGISTRY_PRIVATE_INSECURE: __registry_insecure__
   CONTAINER_REGISTRY_USERNAME: __registry_username__
   CONTAINER_REGISTRY_PASSWORD: __registry_password__
 contrail_configuration:
