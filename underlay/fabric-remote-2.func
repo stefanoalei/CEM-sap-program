@@ -152,14 +152,15 @@ set interfaces lo0 unit 0 family inet address 10.6.0.33/32; \
 set interfaces ge-0/0/0 unit 0 family inet address 172.16.1.13/24; \
 set interfaces ge-0/0/1 unit 0 family inet address 10.6.30.3/31; \
 set routing-options route-distinguisher-id 10.6.0.33; \
-set routing-options autonomous-system 64033; \
 set protocols bgp group fabric type external; \
 set protocols bgp group fabric family inet unicast; \
 set protocols bgp group fabric export direct; \
+set protocols bgp group fabric local-as 64033; \
 set protocols bgp group fabric neighbor 10.6.30.2 peer-as 64022; \
 set protocols bgp group core type external; \
 set protocols bgp group core family inet unicast; \
 set protocols bgp group core export direct; \
+set protocols bgp group core local-as 64033; \
 set protocols bgp group core neighbor 172.16.1.11 peer-as 64031; \
 set protocols bgp group core neighbor 172.16.1.14 peer-as 64034; \
 set policy-options policy-statement direct term t1 from protocol direct; \
@@ -177,14 +178,15 @@ set interfaces lo0 unit 0 family inet address 10.6.0.34/32; \
 set interfaces ge-0/0/0 unit 0 family inet address 172.16.1.14/24; \
 set interfaces ge-0/0/1 unit 0 family inet address 10.6.20.6/31; \
 set routing-options route-distinguisher-id 10.6.0.34; \
-set routing-options autonomous-system 64034; \
 set protocols bgp group fabric type external; \
 set protocols bgp group fabric family inet unicast; \
 set protocols bgp group fabric export direct; \
+set protocols bgp group fabric local-as 64034; \
 set protocols bgp group fabric neighbor 10.6.20.7 peer-as 64014; \
 set protocols bgp group core type external; \
 set protocols bgp group core family inet unicast; \
 set protocols bgp group core export direct; \
+set protocols bgp group core local-as 64034; \
 set protocols bgp group core neighbor 172.16.1.13 peer-as 64033; \
 set policy-options policy-statement direct term t1 from protocol direct; \
 set policy-options policy-statement direct term t1 then accept; \
@@ -201,10 +203,10 @@ set interfaces lo0 unit 0 family inet address 10.6.0.22/32; \
 set interfaces xe-0/0/0 unit 0 family inet address 10.6.30.2/31; \
 set interfaces xe-0/0/1 unit 0 family inet address 10.6.20.4/31; \
 set routing-options route-distinguisher-id 10.6.0.22; \
-set routing-options autonomous-system 64022; \
 set protocols bgp group fabric type external; \
 set protocols bgp group fabric family inet unicast; \
 set protocols bgp group fabric export direct; \
+set protocols bgp group fabric local-as 64022; \
 set protocols bgp group fabric neighbor 10.6.30.3 peer-as 64033; \
 set protocols bgp group fabric neighbor 10.6.20.5 peer-as 64013; \
 set policy-options policy-statement direct term t1 from protocol direct; \
@@ -225,10 +227,10 @@ set interfaces irb unit 12 family inet address 10.6.12.254/24; \
 set vlans vlan-12 vlan-id 12; \
 set vlans vlan-12 l3-interface irb.12; \
 set routing-options route-distinguisher-id 10.6.0.13; \
-set routing-options autonomous-system 64013; \
 set protocols bgp group fabric type external; \
 set protocols bgp group fabric family inet unicast; \
 set protocols bgp group fabric export direct; \
+set protocols bgp group fabric local-as 64013; \
 set protocols bgp group fabric neighbor 10.6.20.4 peer-as 64022; \
 set policy-options policy-statement direct term t1 from protocol direct; \
 set policy-options policy-statement direct term t1 then accept; \
@@ -244,10 +246,10 @@ configure_vqfx_leaf_2()
 set interfaces lo0 unit 0 family inet address 10.6.0.14/32; \
 set interfaces xe-0/0/0 unit 0 family inet address 10.6.20.7/31; \
 set routing-options route-distinguisher-id 10.6.0.14; \
-set routing-options autonomous-system 64014; \
 set protocols bgp group fabric type external; \
 set protocols bgp group fabric family inet unicast; \
 set protocols bgp group fabric export direct; \
+set protocols bgp group fabric local-as 64014; \
 set protocols bgp group fabric neighbor 10.6.20.6 peer-as 64034; \
 set policy-options policy-statement direct term t1 from protocol direct; \
 set policy-options policy-statement direct term t1 then accept; \
