@@ -1,0 +1,262 @@
+#!/bin/bash
+
+source poc.conf
+
+deployer_image=$registry_url/contrail-kolla-ansible-deployer:$contrail_release
+command_image=$registry_url/contrail-command-deployer:$contrail_release
+
+
+install_deployer_package()
+{
+    yum install -y ansible git
+}
+
+registry_security()
+{
+    if [ "$registry_url" == "hub.juniper.net/contrail" ]; then
+        echo "secured"
+    else
+        echo "insecured"
+    fi
+}
+
+add_insecured_registry()
+{
+    cat << __EOT__ > /etc/docker/daemon.json
+{
+    "insecure-registries": [ "$registry_url" ]
+}
+__EOT__
+    systemctl restart docker
+}
+
+install_docker()
+{
+    echo "Install Docker CE..."
+    yum install -y yum-utils device-mapper-persistent-data lvm2
+    yum-config-manager \
+      --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+    yum install -y docker-ce-18.03.1.ce
+    systemctl start docker
+
+    if [ "$(registry_security)" = "insecured" ]; then
+        add_insecured_registry
+    fi
+}
+
+pull_image()
+{
+    local image=$1
+
+    echo "Pull $image..."
+    if [ "$(registry_security)" = "secured" ]; then
+        docker login hub.juniper.net \
+          --username $registry_username \
+          --password $registry_password
+    fi
+    docker pull $image
+}
+
+launch_deployer()
+{
+    docker run -td --net host --name contrail_kolla_ansible_deployer \
+            $deployer_image
+}
+
+install_deployer()
+{
+    if [ "${contrail_release:0:3}" == "5.0" ]; then
+        install_deployer_package
+    else
+        install_docker
+        pull_image "$deployer_image"
+        launch_deployer
+    fi
+}
+
+check_playbook_result()
+{
+    local rc_list
+    local rc
+
+    rc_list=$(tail -n 80 builder.log | grep -A 30 "PLAY RECAP" | \
+            awk "/failed/"'{print $6}')
+    for rc in $rc_list; do
+        if [ "$rc" != "failed=0" ]; then return 1; fi
+    done
+}
+
+build_instances_yaml()
+{
+    if [ "registry_url" == "hub.juniper.net/contrail" ]; then
+        sed -i \
+            -e "s/__registry_url__/$registry_url/" \
+            -e "s/__registry_insecure__/False/" \
+            -e "s/__registry_username__/$registry_username/" \
+            -e "s/__registry_password__/$registry_password/" \
+            -e "s/__container_tag__/$contrail_release-$openstack_release/" \
+            -e "s/__openstack_release__/$openstack_release/" \
+            instances.yaml
+    else
+        sed -i \
+            -e "s/__registry_url__/$registry_url/" \
+            -e "s/__registry_insecure__/True/" \
+            -e "s/__container_tag__/$openstack_release-$contrail_release/" \
+            -e "s/__openstack_release__/$openstack_release/" \
+            instances.yaml
+    fi
+}
+
+run_playbook()
+{
+    local cmd1=$1
+    local cmd2=$2
+    local cmd3=$3
+
+    exec > >(tee builder.log)
+    exec 2>&1
+    echo "Deploy..."
+
+    build_instances_yaml
+    if [ "${contrail_release:0:3}" == "5.0" ]; then
+        cp -f instances.yaml contrail-ansible-deployer/config/
+        cd contrail-ansible-deployer
+        $cmd1
+        check_playbook_result; if (( $? )); then return 1; fi
+        $cmd2
+        check_playbook_result; if (( $? )); then return 1; fi
+        $cmd3
+        check_playbook_result; if (( $? )); then return 1; fi
+    else
+        docker cp instances.yaml contrail_kolla_ansible_deployer:/root/contrail-ansible-deployer/config/instances.yaml
+        docker exec contrail_kolla_ansible_deployer bash -c \
+                "cd /root/contrail-ansible-deployer; $cmd1"
+        check_playbook_result; if (( $? )); then return 1; fi
+        docker exec contrail_kolla_ansible_deployer bash -c \
+                "cd /root/contrail-ansible-deployer; $cmd2"
+        check_playbook_result; if (( $? )); then return 1; fi
+        docker exec contrail_kolla_ansible_deployer bash -c \
+                "cd /root/contrail-ansible-deployer; $cmd3"
+        check_playbook_result; if (( $? )); then return 1; fi
+    fi
+}
+
+deploy_openstack()
+{
+    local cmd1="ansible-playbook -i inventory/ -e orchestrator=openstack \
+            playbooks/configure_instances.yml"
+    local cmd2="ansible-playbook -i inventory/ -e orchestrator=openstack \
+            playbooks/install_openstack.yml"
+    local cmd3="ansible-playbook -i inventory/ -e orchestrator=openstack \
+            playbooks/install_contrail.yml"
+
+    run_playbook "$cmd1" "$cmd2" "$cmd3"
+}
+
+deploy_kubernetes()
+{
+    local cmd1="ansible-playbook -i inventory/ -e orchestrator=kubernetes \
+            playbooks/configure_instances.yml"
+    local cmd2="ansible-playbook -i inventory/ -e orchestrator=kubernetes \
+            playbooks/install_k8s.yml"
+    local cmd3="ansible-playbook -i inventory/ -e orchestrator=kubernetes \
+            playbooks/install_contrail.yml"
+
+    run_playbook $cmd1 $cmd2 $cmd3
+}
+
+build_command_yaml()
+{
+    local host=$1
+
+    if [ "registry_url" == "hub.juniper.net/contrail" ]; then
+        sed -i \
+            -e "s/__address__/$host/" \
+            -e "s/__registry_url__/$registry_url/" \
+            -e "s/__registry_insecure__/false/" \
+            -e "s/__registry_username__/$registry_username/" \
+            -e "s/__registry_password__/$registry_password/" \
+            -e "s/__container_tag__/$contrail_release/" \
+            command_servers.yml
+    else
+        sed -i \
+            -e "s/__address__/$host/" \
+            -e "s/__registry_url__/$registry_url/" \
+            -e "s/__registry_insecure__/true/" \
+            -e "s/__container_tag__/$contrail_release/" \
+            command_servers.yml
+    fi
+}
+
+install_command()
+{
+    pull_image "$command_image"
+}
+
+launch_command()
+{
+    local host=$1
+    local append=""
+
+    build_instances_yaml
+    build_command_yaml "$host"
+
+    if [ -n "$2" ]; then
+        append="-e delete_db=no"
+    fi
+    docker run -t --net host -d --privileged \
+            -e orchestrator=openstack \
+            -e action=import_cluster \
+            $append \
+            -v /root/instances.yaml:/instances.yml \
+            -v /root/command_servers.yml:/command_servers.yml \
+            --name contrail_command_deployer \
+            $command_image
+}
+
+delete_command()
+{
+    local vol=$(docker inspect -f '{{ (index .Mounts 0).Name }}' contrail_psql)
+
+    docker stop contrail_command
+    docker stop contrail_psql
+    docker rm contrail_command
+    docker rm contrail_psql
+    docker rm contrail_command_deployer
+    docker volume rm $vol
+}
+
+main()
+{
+    case "$1" in
+        install-deployer)
+            install_deployer
+            ;;
+        deploy-openstack)
+            deploy_openstack
+            ;;
+        deploy-kubernetes)
+            deploy_kubernetes
+            ;;
+        install-command)
+            install_command
+            ;;
+        launch-command)
+            shift
+            launch_command "$@"
+            ;;
+        delete-command)
+            delete_command
+            ;;
+        delete)
+            delete
+            ;;
+        *)
+            echo "Help"
+            ;;
+    esac
+}
+
+main "$@"
+exit 0
+
