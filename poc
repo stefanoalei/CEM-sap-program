@@ -428,12 +428,24 @@ upload_instances_yaml()
     if [ -z "$src" ]; then src=instances.yaml; fi
     scp $cluster_path/$src \
             $host:./contrail-ansible-deployer/config/instances.yaml
-    ssh $host sed -i \
+
+    if [ "registry_url" == "hub.juniper.net/contrail" ]; then
+        ssh $host sed -i \
+            -e "s/__registry_url__/$registry_url/" \
+            -e "s/__registry_insecure__/False/" \
             -e "s/__registry_username__/$registry_username/" \
             -e "s/__registry_password__/$registry_password/" \
             -e "s/__container_tag__/$contrail_release-$openstack_release/" \
             -e "s/__openstack_release__/$openstack_release/" \
             ./contrail-ansible-deployer/config/instances.yaml
+    else
+        ssh $host sed -i \
+            -e "s/__registry_url__/$registry_url/" \
+            -e "s/__registry_insecure__/True/" \
+            -e "s/__container_tag__/$openstack_release-$contrail_release/" \
+            -e "s/__openstack_release__/$openstack_release/" \
+            ./contrail-ansible-deployer/config/instances.yaml
+    fi
 }
 
 check_playbook_result()
@@ -475,7 +487,7 @@ load_playbook()
     local host=$2
 
     echo "Upload playbook..."
-    scp $playbook $host:./playbook.tgz
+    scp playbook/$playbook $host:./playbook.tgz
     ssh $host "tar -xzf playbook.tgz; rm -f playbook.tgz"
 }
 
