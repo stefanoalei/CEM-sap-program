@@ -160,7 +160,7 @@ set protocols bgp group fabric neighbor 10.6.30.2 peer-as 64022; \
 set protocols bgp group core type external; \
 set protocols bgp group core family inet unicast; \
 set protocols bgp group core export direct; \
-set protocols bgp group core neighbor 172.16.1.11 peer-as 64034; \
+set protocols bgp group core neighbor 172.16.1.11 peer-as 64031; \
 set protocols bgp group core neighbor 172.16.1.14 peer-as 64034; \
 set policy-options policy-statement direct term t1 from protocol direct; \
 set policy-options policy-statement direct term t1 then accept; \
@@ -181,11 +181,11 @@ set routing-options autonomous-system 64034; \
 set protocols bgp group fabric type external; \
 set protocols bgp group fabric family inet unicast; \
 set protocols bgp group fabric export direct; \
-set protocols bgp group fabric neighbor 10.6.20.7 peer-as 64012; \
+set protocols bgp group fabric neighbor 10.6.20.7 peer-as 64014; \
 set protocols bgp group core type external; \
 set protocols bgp group core family inet unicast; \
 set protocols bgp group core export direct; \
-set protocols bgp group core neighbor 172.16.1.11 peer-as 64031; \
+set protocols bgp group core neighbor 172.16.1.13 peer-as 64033; \
 set policy-options policy-statement direct term t1 from protocol direct; \
 set policy-options policy-statement direct term t1 then accept; \
 commit'"
