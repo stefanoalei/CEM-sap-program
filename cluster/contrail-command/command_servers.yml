@@ -12,15 +12,12 @@ command_servers:
         # or registry details and container_name
         #container_path: /root/contrail-command-051618.tar
 
-        container_registry: hub.juniper.net/contrail
-        container_name: contrail-command
+        container_registry: __registry_url__
+        registry_insecure: __registry_insecure__
         container_tag: __container_tag__
         container_registry_username: __registry_username__
         container_registry_password: __registry_password__
-        #registry_insecure: true
-        #container_registry: ci-repo.englab.juniper.net:5010
-        #container_name: contrail-command
-        #container_tag: 5.0-360
+        container_name: contrail-command
 
         config_dir: /etc/contrail
 

@@ -426,26 +426,7 @@ upload_instances_yaml()
     local src=$2
 
     if [ -z "$src" ]; then src=instances.yaml; fi
-    scp $cluster_path/$src \
-            $host:./contrail-ansible-deployer/config/instances.yaml
-
-    if [ "registry_url" == "hub.juniper.net/contrail" ]; then
-        ssh $host sed -i \
-            -e "s/__registry_url__/$registry_url/" \
-            -e "s/__registry_insecure__/False/" \
-            -e "s/__registry_username__/$registry_username/" \
-            -e "s/__registry_password__/$registry_password/" \
-            -e "s/__container_tag__/$contrail_release-$openstack_release/" \
-            -e "s/__openstack_release__/$openstack_release/" \
-            ./contrail-ansible-deployer/config/instances.yaml
-    else
-        ssh $host sed -i \
-            -e "s/__registry_url__/$registry_url/" \
-            -e "s/__registry_insecure__/True/" \
-            -e "s/__container_tag__/$openstack_release-$contrail_release/" \
-            -e "s/__openstack_release__/$openstack_release/" \
-            ./contrail-ansible-deployer/config/instances.yaml
-    fi
+    scp $cluster_path/$src $host:.
 }
 
 check_playbook_result()
@@ -481,14 +462,36 @@ configure_haproxy()
     systemctl restart haproxy
 }
 
+install_openstack_deployer()
+{
+    local host=$1
+
+    copy_ssh_key $host
+    scp cluster/builder $host:.
+    scp poc.conf $host:.
+    ssh $host "./builder install-deployer"
+}
+
+install_kubernetes_deployer()
+{
+    local host=$1
+
+    copy_ssh_key $host
+    scp cluster/builder $host:.
+    scp poc.conf $host:.
+    ssh $host "./builder install-deployer"
+}
+
 load_playbook()
 {
     local playbook=$1
     local host=$2
 
     echo "Upload playbook..."
-    scp playbook/$playbook $host:./playbook.tgz
-    ssh $host "tar -xzf playbook.tgz; rm -f playbook.tgz"
+    if [ -n "$playbook" ]; then
+        scp playbook/$playbook $host:./playbook.tgz
+        ssh $host "tar -xzf playbook.tgz; rm -f playbook.tgz"
+    fi
 }
 
 run_playbook_openstack()
@@ -496,23 +499,7 @@ run_playbook_openstack()
     local host=$1
 
     echo "Run playbook......"
-    upload_instances_yaml $host
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory -e orchestrator=openstack \
-            playbooks/configure_instances.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory/ \
-            playbooks/install_openstack.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory/ -e orchestrator=openstack \
-            playbooks/install_contrail.yml"
+    ssh $host "./builder deploy-openstack"
     check_playbook_result
     if (( $? )); then return 1; fi
 }
@@ -522,23 +509,7 @@ run_playbook_kubernetes()
     local host=$1
 
     echo "Run playbook......"
-    upload_instances_yaml $host
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory -e orchestrator=kubernetes \
-            playbooks/configure_instances.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory -e orchestrator=kubernetes \
-            playbooks/install_k8s.yml"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-
-    ssh $host "cd contrail-ansible-deployer; \
-            ansible-playbook -i inventory/ -e orchestrator=kubernetes \
-            playbooks/install_contrail.yml"
+    ssh $host "./builder deploy-kubernetes"
     check_playbook_result
     if (( $? )); then return 1; fi
 }
@@ -573,14 +544,8 @@ install_command()
     local host=$1
 
     echo "Install Contrail Command..."
-    scp cluster/contrail-command/contrail-command $host:.
-    ssh $host sed -i \
-        -e "s/__registry_username__/$registry_username/" \
-        -e "s/__registry_password__/$registry_password/" \
-        -e "s/__container_tag__/$contrail_release/" \
-        ./contrail-command
-
-    ssh $host "./contrail-command install"
+    scp cluster/builder $host:.
+    ssh $host "./builder install-command"
 }
 
 launch_command()
@@ -589,21 +554,10 @@ launch_command()
     local cluster_conf=$2
 
     echo "Launch Contrail Command..."
-    scp cluster/contrail-command/command_servers.yml $host:./command_servers.yml
-    ssh $host sed -i \
-        -e "s/__registry_username__/$registry_username/" \
-        -e "s/__registry_password__/$registry_password/" \
-        -e "s/__container_tag__/$contrail_release/" \
-        -e "s/__address__/$host/" \
-        ./command_servers.yml
+    scp cluster/builder $host:.
+    scp cluster/contrail-command/command_servers.yml $host:.
     scp $cluster_path/$cluster_conf $host:./instances.yaml
-    ssh $host sed -i \
-        -e "s/__registry_username__/$registry_username/" \
-        -e "s/__registry_password__/$registry_password/" \
-        -e "s/__container_tag__/$contrail_release-$openstack_release/" \
-        -e "s/__openstack_release__/$openstack_release/" \
-        ./instances.yaml
-    ssh $host "./contrail-command launch"
+    ssh $host "./builder launch-command $host"
 }
  
 delete_command()
@@ -611,13 +565,9 @@ delete_command()
     local host=$1
 
     echo "Delete Contrail Command..."
-    scp cluster/contrail-command/contrail-command $host:.
-    ssh $host sed -i \
-        -e "s/__registry_username__/$registry_username/" \
-        -e "s/__registry_password__/$registry_password/" \
-        -e "s/__contrail_command_tag__/$contrail_command_tag/" \
-        ./contrail-command
-    ssh $host "./contrail-command delete"
+    scp cluster/builder $host:.
+    scp poc.conf $host:.
+    ssh $host "./builder delete-command"
 }
  
 build_cluster()
@@ -835,6 +785,9 @@ main()
             ;;
         configure-poc)
             configure_poc
+            ;;
+        deploy)
+            deploy
             ;;
         *)
             help

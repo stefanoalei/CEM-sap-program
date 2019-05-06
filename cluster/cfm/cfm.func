@@ -5,7 +5,7 @@ cluster_br_list="br-int br-r1"
 
 server_list="contrail openstack csn compute"
 
-vm_cpu[contrail]=4
+vm_cpu[contrail]=6
 vm_ram[contrail]=65535
 vm_disk[contrail]=100G
 vm_os[contrail]=centos
@@ -15,8 +15,8 @@ vm_netmask_list[contrail]="255.255.255.0   255.255.255.0"
 vm_gateway_list[contrail]="10.6.8.254      null"
 vm_nic_list[contrail]="br=br-int br=br-r1"
 
-vm_cpu[openstack]=4
-vm_ram[openstack]=65535
+vm_cpu[openstack]=5
+vm_ram[openstack]=49152
 vm_disk[openstack]=100G
 vm_os[openstack]=centos
 vm_image_type[openstack]=volume
@@ -26,7 +26,7 @@ vm_gateway_list[openstack]="10.6.8.254      null"
 vm_nic_list[openstack]="br=br-int br=br-r1"
 
 vm_cpu[csn]=1
-vm_ram[csn]=16384
+vm_ram[csn]=8096
 vm_disk[csn]=40G
 vm_os[csn]=centos
 vm_image_type[csn]=volume
@@ -36,7 +36,7 @@ vm_gateway_list[csn]="10.6.8.254      null"
 vm_nic_list[csn]="br=br-int br=br-r1"
 
 vm_cpu[compute]=4
-vm_ram[compute]=32768
+vm_ram[compute]=16384
 vm_disk[compute]=60G
 vm_os[compute]=centos
 vm_image_type[compute]=volume
@@ -46,34 +46,21 @@ vm_gateway_list[compute]="10.6.8.254      null"
 vm_nic_list[compute]="br=br-int br=br-r1"
 vm_spec_arg[compute]="--cpu host"
 
-vm_cpu[command]=2
-vm_ram[command]=32768
-vm_disk[command]=80G
-vm_os[command]=centos
-vm_image_type[command]=volume
-vm_address_list[command]="10.6.8.10       10.6.11.10"
-vm_netmask_list[command]="255.255.255.0   255.255.255.0"
-vm_gateway_list[command]="10.6.8.254      null"
-vm_nic_list[command]="br=br-int br=br-r1"
-
 
 launch_builder()
 {
-    local arr=(${vm_address_list[command]})
+    local arr=(${vm_address_list[contrail]})
     local host=${arr[0]}
 
     echo "Launch builder..."
-    launch_vm "command"
-    wait_for_host "command"
-
-    copy_ssh_key $host
-    ssh $host yum install -y ansible git
+    #copy_ssh_key $host
+    #ssh $host yum install -y ansible git
+    install_openstack_deployer $host
 }
 
 delete_builder()
 {
     echo "Delete builder..."
-    delete_vm "command"
 }
 
 
@@ -84,10 +71,13 @@ pre_deployment()
 
 deploy()
 {
-    local arr=(${vm_address_list[command]})
+    local arr=(${vm_address_list[contrail]})
     local host=${arr[0]}
 
-    load_playbook $contrail_playbook $host
+    upload_instances_yaml $host
+    if [ -n "$contrail_playbook" ]; then
+        load_playbook $contrail_playbook $host
+    fi
     run_playbook_openstack $host
 }
 
@@ -186,8 +176,8 @@ post_deployment()
     setup_openstack
     #configure_poc
     add_static_route
-    #arr=(${vm_address_list[command]})
-    #install_command ${arr[0]}
-    #launch_command ${arr[0]} instances.yaml
+    arr=(${vm_address_list[contrail]})
+    install_command ${arr[0]}
+    launch_command ${arr[0]} instances.yaml
 }
 
