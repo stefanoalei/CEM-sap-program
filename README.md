@@ -15,6 +15,7 @@ Pick cluster and underlay to build the POC.
   * Contrail Fabric Management
 * [IP Fabric HA](underlay/fabric-ha.md)
   * Contrail Fabric Management HA
+* [IP Fabric Remote](underlay/fabric-remote.md)
 * [Gateway x2](underlay/gateway-x2.md)
   * Contrail gateway to corp gateway.
   * Contrail gateway to Contrail gateway (DCI).
@@ -28,6 +29,8 @@ Pick cluster and underlay to build the POC.
 * [Contrail and Kubernetes HA](cluster/kubernetes-ha/kubernetes-ha.md)
 * [Contrail and OpenShift Origin](cluster/openshift-origin/openshift-origin.md)
 * [Contrail Fabric Management](cluster/cfm/cfm.md)
+* [Contrail Fabric Management](cluster/cfm/cfm.md)
+* [Contrail Fabric Management Remote](cluster/cfm-remote/cfm-remote.md)
 
 
 # 2 Hypervisor
