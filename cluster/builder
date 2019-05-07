@@ -233,7 +233,11 @@ launch_command()
             --name contrail_command_deployer \
             $command_image
     check_command
-    systemctl stop iptables
+    systemctl status iptables > /dev/null 2>&1
+    if (( "$?" == "0" )); then
+        systemctl stop iptables
+        systemctl disable iptables
+    fi
 }
 
 delete_command()
