@@ -46,13 +46,14 @@ instances:
 #        TSN_NODES: 10.6.12.5
   compute-2:
     provider: bms
-    ip: 10.6.8.14
+    ip: 10.6.8.6
     roles:
       vrouter:
         VROUTER_GATEWAY: 10.6.12.254
       openstack_compute:
 global_configuration:
-  CONTAINER_REGISTRY: hub.juniper.net/contrail
+  CONTAINER_REGISTRY: __registry_url__
+  REGISTRY_PRIVATE_INSECURE: __registry_insecure__
   CONTAINER_REGISTRY_USERNAME: __registry_username__
   CONTAINER_REGISTRY_PASSWORD: __registry_password__
 contrail_configuration:
