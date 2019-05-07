@@ -1,0 +1,153 @@
+
+cluster_path=cluster/cfm-remote-2
+
+cluster_br_list="br-int br-r1 br-r2"
+
+#server_list="contrail openstack csn-1 csn-2 compute-1 compute-2"
+server_list="contrail openstack csn-1 compute-1 compute-2"
+
+vm_cpu[contrail]=6
+vm_ram[contrail]=65535
+vm_disk[contrail]=100G
+vm_os[contrail]=centos
+vm_image_type[contrail]=volume
+vm_address_list[contrail]="10.6.8.51       10.6.13.1"
+vm_netmask_list[contrail]="255.255.255.0   255.255.255.0"
+vm_gateway_list[contrail]="10.6.8.254      null"
+vm_nic_list[contrail]="br=br-int br=br-r1"
+
+vm_cpu[openstack]=5
+vm_ram[openstack]=49152
+vm_disk[openstack]=100G
+vm_os[openstack]=centos
+vm_image_type[openstack]=volume
+vm_address_list[openstack]="10.6.8.52       10.6.13.2"
+vm_netmask_list[openstack]="255.255.255.0   255.255.255.0"
+vm_gateway_list[openstack]="10.6.8.254      null"
+vm_nic_list[openstack]="br=br-int br=br-r1"
+
+vm_cpu[csn-1]=1
+vm_ram[csn-1]=8096
+vm_disk[csn-1]=40G
+vm_os[csn-1]=centos
+vm_image_type[csn-1]=volume
+vm_address_list[csn-1]="10.6.8.53       10.6.13.3"
+vm_netmask_list[csn-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[csn-1]="10.6.8.254      null"
+vm_nic_list[csn-1]="br=br-int br=br-r1"
+
+vm_cpu[compute-1]=2
+vm_ram[compute-1]=16384
+vm_disk[compute-1]=40G
+vm_os[compute-1]=centos
+vm_image_type[compute-1]=volume
+vm_address_list[compute-1]="10.6.8.54       10.6.13.4"
+vm_netmask_list[compute-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[compute-1]="10.6.8.254      null"
+vm_nic_list[compute-1]="br=br-int br=br-r1"
+vm_spec_arg[compute-1]="--cpu host"
+
+vm_cpu[csn-2]=1
+vm_ram[csn-2]=8096
+vm_disk[csn-2]=40G
+vm_os[csn-2]=centos
+vm_image_type[csn-2]=volume
+vm_address_list[csn-2]="10.6.8.55       10.6.13.5"
+vm_netmask_list[csn-2]="255.255.255.0   255.255.255.0"
+vm_gateway_list[csn-2]="10.6.8.254      null"
+vm_nic_list[csn-2]="br=br-int br=br-r2"
+
+vm_cpu[compute-2]=2
+vm_ram[compute-2]=16384
+vm_disk[compute-2]=40G
+vm_os[compute-2]=centos
+vm_image_type[compute-2]=volume
+vm_address_list[compute-2]="10.6.8.56       10.6.14.6"
+vm_netmask_list[compute-2]="255.255.255.0   255.255.255.0"
+vm_gateway_list[compute-2]="10.6.8.254      null"
+vm_nic_list[compute-2]="br=br-int br=br-r2"
+vm_spec_arg[compute-2]="--cpu host"
+
+
+launch_builder()
+{
+    local arr=(${vm_address_list[contrail]})
+    local host=${arr[0]}
+
+    echo "Launch builder..."
+    install_openstack_deployer $host
+}
+
+delete_builder()
+{
+    echo "Delete builder..."
+}
+
+pre_deployment()
+{
+    echo "Pre-Deployment"
+}
+
+deploy()
+{
+    local arr=(${vm_address_list[contrail]})
+    local host=${arr[0]}
+
+    upload_instances_yaml $host
+    if [ -n "$playbook" ]; then
+        load_playbook $contrail_playbook $host
+    fi
+    run_playbook_openstack $host
+}
+
+setup_openstack()
+{
+    local arr=(${vm_address_list[openstack]})
+    local host=${arr[0]}
+
+    scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
+    ssh $host "docker exec kolla_toolbox \
+      bash -c \"source /var/lib/kolla/config_files/admin-openrc.sh; \
+        openstack flavor create \
+          --id 1 --disk 1 --ram 512 --vcpus 1 --public m1.tiny\""
+    ssh $host "docker exec kolla_toolbox \
+      bash -c \"source /var/lib/kolla/config_files/admin-openrc.sh; \
+        openstack image create \
+          --container-format bare --disk-format qcow2 --public \
+          --file /var/lib/kolla/config_files/$image_cirros cirros\""
+    ssh $host "rm -f /etc/kolla/kolla-toolbox/$image_cirros"
+}
+
+add_static_route()
+{
+    local arr
+    local host
+    local name
+
+    #for name in $server_list; do
+    #    arr=(${vm_address_list[$name]})
+    #    host=${arr[0]}
+    #    ssh $host ip route add 10.6.0.0/24 via 10.6.11.254
+    #done
+    arr=(${vm_address_list[contrail]})
+    host=${arr[0]}
+    ssh $host ip route add 10.6.0.0/24 via 10.6.13.254
+    arr=(${vm_address_list[compute-2]})
+    host=${arr[0]}
+    ssh $host ip route add 10.6.0.0/24 via 10.6.14.254
+    ssh $host ip route add 10.6.11.0/24 via 10.6.14.254
+}
+
+post_deployment()
+{
+    local arr
+
+    echo "Post-Deployment"
+    configure_haproxy
+    setup_openstack
+    add_static_route
+    #arr=(${vm_address_list[contrail]})
+    #install_command ${arr[0]}
+    #launch_command ${arr[0]} instances.yaml
+}
+
