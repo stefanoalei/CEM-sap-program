@@ -193,6 +193,26 @@ install_command()
     pull_image "$command_image"
 }
 
+check_command()
+{
+    local rc_list
+    local rc
+
+    let "count = 2"
+    while (( "$count" > "0"  )); do
+        sleep 10
+        echo "Check Contrail Command Deployer..."
+        docker logs --tail 10 contrail_command_deployer | \
+                grep "PLAY RECAP" > /dev/null 2>&1
+        if (( "$?" == "0" )); then
+            let "count -= 1"
+        fi
+    done
+
+    docker logs --tail 10 contrail_command_deployer | \
+            grep -A 10 "PLAY RECAP" | awk "/failed/"'{print}'
+}
+
 launch_command()
 {
     local host=$1
@@ -212,6 +232,8 @@ launch_command()
             -v /root/command_servers.yml:/command_servers.yml \
             --name contrail_command_deployer \
             $command_image
+    check_command
+    systemctl stop iptables
 }
 
 delete_command()
