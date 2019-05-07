@@ -65,7 +65,7 @@ vm_address_list[vqfx-leaf-2-re]="10.6.8.12"
 #vm_nic_list[vqfx-leaf-2-re]="br=br-int dir=l2-re-em1 br=br-dummy
 #  dir=l2-xe0 dir=l2-xe1 dir=l2-xe2"
 vm_nic_list[vqfx-leaf-2-re]="br=br-int br=br-l2-int br=br-dummy
-  br=br-gw2-ge1 br=br-l2-xe1 br=br-l2-xe2"
+  br=br-gw2-ge1 br=br-l2-xe1 br=br-l2-xe2 br=br-r2"
 
 vm_cpu[vqfx-leaf-2-pfe]=1
 vm_ram[vqfx-leaf-2-pfe]=2048
@@ -245,6 +245,10 @@ configure_vqfx_leaf_2()
     ssh $host "cli -c 'configure; \
 set interfaces lo0 unit 0 family inet address 10.6.0.12/32; \
 set interfaces xe-0/0/0 unit 0 family inet address 10.6.20.3/31; \
+set interfaces xe-0/0/3 unit 0 family ethernet-switching vlan members vlan-12; \
+set interfaces irb unit 12 family inet address 10.6.12.254/24; \
+set vlans vlan-12 vlan-id 12; \
+set vlans vlan-12 l3-interface irb.12; \
 set routing-options route-distinguisher-id 10.6.0.12; \
 set routing-options autonomous-system 64012; \
 set protocols bgp group fabric type external; \
