@@ -88,21 +88,21 @@ check_playbook_result()
 
 build_instances_yaml()
 {
-    if [ "registry_url" == "hub.juniper.net/contrail" ]; then
+    if [ "$registry_url" == "hub.juniper.net/contrail" ]; then
         sed -i \
-            -e "s/__registry_url__/$registry_url/" \
-            -e "s/__registry_insecure__/False/" \
-            -e "s/__registry_username__/$registry_username/" \
-            -e "s/__registry_password__/$registry_password/" \
-            -e "s/__container_tag__/$contrail_release-$openstack_release/" \
-            -e "s/__openstack_release__/$openstack_release/" \
+            -e "s|__registry_url__|$registry_url|" \
+            -e "s|__registry_insecure__|False|" \
+            -e "s|__registry_username__|$registry_username|" \
+            -e "s|__registry_password__|$registry_password|" \
+            -e "s|__container_tag__|$contrail_release-$openstack_release|" \
+            -e "s|__openstack_release__|$openstack_release|" \
             instances.yaml
     else
         sed -i \
-            -e "s/__registry_url__/$registry_url/" \
-            -e "s/__registry_insecure__/True/" \
-            -e "s/__container_tag__/$openstack_release-$contrail_release/" \
-            -e "s/__openstack_release__/$openstack_release/" \
+            -e "s|__registry_url__|$registry_url|" \
+            -e "s|__registry_insecure__|True|" \
+            -e "s|__container_tag__|$openstack_release-$contrail_release|" \
+            -e "s|__openstack_release__|$openstack_release|" \
             instances.yaml
     fi
 }
@@ -169,21 +169,21 @@ build_command_yaml()
 {
     local host=$1
 
-    if [ "registry_url" == "hub.juniper.net/contrail" ]; then
+    if [ "$registry_url" == "hub.juniper.net/contrail" ]; then
         sed -i \
-            -e "s/__address__/$host/" \
-            -e "s/__registry_url__/$registry_url/" \
-            -e "s/__registry_insecure__/false/" \
-            -e "s/__registry_username__/$registry_username/" \
-            -e "s/__registry_password__/$registry_password/" \
-            -e "s/__container_tag__/$contrail_release/" \
+            -e "s|__address__|$host|" \
+            -e "s|__registry_url__|$registry_url|" \
+            -e "s|__registry_insecure__|false|" \
+            -e "s|__registry_username__|$registry_username|" \
+            -e "s|__registry_password__|$registry_password|" \
+            -e "s|__container_tag__|$contrail_release|" \
             command_servers.yml
     else
         sed -i \
-            -e "s/__address__/$host/" \
-            -e "s/__registry_url__/$registry_url/" \
-            -e "s/__registry_insecure__/true/" \
-            -e "s/__container_tag__/$contrail_release/" \
+            -e "s|__address__|$host|" \
+            -e "s|__registry_url__|$registry_url|" \
+            -e "s|__registry_insecure__|true|" \
+            -e "s|__container_tag__|$contrail_release|" \
             command_servers.yml
     fi
 }
