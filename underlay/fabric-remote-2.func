@@ -120,25 +120,29 @@ vm_cpu[bms-11]=1
 vm_ram[bms-11]=1024
 vm_os[bms-11]=cirros
 vm_image_type[bms-11]=file
-vm_nic_list[bms-11]="dir=bms11"
+#vm_nic_list[bms-11]="dir=bms11"
+vm_nic_list[bms-11]="br=br-l1-xe1"
 
 vm_cpu[bms-12]=1
 vm_ram[bms-12]=1024
 vm_os[bms-12]=cirros
 vm_image_type[bms-12]=file
-vm_nic_list[bms-12]="dir=bms12"
+#vm_nic_list[bms-12]="dir=bms12"
+vm_nic_list[bms-11]="br=br-l1-xe2"
 
 vm_cpu[bms-21]=1
 vm_ram[bms-21]=1024
 vm_os[bms-21]=cirros
 vm_image_type[bms-21]=file
-vm_nic_list[bms-21]="dir=bms21"
+#vm_nic_list[bms-21]="dir=bms21"
+vm_nic_list[bms-11]="br=br-l2-xe1"
 
 vm_cpu[bms-22]=1
 vm_ram[bms-22]=1024
 vm_os[bms-22]=cirros
 vm_image_type[bms-22]=file
-vm_nic_list[bms-22]="dir=bms22"
+#vm_nic_list[bms-22]="dir=bms22"
+vm_nic_list[bms-11]="br=br-l2-xe2"
 
 
 #####################################################
