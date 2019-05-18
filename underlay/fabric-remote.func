@@ -140,6 +140,34 @@ vm_os[bms-22]=cirros
 vm_image_type[bms-22]=file
 vm_nic_list[bms-22]="br=br-l2-xe2"
 
+vm_cpu[host-1-10]=1
+vm_ram[host-1-10]=512
+vm_disk[host-1-10]=9G
+vm_os[host-1-10]=centos
+vm_image_type[host-1-10]=volume
+vm_nic_list[host-1-10]="br=br-l1-xe1"
+
+vm_cpu[host-1-20]=1
+vm_ram[host-1-20]=512
+vm_disk[host-1-20]=9G
+vm_os[host-1-20]=centos
+vm_image_type[host-1-20]=volume
+vm_nic_list[host-1-20]="br=br-l1-xe1"
+
+vm_cpu[host-2-10]=1
+vm_ram[host-2-10]=512
+vm_disk[host-2-10]=9G
+vm_os[host-2-10]=centos
+vm_image_type[host-2-10]=volume
+vm_nic_list[host-2-10]="br=br-l2-xe1"
+
+vm_cpu[host-2-20]=1
+vm_ram[host-2-20]=512
+vm_disk[host-2-20]=9G
+vm_os[host-2-20]=centos
+vm_image_type[host-2-20]=volume
+vm_nic_list[host-2-20]="br=br-l2-xe1"
+
 
 #####################################################
 configure_vmx_1()
