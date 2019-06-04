@@ -202,6 +202,19 @@ __EOF__
     fi
 }
 
+update_hosts()
+{
+    local name=$1
+
+    if [ "$2" == "add" ]; then
+        arr=(${vm_address_list[$name]})
+        addr=${arr[0]}
+        echo "$addr  $name" >> /etc/hosts
+    elif [ "$2" == "delete" ]; then
+        sed -i -e "/$name/d" /etc/hosts
+    fi
+}
+
 initialize_vqfx()
 {
     local arr=(${vm_address_list[$1-re]})
@@ -409,6 +422,12 @@ build_underlay()
     launch_bms_all
     configure_vqfx_all
     configure_vmx_all
+    for name in $vqfx_list; do
+        update_hosts "$name-re" "add"
+    done
+    for name in $vmx_list; do
+        update_hosts "$name-re" "add"
+    done
 }
 
 delete_underlay()
@@ -418,6 +437,12 @@ delete_underlay()
     delete_vqfx_all
     disable_snat
     delete_underlay_link
+    for name in $vqfx_list; do
+        update_hosts "$name-re" "delete"
+    done
+    for name in $vmx_list; do
+        update_hosts "$name-re" "delete"
+    done
 }
 
 upload_instances_yaml()
@@ -589,6 +614,9 @@ build_cluster()
     deploy
     if (( $? )); then return 1; fi
     post_deployment
+    for name in $server_list; do
+        update_hosts "$name" "add"
+    done
 }
 
 delete_cluster()
@@ -601,6 +629,9 @@ delete_cluster()
     delete_builder
     disable_snat
     delete_cluster_link
+    for name in $server_list; do
+        update_hosts "$name" "delete"
+    done
 }
 
 help()
@@ -645,7 +676,13 @@ main()
     local start_date=$(date)
     local end_date
 
-    exec > >(tee poc.log)
+    max_size=5000000
+    file_size=$(stat -c%s poc.log)
+    if (( $file_size > $max_size )); then
+        exec > >(tee poc.log)
+    else
+        exec > >(tee -a poc.log)
+    fi
     exec 2>&1
     echo "==== $1 Start $start_date ===="
 
