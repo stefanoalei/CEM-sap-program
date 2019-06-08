@@ -17,7 +17,7 @@ vm_nic_list[master-1]="br=br-int br=br-r1"
 
 vm_cpu[node-1]=4
 vm_ram[node-1]=16384
-vm_disk[node-1]=80G
+vm_disk[node-1]=60G
 vm_os[node-1]=centos
 vm_image_type[node-1]=volume
 vm_address_list[node-1]="10.6.8.2        10.6.11.2"
@@ -27,7 +27,7 @@ vm_nic_list[node-1]="br=br-int br=br-r1"
 
 vm_cpu[node-2]=4
 vm_ram[node-2]=16384
-vm_disk[node-2]=80G
+vm_disk[node-2]=60G
 vm_os[node-2]=centos
 vm_image_type[node-2]=volume
 vm_address_list[node-2]="10.6.8.3        10.6.11.3"

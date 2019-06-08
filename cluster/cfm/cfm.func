@@ -26,7 +26,7 @@ vm_gateway_list[openstack]="10.6.8.254      null"
 vm_nic_list[openstack]="br=br-int br=br-r1"
 
 vm_cpu[csn]=1
-vm_ram[csn]=8096
+vm_ram[csn]=8192
 vm_disk[csn]=40G
 vm_os[csn]=centos
 vm_image_type[csn]=volume

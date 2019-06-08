@@ -25,9 +25,9 @@
 ```
                 vCPU    memory(GB)    disk(GB)    OS
 master           6        64            100      CentOS 7.5-1805
-node-1           4        16             80      CentOS 7.5-1805
-node-2           4        16             80      CentOS 7.5-1805
+node-1           4        16             60      CentOS 7.5-1805
+node-2           4        16             60      CentOS 7.5-1805
 ----------------------------------------------------------------
-Total           14        96            260
+Total           14        96            220
 ```
 

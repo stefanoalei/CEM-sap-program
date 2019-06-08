@@ -31,11 +31,11 @@
 master-1         5        48            100      CentOS 7.5-1805
 master-2         5        48            100      CentOS 7.5-1805
 master-3         5        48            100      CentOS 7.5-1805
-node-1           3        16             80      CentOS 7.5-1805
-node-2           3        16             80      CentOS 7.5-1805
-node-3           3        16             80      CentOS 7.5-1805
-node-4           3        16             80      CentOS 7.5-1805
+node-1           3        16             60      CentOS 7.5-1805
+node-2           3        16             60      CentOS 7.5-1805
+node-3           3        16             60      CentOS 7.5-1805
+node-4           3        16             60      CentOS 7.5-1805
 ----------------------------------------------------------------
-Total           27       208            620
+Total           27       208            540
 ```
 
