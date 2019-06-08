@@ -52,24 +52,16 @@ delete_builder()
     echo "Delete builder..."
 }
 
-enable_ipv4_forward()
-{
-    local arr=(${vm_address_list[$1]})
-    local host=${arr[0]}
-    local r
-
-    echo "# Enable IPv4 forwarding..."
-    r=$(ssh -q $host "cat /proc/sys/net/ipv4/ip_forward")
-    if [ $r == "0" ]; then
-        ssh $host "echo \"net.ipv4.ip_forward = 1\" >> /etc/sysctl.conf"
-        ssh $host "sysctl -p /etc/sysctl.conf"
-    fi
-}
-
 pre_deployment()
 {
+    local arr
+    local host
+
     echo "Pre-Deployment"
-    enable_ipv4_forward "master-1"
+    arr=(${vm_address_list[master-1]})
+    host=${arr[0]}
+    ssh $host "echo \"net.ipv4.ip_forward = 1\" >> /etc/sysctl.conf"
+    ssh $host "sysctl -p /etc/sysctl.conf"
 }
 
 deploy()
