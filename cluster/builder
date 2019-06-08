@@ -36,7 +36,8 @@ install_docker()
     yum install -y yum-utils device-mapper-persistent-data lvm2
     yum-config-manager \
       --add-repo https://download.docker.com/linux/centos/docker-ce.repo
-    yum install -y docker-ce-18.03.1.ce
+    #yum install -y docker-ce-18.03.1.ce
+    yum install -y docker-ce-18.06.1.ce
     systemctl start docker
 
     if [ "$(registry_security)" = "insecured" ]; then
@@ -162,7 +163,7 @@ deploy_kubernetes()
     local cmd3="ansible-playbook -i inventory/ -e orchestrator=kubernetes \
             playbooks/install_contrail.yml"
 
-    run_playbook $cmd1 $cmd2 $cmd3
+    run_playbook "$cmd1" "$cmd2" "$cmd3"
 }
 
 build_command_yaml()
