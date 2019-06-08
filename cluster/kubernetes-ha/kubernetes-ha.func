@@ -82,8 +82,9 @@ launch_builder()
     local host=${arr[0]}
 
     echo "Launch builder..."
-    copy_ssh_key $host
-    ssh $host yum install -y ansible git
+    #copy_ssh_key $host
+    #ssh $host yum install -y ansible git
+    install_kubernetes_deployer $host
 }
 
 delete_builder()
@@ -94,6 +95,12 @@ delete_builder()
 pre_deployment()
 {
     echo "Pre-Deployment"
+    for name in master-1 master-2 master-3; do
+        arr=(${vm_address_list[$name]})
+        host=${arr[0]}
+        ssh $host "echo \"net.ipv4.ip_forward = 1\" >> /etc/sysctl.conf"
+        ssh $host "sysctl -p /etc/sysctl.conf"
+    done
 }
 
 deploy()
@@ -101,7 +108,10 @@ deploy()
     local arr=(${vm_address_list[master-1]})
     local host=${arr[0]}
 
-    load_playbook $contrail_playbook $host
+    upload_instances_yaml $host
+    if [ -n "$contrail_playbook" ]; then
+        load_playbook $contrail_playbook $host
+    fi
     run_playbook_kubernetes $host
 }
 
