@@ -1,5 +1,5 @@
 
-cluster_path=cluster/cfm-remote
+cluster_path=cluster/multi-site
 
 cluster_br_list="br-int br-r1 br-r2"
 
