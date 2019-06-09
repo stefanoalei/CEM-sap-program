@@ -569,6 +569,7 @@ install_command()
     local host=$1
 
     echo "Install Contrail Command..."
+    scp poc.conf $host:.
     scp cluster/builder $host:.
     ssh $host "./builder install-command"
 }
@@ -577,12 +578,13 @@ launch_command()
 {
     local host=$1
     local cluster_conf=$2
+    local orch=$3
 
     echo "Launch Contrail Command..."
     scp cluster/builder $host:.
     scp cluster/contrail-command/command_servers.yml $host:.
     scp $cluster_path/$cluster_conf $host:./instances.yaml
-    ssh $host "./builder launch-command $host"
+    ssh $host "./builder launch-command $host $orch"
 }
  
 delete_command()
@@ -669,6 +671,7 @@ help()
 test()
 {
     echo "Test"
+    post_deployment
 }
 
 main()
