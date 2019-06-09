@@ -33,9 +33,14 @@ __EOT__
 install_docker()
 {
     echo "Install Docker CE..."
+
+    rpm -q docker-ce-18.06.1.ce > /dev/null 2>&1
+    if (( "$?" == "0" )); then
+        return
+    fi
     yum install -y yum-utils device-mapper-persistent-data lvm2
     yum-config-manager \
-      --add-repo https://download.docker.com/linux/centos/docker-ce.repo
+        --add-repo https://download.docker.com/linux/centos/docker-ce.repo
     #yum install -y docker-ce-18.03.1.ce
     yum install -y docker-ce-18.06.1.ce
     systemctl start docker
@@ -191,6 +196,7 @@ build_command_yaml()
 
 install_command()
 {
+    install_docker
     pull_image "$command_image"
 }
 
@@ -217,16 +223,20 @@ check_command()
 launch_command()
 {
     local host=$1
+    local orch=$2
     local append=""
 
     build_instances_yaml
     build_command_yaml "$host"
 
-    if [ -n "$2" ]; then
+    if [ -n "$3" ]; then
         append="-e delete_db=no"
     fi
+    if [ -z "$orch" ]; then
+        orch=openstack
+    fi
     docker run -t --net host -d --privileged \
-            -e orchestrator=openstack \
+            -e orchestrator=$orch \
             -e action=import_cluster \
             $append \
             -v /root/instances.yaml:/instances.yml \
