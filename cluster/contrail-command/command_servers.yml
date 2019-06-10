@@ -105,13 +105,13 @@ command_servers:
                       users:
                         admin:
                           id: admin
-                          name: Admin
+                          name: admin
                           domain: *default
                           password: contrail123
                           email: admin@juniper.nets
                           roles:
                           - id: admin
-                            name: Admin
+                            name: admin
                             project: *admin
                         bob:
                           id: bob
