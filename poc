@@ -671,7 +671,6 @@ help()
 test()
 {
     echo "Test"
-    post_deployment
 }
 
 main()
