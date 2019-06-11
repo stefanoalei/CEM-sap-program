@@ -55,6 +55,16 @@ vm_netmask_list[command]="255.255.255.0   255.255.255.0"
 vm_gateway_list[command]="10.6.8.254      null"
 vm_nic_list[command]="br=br-int br=br-r1"
 
+vm_cpu[mc-gw]=1
+vm_ram[mc-gw]=8192
+vm_disk[mc-gw]=40G
+vm_os[mc-gw]=centos
+vm_image_type[mc-gw]=volume
+vm_address_list[mc-gw]="10.6.8.6        10.6.12.1"
+vm_netmask_list[mc-gw]="255.255.255.0   255.255.255.0"
+vm_gateway_list[mc-gw]="10.6.8.254      null"
+vm_nic_list[mc-gw]="br=br-int br=br-r2"
+
 
 launch_builder()
 {
@@ -96,9 +106,24 @@ deploy()
     run_playbook_kubernetes $host
 }
 
+add_static_route()
+{
+    local arr
+    local host
+    local name
+
+    for name in $server_list; do
+        arr=(${vm_address_list[$name]})
+        host=${arr[0]}
+        ssh $host ip route add 10.6.0.0/24 via 10.6.11.254
+        ssh $host ip route add 10.6.12.0/24 via 10.6.11.254
+    done
+}
+
 post_deployment()
 {
     echo "Post-Deployment"
+    add_static_route
     configure_haproxy
     arr=(${vm_address_list[command]})
     install_command ${arr[0]}
