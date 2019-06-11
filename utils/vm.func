@@ -302,7 +302,8 @@ build_vm_net_arg()
             if [ $key == "br" ]; then
                 vm_net_arg+="--network bridge=$val,model=$model "
             elif [ $key == "dir" ]; then
-                vm_net_arg+="--network type=direct,source=$val,model=$model "
+                vm_net_arg+="--network type=direct,source=$val,"
+                vm_net_arg+="source_mode=passthrough,model=$model "
             fi
         done
     fi
