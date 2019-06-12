@@ -101,14 +101,14 @@ build_instances_yaml()
             -e "s|__registry_username__|$registry_username|" \
             -e "s|__registry_password__|$registry_password|" \
             -e "s|__contrail_version__|$contrail_version|" \
-            -e "s|__openstack_release__|$openstack_release|" \
+            -e "s|__openstack_version__|$openstack_version|" \
             instances.yaml
     else
         sed -i \
             -e "s|__registry_url__|$registry_url|" \
             -e "s|__registry_insecure__|True|" \
             -e "s|__contrail_version__|$contrail_version|" \
-            -e "s|__openstack_release__|$openstack_release|" \
+            -e "s|__openstack_version__|$openstack_version|" \
             instances.yaml
     fi
 }

@@ -78,7 +78,7 @@ global_configuration:
 contrail_configuration:
   CONTRAIL_VERSION: __contrail_version__
   CLOUD_ORCHESTRATOR: openstack
-  OPENSTACK_VERSION: __openstack_release__
+  OPENSTACK_VERSION: __openstack_version__
   CONTROLLER_NODES: 10.6.11.1,10.6.11.2,10.6.11.3
   CONTROL_NODES: 10.6.11.1,10.6.11.2,10.6.11.3
   WEBUI_NODES: 10.6.8.1,10.6.8.2,10.6.8.3
