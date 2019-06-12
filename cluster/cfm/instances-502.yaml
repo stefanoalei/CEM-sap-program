@@ -39,7 +39,7 @@ global_configuration:
   CONTAINER_REGISTRY: ci-repo.englab.juniper.net:5010
   REGISTRY_PRIVATE_INSECURE: True
 contrail_configuration:
-  CONTRAIL_CONTAINER_TAG: __container_tag__
+  CONTRAIL_VERSION: __contrail_version__
   CLOUD_ORCHESTRATOR: openstack
   OPENSTACK_VERSION: __openstack_release__
   CONTROLLER_NODES: 10.6.11.2

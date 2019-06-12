@@ -15,7 +15,7 @@ command_servers:
         #registry_insecure: false
         container_registry: hub.juniper.net/contrail
         container_name: contrail-command
-        container_tag: __container_tag__
+        container_tag: __contrail_version__
         container_registry_username: __registry_useranme__
         container_registry_password: __registry_password__
         #registry_insecure: true

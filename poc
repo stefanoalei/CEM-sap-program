@@ -548,7 +548,7 @@ run_playbook_openshift()
     ssh $host sed -i \
             -e "s/__registry_username__/$registry_username/" \
             -e "s/__registry_password__/$registry_password/" \
-            -e "s/__container_tag__/$contrail_release/" \
+            -e "s/__contrail_version__/$contrail_version/" \
             ./openshift-ansible/inventory/poc.yaml
 
     ssh $host "cd openshift-ansible; \
