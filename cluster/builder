@@ -101,6 +101,7 @@ build_instances_yaml()
             -e "s|__registry_username__|$registry_username|" \
             -e "s|__registry_password__|$registry_password|" \
             -e "s|__contrail_version__|$contrail_version|" \
+            -e "s|__contrail_tag__|$contrail_version-$openstack_version|" \
             -e "s|__openstack_version__|$openstack_version|" \
             instances.yaml
     else
@@ -109,6 +110,7 @@ build_instances_yaml()
             -e "s|__registry_insecure__|True|" \
             -e "s|__contrail_version__|$contrail_version|" \
             -e "s|__openstack_version__|$openstack_version|" \
+            -e "s|__contrail_tag__|$openstack_version-$contrail_version|" \
             instances.yaml
     fi
 }

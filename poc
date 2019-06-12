@@ -413,6 +413,16 @@ delete_bms_all()
     done
 }
 
+update_hosts_underlay()
+{
+    for name in $vqfx_list; do
+        update_hosts "$name-re" "add"
+    done
+    for name in $vmx_list; do
+        update_hosts "$name-re" "add"
+    done
+}
+
 build_underlay()
 {
     create_underlay_link
@@ -422,12 +432,7 @@ build_underlay()
     launch_bms_all
     configure_vqfx_all
     configure_vmx_all
-    for name in $vqfx_list; do
-        update_hosts "$name-re" "add"
-    done
-    for name in $vmx_list; do
-        update_hosts "$name-re" "add"
-    done
+    update_hosts_underlay
 }
 
 delete_underlay()
@@ -597,6 +602,13 @@ delete_command()
     ssh $host "./builder delete-command"
 }
  
+update_hosts_cluster()
+{
+    for name in $server_list; do
+        update_hosts "$name" "add"
+    done
+}
+
 build_cluster()
 {
     local name
@@ -616,9 +628,7 @@ build_cluster()
     deploy
     if (( $? )); then return 1; fi
     post_deployment
-    for name in $server_list; do
-        update_hosts "$name" "add"
-    done
+    update_hosts_cluster
 }
 
 delete_cluster()
@@ -827,6 +837,9 @@ main()
             ;;
         deploy)
             deploy
+            ;;
+        post-deployment)
+            post_deployment
             ;;
         *)
             help
