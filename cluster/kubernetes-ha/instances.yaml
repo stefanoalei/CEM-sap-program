@@ -70,7 +70,8 @@ global_configuration:
   CONTAINER_REGISTRY_USERNAME: __registry_username__
   CONTAINER_REGISTRY_PASSWORD: __registry_password__
 contrail_configuration:
-  CONTRAIL_CONTAINER_TAG: __container_tag__
+  CONTRAIL_VERSION: __contrail_version__
+  CONTRAIL_CONTAINER_TAG: __contrail_tag__
   CLOUD_ORCHESTRATOR: kubernetes
   CONTROLLER_NODES: 10.6.11.1,10.6.11.2,10.6.11.3
   CONTROL_NODES: 10.6.11.1,10.6.11.2,10.6.11.3

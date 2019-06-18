@@ -2,8 +2,8 @@
 
 source poc.conf
 
-deployer_image=$registry_url/contrail-kolla-ansible-deployer:$contrail_release
-command_image=$registry_url/contrail-command-deployer:$contrail_release
+deployer_image=$registry_url/contrail-kolla-ansible-deployer:$contrail_version
+command_image=$registry_url/contrail-command-deployer:$contrail_version
 
 
 install_deployer_package()
@@ -71,7 +71,7 @@ launch_deployer()
 
 install_deployer()
 {
-    if [ "${contrail_release:0:3}" == "5.0" ]; then
+    if [ "${contrail_version:0:3}" == "5.0" ]; then
         install_deployer_package
     else
         install_docker
@@ -100,15 +100,17 @@ build_instances_yaml()
             -e "s|__registry_insecure__|False|" \
             -e "s|__registry_username__|$registry_username|" \
             -e "s|__registry_password__|$registry_password|" \
-            -e "s|__container_tag__|$contrail_release-$openstack_release|" \
-            -e "s|__openstack_release__|$openstack_release|" \
+            -e "s|__contrail_version__|$contrail_version|" \
+            -e "s|__contrail_tag__|$contrail_version-$openstack_version|" \
+            -e "s|__openstack_version__|$openstack_version|" \
             instances.yaml
     else
         sed -i \
             -e "s|__registry_url__|$registry_url|" \
             -e "s|__registry_insecure__|True|" \
-            -e "s|__container_tag__|$openstack_release-$contrail_release|" \
-            -e "s|__openstack_release__|$openstack_release|" \
+            -e "s|__contrail_version__|$contrail_version|" \
+            -e "s|__openstack_version__|$openstack_version|" \
+            -e "s|__contrail_tag__|$openstack_version-$contrail_version|" \
             instances.yaml
     fi
 }
@@ -124,7 +126,7 @@ run_playbook()
     echo "Deploy..."
 
     build_instances_yaml
-    if [ "${contrail_release:0:3}" == "5.0" ]; then
+    if [ "${contrail_version:0:3}" == "5.0" ]; then
         cp -f instances.yaml contrail-ansible-deployer/config/
         cd contrail-ansible-deployer
         $cmd1
@@ -182,14 +184,14 @@ build_command_yaml()
             -e "s|__registry_insecure__|false|" \
             -e "s|__registry_username__|$registry_username|" \
             -e "s|__registry_password__|$registry_password|" \
-            -e "s|__container_tag__|$contrail_release|" \
+            -e "s|__contrail_version__|$contrail_version|" \
             command_servers.yml
     else
         sed -i \
             -e "s|__address__|$host|" \
             -e "s|__registry_url__|$registry_url|" \
             -e "s|__registry_insecure__|true|" \
-            -e "s|__container_tag__|$contrail_release|" \
+            -e "s|__contrail_version__|$contrail_version|" \
             command_servers.yml
     fi
 }
