@@ -137,14 +137,15 @@ hv_create_volume_pool()
         return 0
     fi
     echo "Create volume pool on device $volume_dev..."
-    virsh pool-info lv > /dev/null 2>&1
+    virsh pool-info $volume_pool > /dev/null 2>&1
     if (( $? == 0 )); then
         return 0
     fi
-    virsh pool-define-as --name lv --type logical --source-dev $volume_dev
-    virsh pool-build lv
-    virsh pool-start lv
-    virsh pool-autostart lv
+    virsh pool-define-as --name $volume_pool --type logical \
+            --source-dev $volume_dev
+    virsh pool-build $volume_pool
+    virsh pool-start $volume_pool
+    virsh pool-autostart $volume_pool
 }
 
 hv_enable_ipv4_forward()
