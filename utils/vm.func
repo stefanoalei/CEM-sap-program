@@ -255,13 +255,14 @@ build_vm_image()
     if [ ${vm_image_type[$name]} == "volume" ]; then
         # Volume is only supported by CentOS, Ubuntu and RHEL,
         # disk size is mandatory.
-        virsh pool-info lv > /dev/null 2>&1
-        if (( $? )); then
-            # Pool is not available.
-            build_vm_image_on_file $name $src_img
-        else
+        pool_state=$(virsh pool-info $volume_pool 2> /dev/null | \
+                awk "/State/"'{print $2 }')
+        if [ "$pool_state" ==  "running" ]]; then
             # Pool is available.
             build_vm_image_on_volume $name $src_img
+        else
+            # Pool is not available.
+            build_vm_image_on_file $name $src_img
         fi
     else
         # File is supported by all OS,
