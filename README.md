@@ -46,10 +46,13 @@ Here are prerequisites for the hypervisor.
 
 * Disk partition
   * This has to be done during host OS installation.
-  * Use logical volume.
-  * Make single root `/` LV.
-  * Don't create separate home `/home` LV.
   * Optionally, for better disk performance, reserve a partition (1TB) for libvirt volume.
+  * Here is the recommended partition schema for a 2TB disk.
+    * Partition 1, 250MB, `/boot`.
+    * Partition 2, 1TB, volume group `system`.
+      * Logical volume `swap`, 256GB.
+      * Logical volume `root`, the rest space.
+    * Partition 3, the rest space (for libvirt volume).
 
 * Kernel
   * Upgrade kernel and reboot, after installation.
