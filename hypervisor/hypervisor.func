@@ -129,6 +129,11 @@ hv_generate_ssh_key()
 hv_create_volume_pool()
 {
     if [ -z $volume_dev ]; then
+        echo "Volume device is not specified."
+        return 0
+    fi
+    if ! [ -e $volume_dev ]; then
+        echo "Volume device $volume_dev does not exist."
         return 0
     fi
     echo "Create volume pool on device $volume_dev..."
