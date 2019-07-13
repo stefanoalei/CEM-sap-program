@@ -1,0 +1,266 @@
+vm_cpu[contrail]=5
+vm_ram[contrail]=65535
+vm_disk[contrail]=100G
+
+vm_cpu[openstack]=5
+vm_ram[openstack]=49152
+vm_disk[openstack]=100G
+
+vm_cpu[compute]=4
+vm_ram[compute]=16384
+vm_disk[compute]=60G
+
+vm_cpu[csn]=1
+vm_ram[csn]=8192
+vm_disk[csn]=40G
+
+vm_cpu[master]=2
+vm_ram[master]=16384
+vm_disk[master]=60G
+
+
+vm_flavor[contrail-1]=contrail
+vm_os[contrail-1]=centos
+vm_image_type[contrail-1]=volume
+vm_address_list[contrail-1]="10.6.8.1        10.6.11.1"
+vm_netmask_list[contrail-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[contrail-1]="10.6.8.254      null"
+vm_nic_list[contrail-1]="br=br-int br=br-r1"
+
+vm_flavor[contrail-2]=contrail
+vm_os[contrail-2]=centos
+vm_image_type[contrail-2]=volume
+vm_address_list[contrail-2]="10.6.8.3        10.6.11.3"
+vm_netmask_list[contrail-2]="255.255.255.0   255.255.255.0"
+vm_gateway_list[contrail-2]="10.6.8.254      null"
+vm_nic_list[contrail-2]="br=br-int br=br-r1"
+
+vm_flavor[contrail-3]=contrail
+vm_os[contrail-3]=centos
+vm_image_type[contrail-3]=volume
+vm_address_list[contrail-3]="10.6.8.5        10.6.11.5"
+vm_netmask_list[contrail-3]="255.255.255.0   255.255.255.0"
+vm_gateway_list[contrail-3]="10.6.8.254      null"
+vm_nic_list[contrail-3]="br=br-int br=br-r1"
+
+vm_flavor[openstack-1]=openstack
+vm_os[openstack-1]=centos
+vm_image_type[openstack-1]=volume
+vm_address_list[openstack-1]="10.6.8.2        10.6.11.2"
+vm_netmask_list[openstack-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[openstack-1]="10.6.8.254      null"
+vm_nic_list[openstack-1]="br=br-int br=br-r1"
+
+vm_flavor[openstack-2]=openstack
+vm_os[openstack-2]=centos
+vm_image_type[openstack-2]=volume
+vm_address_list[openstack-2]="10.6.8.4        10.6.11.4"
+vm_netmask_list[openstack-2]="255.255.255.0   255.255.255.0"
+vm_gateway_list[openstack-2]="10.6.8.254      null"
+vm_nic_list[openstack-2]="br=br-int br=br-r1"
+
+vm_flavor[openstack-3]=openstack
+vm_os[openstack-3]=centos
+vm_image_type[openstack-3]=volume
+vm_address_list[openstack-3]="10.6.8.6        10.6.11.6"
+vm_netmask_list[openstack-3]="255.255.255.0   255.255.255.0"
+vm_gateway_list[openstack-3]="10.6.8.254      null"
+vm_nic_list[openstack-3]="br=br-int br=br-r1"
+
+vm_flavor[csn-1]=csn
+vm_os[csn-1]=centos
+vm_image_type[csn-1]=volume
+vm_address_list[csn-1]="10.6.8.3       10.6.11.3"
+vm_netmask_list[csn-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[csn-1]="10.6.8.254      null"
+vm_nic_list[csn-1]="br=br-int br=br-r1"
+
+vm_flavor[csn-r1]=csn
+vm_os[csn-r1]=centos
+vm_image_type[csn-r1]=volume
+vm_address_list[csn-r1]="10.6.8.4        10.6.12.4"
+vm_netmask_list[csn-r1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[csn-r1]="10.6.8.254      null"
+vm_nic_list[csn-r1]="br=br-int br=br-r2"
+
+vm_flavor[compute-1]=compute
+vm_os[compute-1]=centos
+vm_image_type[compute-1]=volume
+vm_address_list[compute-1]="10.6.8.7        10.6.11.7"
+vm_netmask_list[compute-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[compute-1]="10.6.8.254      null"
+vm_nic_list[compute-1]="br=br-int br=br-r1"
+vm_spec_arg[compute-1]="--cpu host"
+
+vm_flavor[compute-r1]=compute
+vm_os[compute-r1]=centos
+vm_image_type[compute-r1]=volume
+vm_address_list[compute-r1]="10.6.8.8        10.6.12.8"
+vm_netmask_list[compute-r1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[compute-r1]="10.6.8.254      null"
+vm_nic_list[compute-r1]="br=br-int br=br-r2"
+vm_spec_arg[compute-r1]="--cpu host"
+
+vm_flavor[compute-2]=compute
+vm_os[compute-2]=centos
+vm_image_type[compute-2]=volume
+vm_address_list[compute-2]="10.6.8.8        10.6.11.8"
+vm_netmask_list[compute-2]="255.255.255.0   255.255.255.0"
+vm_gateway_list[compute-2]="10.6.8.254      null"
+vm_nic_list[compute-2]="br=br-int br=br-r1"
+vm_spec_arg[compute-2]="--cpu host"
+
+vm_flavor[contrail-c2-1]=contrail
+vm_os[contrail-c2-1]=centos
+vm_image_type[contrail-c2-1]=volume
+vm_address_list[contrail-c2-1]="10.6.8.51        10.6.13.1"
+vm_netmask_list[contrail-c2-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[contrail-c2-1]="10.6.8.254      null"
+vm_nic_list[contrail-c2-1]="br=br-int br=br-r3"
+
+vm_flavor[openstack-c2-1]=openstack
+vm_os[openstack-c2-1]=centos
+vm_image_type[openstack-c2-1]=volume
+vm_address_list[openstack-c2-1]="10.6.8.52        10.6.13.2"
+vm_netmask_list[openstack-c2-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[openstack-c2-1]="10.6.8.254      null"
+vm_nic_list[openstack-c2-1]="br=br-int br=br-r3"
+
+vm_flavor[csn-c2-1]=csn
+vm_os[csn-c2-1]=centos
+vm_image_type[csn-c2-1]=volume
+vm_address_list[csn-c2-1]="10.6.8.53       10.6.13.3"
+vm_netmask_list[csn-c2-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[csn-c2-1]="10.6.8.254      null"
+vm_nic_list[csn-c2-1]="br=br-int br=br-r3"
+
+vm_flavor[csn-c2-r1]=csn
+vm_os[csn-c2-r1]=centos
+vm_image_type[csn-c2-r1]=volume
+vm_address_list[csn-c2-r1]="10.6.8.54        10.6.14.4"
+vm_netmask_list[csn-c2-r1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[csn-c2-r1]="10.6.8.254      null"
+vm_nic_list[csn-c2-r1]="br=br-int br=br-r4"
+
+vm_flavor[compute-c2-1]=compute
+vm_os[compute-c2-1]=centos
+vm_image_type[compute-c2-1]=volume
+vm_address_list[compute-c2-1]="10.6.8.57        10.6.13.7"
+vm_netmask_list[compute-c2-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[compute-c2-1]="10.6.8.254      null"
+vm_nic_list[compute-c2-1]="br=br-int br=br-r3"
+vm_spec_arg[compute-c2-1]="--cpu host"
+
+vm_flavor[compute-c2-r1]=compute
+vm_os[compute-c2-r1]=centos
+vm_image_type[compute-c2-r1]=volume
+vm_address_list[compute-c2-r1]="10.6.8.58        10.6.14.8"
+vm_netmask_list[compute-c2-r1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[compute-c2-r1]="10.6.8.254      null"
+vm_nic_list[compute-c2-r1]="br=br-int br=br-r4"
+vm_spec_arg[compute-c2-r1]="--cpu host"
+
+vm_flavor[kmaster-1]=contrail
+vm_os[kmaster-1]=centos
+vm_image_type[kmaster-1]=volume
+vm_address_list[kmaster-1]="10.6.8.1        10.6.11.1"
+vm_netmask_list[kmaster-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[kmaster-1]="10.6.8.254      null"
+vm_nic_list[kmaster-1]="br=br-int br=br-r1"
+
+vm_flavor[kmaster-2]=contrail
+vm_os[kmaster-2]=centos
+vm_image_type[kmaster-2]=volume
+vm_address_list[kmaster-2]="10.6.8.2        10.6.11.2"
+vm_netmask_list[kmaster-2]="255.255.255.0   255.255.255.0"
+vm_gateway_list[kmaster-2]="10.6.8.254      null"
+vm_nic_list[kmaster-2]="br=br-int br=br-r1"
+
+vm_flavor[kmaster-3]=contrail
+vm_os[kmaster-3]=centos
+vm_image_type[kmaster-3]=volume
+vm_address_list[kmaster-3]="10.6.8.3        10.6.11.3"
+vm_netmask_list[kmaster-3]="255.255.255.0   255.255.255.0"
+vm_gateway_list[kmaster-3]="10.6.8.254      null"
+vm_nic_list[kmaster-3]="br=br-int br=br-r1"
+
+vm_flavor[master-1]=master
+vm_os[master-1]=centos
+vm_image_type[master-1]=volume
+vm_address_list[master-1]="10.6.8.1        10.6.11.1"
+vm_netmask_list[master-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[master-1]="10.6.8.254      null"
+vm_nic_list[master-1]="br=br-int br=br-r1"
+
+vm_flavor[master-2]=master
+vm_os[master-2]=centos
+vm_image_type[master-2]=volume
+vm_address_list[master-2]="10.6.8.2        10.6.11.2"
+vm_netmask_list[master-2]="255.255.255.0   255.255.255.0"
+vm_gateway_list[master-2]="10.6.8.254      null"
+vm_nic_list[os-master-2]="br=br-int br=br-r1"
+
+vm_flavor[master-3]=master
+vm_os[master-3]=centos
+vm_image_type[master-3]=volume
+vm_address_list[master-3]="10.6.8.3        10.6.11.3"
+vm_netmask_list[master-3]="255.255.255.0   255.255.255.0"
+vm_gateway_list[master-3]="10.6.8.254      null"
+vm_nic_list[master-3]="br=br-int br=br-r1"
+
+vm_flavor[infra-1]=contrail
+vm_os[infra-1]=centos
+vm_image_type[infra-1]=volume
+vm_address_list[infra-1]="10.6.8.4        10.6.11.4"
+vm_netmask_list[infra-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[infra-1]="10.6.8.254      null"
+vm_nic_list[infra-1]="br=br-int br=br-r1"
+
+vm_flavor[infra-2]=contrail
+vm_os[infra-2]=centos
+vm_image_type[infra-2]=volume
+vm_address_list[infra-2]="10.6.8.5        10.6.11.5"
+vm_netmask_list[infra-2]="255.255.255.0   255.255.255.0"
+vm_gateway_list[infra-2]="10.6.8.254      null"
+vm_nic_list[infra-2]="br=br-int br=br-r1"
+
+vm_flavor[infra-3]=contrail
+vm_os[infra-3]=centos
+vm_image_type[infra-3]=volume
+vm_address_list[infra-3]="10.6.8.6        10.6.11.6"
+vm_netmask_list[infra-3]="255.255.255.0   255.255.255.0"
+vm_gateway_list[infra-3]="10.6.8.254      null"
+vm_nic_list[infra-3]="br=br-int br=br-r1"
+
+vm_flavor[node-1]=compute
+vm_os[node-1]=centos
+vm_image_type[node-1]=volume
+vm_address_list[node-1]="10.6.8.7        10.6.11.7"
+vm_netmask_list[node-1]="255.255.255.0   255.255.255.0"
+vm_gateway_list[node-1]="10.6.8.254      null"
+vm_nic_list[node-1]="br=br-int br=br-r1"
+
+vm_flavor[node-2]=compute
+vm_os[node-2]=centos
+vm_image_type[node-2]=volume
+vm_address_list[node-2]="10.6.8.8        10.6.11.8"
+vm_netmask_list[node-2]="255.255.255.0   255.255.255.0"
+vm_gateway_list[node-2]="10.6.8.254      null"
+vm_nic_list[node-2]="br=br-int br=br-r1"
+
+vm_flavor[mc-gw]=csn
+vm_os[mc-gw]=centos
+vm_image_type[mc-gw]=volume
+vm_address_list[mc-gw]="10.6.8.9        10.6.12.1"
+vm_netmask_list[mc-gw]="255.255.255.0   255.255.255.0"
+vm_gateway_list[mc-gw]="10.6.8.254      null"
+vm_nic_list[mc-gw]="br=br-int br=br-r2"
+
+vm_flavor[command]=compute
+vm_os[command]=centos
+vm_image_type[command]=volume
+vm_address_list[command]="10.6.8.10        10.6.11.10"
+vm_netmask_list[command]="255.255.255.0   255.255.255.0"
+vm_gateway_list[command]="10.6.8.254      null"
+vm_nic_list[command]="br=br-int br=br-r1"
+

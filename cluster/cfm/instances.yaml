@@ -5,7 +5,7 @@ provider_config:
     ntpserver: 10.6.8.254
     domainsuffix: poc
 instances:
-  contrail:
+  contrail-1:
     provider: bms
     ip: 10.6.8.1
     roles:
@@ -15,7 +15,7 @@ instances:
       analytics_database:
       analytics:
       webui:
-  openstack:
+  openstack-1:
     provider: bms
     ip: 10.6.8.2
     roles:
@@ -23,13 +23,13 @@ instances:
       openstack_network:
       openstack_storage:
       openstack_monitoring:
-  csn:
+  csn-1:
     provider: bms
     ip: 10.6.8.3
     roles:
       vrouter:
         TSN_EVPN_MODE: True
-  compute:
+  compute-1:
     provider: bms
     ip: 10.6.8.4
     roles:

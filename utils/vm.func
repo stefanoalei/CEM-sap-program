@@ -4,6 +4,7 @@ vm_disk_img=""
 vm_net_arg=""
 vm_os_arg=""
 
+declare -A vm_flavor
 declare -A vm_cpu
 declare -A vm_ram
 declare -A vm_disk

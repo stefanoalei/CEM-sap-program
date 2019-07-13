@@ -16,6 +16,7 @@ source poc.conf
 source utils/vm.func
 source hypervisor/hypervisor.func
 source underlay/$poc_underlay.func
+source cluster/inventory
 source cluster/$poc_cluster/$poc_cluster.func
 
 
@@ -26,7 +27,7 @@ get_host_os()
 
 host_os=$(get_host_os)
 
-create_bridge()
+create_bridge_centos()
 {
     local name=$1
     local output
@@ -66,7 +67,7 @@ __EOF__
 
 }
 
-delete_bridge()
+delete_bridge_centos()
 {
     local name=$1
     local port
@@ -113,9 +114,15 @@ create_underlay_link()
     local name
 
     echo "Create underlay links..."
-    for name in $underlay_br_list; do
-        create_bridge $name
-    done
+    if [ "$host_os" == "CentOS Linux" ]; then
+        for name in $underlay_br_list; do
+            create_bridge_centos $name
+        done
+    elif [ "$host_os" == "Ubuntu" ]; then
+        for name in $underlay_br_list; do
+            create_bridge_ubuntu $name
+        done
+    fi
     for name in $underlay_veth_list; do
         create_veth $name
     done
@@ -126,8 +133,15 @@ delete_underlay_link()
     local name
 
     echo "Delete underlay links..."
-    for name in $underlay_br_list; do
-        delete_bridge $name
+    if [ "$host_os" == "CentOS Linux" ]; then
+        for name in $underlay_br_list; do
+            delete_bridge_centos $name
+        done
+    elif [ "$host_os" == "Ubuntu" ]; then
+        for name in $underlay_br_list; do
+            delete_bridge_ubuntu $name
+        done
+    fi
     done
     for name in $underlay_veth_list; do
         delete_veth $name

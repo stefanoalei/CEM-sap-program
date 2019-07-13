@@ -5,66 +5,6 @@ cluster_br_list="br-int br-r1"
 
 server_list="master-1 csn node-1 node-2 command"
 
-vm_cpu[master-1]=6
-vm_ram[master-1]=65535
-vm_disk[master-1]=100G
-vm_os[master-1]=centos
-vm_image_type[master-1]=volume
-vm_address_list[master-1]="10.6.8.1        10.6.11.1"
-vm_netmask_list[master-1]="255.255.255.0   255.255.255.0"
-vm_gateway_list[master-1]="10.6.8.254      null"
-vm_nic_list[master-1]="br=br-int br=br-r1"
-
-vm_cpu[csn]=1
-vm_ram[csn]=8192
-vm_disk[csn]=40G
-vm_os[csn]=centos
-vm_image_type[csn]=volume
-vm_address_list[csn]="10.6.8.2        10.6.11.2"
-vm_netmask_list[csn]="255.255.255.0   255.255.255.0"
-vm_gateway_list[csn]="10.6.8.254      null"
-vm_nic_list[csn]="br=br-int br=br-r1"
-
-vm_cpu[node-1]=4
-vm_ram[node-1]=16384
-vm_disk[node-1]=60G
-vm_os[node-1]=centos
-vm_image_type[node-1]=volume
-vm_address_list[node-1]="10.6.8.3        10.6.11.3"
-vm_netmask_list[node-1]="255.255.255.0   255.255.255.0"
-vm_gateway_list[node-1]="10.6.8.254      null"
-vm_nic_list[node-1]="br=br-int br=br-r1"
-
-vm_cpu[node-2]=4
-vm_ram[node-2]=16384
-vm_disk[node-2]=60G
-vm_os[node-2]=centos
-vm_image_type[node-2]=volume
-vm_address_list[node-2]="10.6.8.4        10.6.11.4"
-vm_netmask_list[node-2]="255.255.255.0   255.255.255.0"
-vm_gateway_list[node-2]="10.6.8.254      null"
-vm_nic_list[node-2]="br=br-int br=br-r1"
-
-vm_cpu[command]=2
-vm_ram[command]=16384
-vm_disk[command]=60G
-vm_os[command]=centos
-vm_image_type[command]=volume
-vm_address_list[command]="10.6.8.5        10.6.11.5"
-vm_netmask_list[command]="255.255.255.0   255.255.255.0"
-vm_gateway_list[command]="10.6.8.254      null"
-vm_nic_list[command]="br=br-int br=br-r1"
-
-vm_cpu[mc-gw]=1
-vm_ram[mc-gw]=8192
-vm_disk[mc-gw]=40G
-vm_os[mc-gw]=centos
-vm_image_type[mc-gw]=volume
-vm_address_list[mc-gw]="10.6.8.6        10.6.12.1"
-vm_netmask_list[mc-gw]="255.255.255.0   255.255.255.0"
-vm_gateway_list[mc-gw]="10.6.8.254      null"
-vm_nic_list[mc-gw]="br=br-int br=br-r2"
-
 
 launch_builder()
 {
