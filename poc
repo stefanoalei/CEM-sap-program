@@ -32,17 +32,37 @@ create_bridge()
     local output
 
     ip -br link show dev $name > /dev/null 2>&1
-    if (( $? )); then
-        echo "Create bridge $name..."
-        brctl addbr $name
-        ip link set dev $name up
-        if [ "$name" == "br-int" ]; then
-            ip addr add 10.6.8.254/24 dev br-int
-        fi
-        if [ "$name" == "br-r1" ]; then
-            ip addr add 10.6.11.100/24 dev br-r1
-        fi
+    if (( $? == 0 )); then
+        return
     fi
+    echo "Create bridge $name..."
+    cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
+DEVICE=$name
+TYPE=Bridge
+ONBOOT=yes
+NM_CONTROLLED=no
+BOOTPROTO=static
+IPADDR=10.6.8.254
+NETMASK=255.255.255.0
+__EOF__
+    if [ "$name" == "br-int" ]; then
+    cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
+BOOTPROTO=static
+IPADDR=10.6.8.254
+NETMASK=255.255.255.0
+__EOF__
+    elif [ "$name" == "br-r1" ]; then
+    cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
+BOOTPROTO=static
+IPADDR=10.6.11.100
+NETMASK=255.255.255.0
+__EOF__
+    else
+    cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
+BOOTPROTO=none
+__EOF__
+    fi
+    ifup $name
 
 }
 
@@ -53,12 +73,12 @@ delete_bridge()
 
     echo "Delete bridge $name..."
     ip -br link show dev $name > /dev/null 2>&1
-    if (( $? == 0 )); then
-        port=$(brctl show $name | awk "/$name/"'{print $4'})
-        if [ "$port" == "" ]; then
-            ip link set dev $name down 
-            brctl delbr $name
-        fi
+    if (( $? )); then
+        return
+    port=$(brctl show $name | awk "/$name/"'{print $4'})
+    if [ "$port" == "" ]; then
+        ip link delete $name
+        rm -f /etc/sysconfig/network-scripts/ifcfg-$name
     fi
 }
 
