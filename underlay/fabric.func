@@ -85,7 +85,7 @@ vm_role[bms-lcm]=bms
 vm_nic_list[bms-lcm]="dir=bms-lcm"
 
 vm_role[client]=cirros
-vm_nic_list[client]="br-ext"
+vm_nic_list[client]="br=br-ext"
 
 #####################################################
 configure_vmx_1()
