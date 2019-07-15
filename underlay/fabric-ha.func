@@ -115,8 +115,8 @@ vm_role[bms-22]=cirros
 vm_nic_list[bms-22]="br=br-l2-xe2"
 
 vm_role[bms-dh]=centos
-vm_nic_list[bms-dh]="dir=bms-dh1 dir=bms-dh2"
-#vm_nic_list[bms-dh]="br=br-l1-xe3 br=br-l2-xe3"
+#vm_nic_list[bms-dh]="dir=bms-dh1 dir=bms-dh2"
+vm_nic_list[bms-dh]="br=br-l1-xe3 br=br-l2-xe3"
 
 vm_role[bms-lcm]=bms
 #vm_nic_list[bms-lcm]="dir=bms-lcm"
