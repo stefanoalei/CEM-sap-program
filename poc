@@ -1,7 +1,15 @@
 
 image_path=/opt/vm-image
 instance_path=/var/lib/libvirt/instance
-volume_pool=lv
+
+virsh pool-info lv 2>&1 > /dev/null
+if (( $?  )); then
+    # No pool 'lv', use the new name.
+    volume_pool=poc
+else
+    # Pool 'lv' is already created, stay with it.
+    volume_pool=lv
+fi
 
 image_cirros=cirros-0.4.0-x86_64-disk.img
 image_centos=CentOS-7-x86_64-GenericCloud-1805.qcow2
@@ -71,6 +79,17 @@ __EOF__
     fi
 }
 
+create_bridge()
+{
+    local name=$1
+
+    if [ "$host_os" == "CentOS Linux" ]; then
+        create_bridge_centos $name
+    elif [ "$host_os" == "Ubuntu" ]; then
+        create_bridge_ubuntu $name
+    fi
+}
+
 delete_bridge_centos()
 {
     local name=$1
@@ -85,6 +104,17 @@ delete_bridge_centos()
     if [ "$port" == "" ]; then
         ip link delete $name
         rm -f /etc/sysconfig/network-scripts/ifcfg-$name
+    fi
+}
+
+delete_bridge()
+{
+    local name=$1
+
+    if [ "$host_os" == "CentOS Linux" ]; then
+        delete_bridge_centos $name
+    elif [ "$host_os" == "Ubuntu" ]; then
+        delete_bridge_ubuntu $name
     fi
 }
 
@@ -119,15 +149,9 @@ create_underlay_link()
     local name
 
     echo "Create underlay links..."
-    if [ "$host_os" == "CentOS Linux" ]; then
-        for name in $underlay_br_list; do
-            create_bridge_centos $name
-        done
-    elif [ "$host_os" == "Ubuntu" ]; then
-        for name in $underlay_br_list; do
-            create_bridge_ubuntu $name
-        done
-    fi
+    for name in $underlay_br_list; do
+        create_bridge $name
+    done
     for name in $underlay_veth_list; do
         create_veth $name
     done
@@ -138,15 +162,9 @@ delete_underlay_link()
     local name
 
     echo "Delete underlay links..."
-    if [ "$host_os" == "CentOS Linux" ]; then
-        for name in $underlay_br_list; do
-            delete_bridge_centos $name
-        done
-    elif [ "$host_os" == "Ubuntu" ]; then
-        for name in $underlay_br_list; do
-            delete_bridge_ubuntu $name
-        done
-    fi
+    for name in $underlay_br_list; do
+        delete_bridge $name
+    done
     for name in $underlay_veth_list; do
         delete_veth $name
     done
@@ -167,15 +185,9 @@ delete_cluster_link()
     local name
 
     echo "Delete cluster links..."
-    if [ "$host_os" == "CentOS Linux" ]; then
-        for name in $cluster_br_list; do
-            delete_bridge_centos $name
-        done
-    elif [ "$host_os" == "Ubuntu" ]; then
-        for name in $cluster_br_list; do
-            delete_bridge_ubuntu $name
-        done
-    fi
+    for name in $cluster_br_list; do
+        delete_bridge $name
+    done
 }
 
 enable_snat()
