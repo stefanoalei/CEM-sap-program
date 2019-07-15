@@ -13,10 +13,11 @@ image_vmx_re_usb=metadata-usb-re.img
 image_vmx_pfe=vFPC-20180829.img
 
 source poc.conf
+source role
+source inventory
 source utils/vm.func
 source hypervisor/hypervisor.func
 source underlay/$poc_underlay.func
-source cluster/inventory
 source cluster/$poc_cluster/$poc_cluster.func
 
 
@@ -36,7 +37,10 @@ create_bridge_centos()
     if (( $? == 0 )); then
         return
     fi
+
     echo "Create bridge $name..."
+    brctl addbr $name
+    ip link set dev $name up
     cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
 DEVICE=$name
 TYPE=Bridge
@@ -47,24 +51,24 @@ IPADDR=10.6.8.254
 NETMASK=255.255.255.0
 __EOF__
     if [ "$name" == "br-int" ]; then
-    cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
+    ip addr add 10.6.8.254/24 dev $name
+    cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
 BOOTPROTO=static
 IPADDR=10.6.8.254
 NETMASK=255.255.255.0
 __EOF__
     elif [ "$name" == "br-r1" ]; then
-    cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
+    ip addr add 10.6.11.100/24 dev $name
+    cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
 BOOTPROTO=static
 IPADDR=10.6.11.100
 NETMASK=255.255.255.0
 __EOF__
     else
-    cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
+    cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
 BOOTPROTO=none
 __EOF__
     fi
-    ifup $name
-
 }
 
 delete_bridge_centos()
@@ -76,6 +80,7 @@ delete_bridge_centos()
     ip -br link show dev $name > /dev/null 2>&1
     if (( $? )); then
         return
+    fi
     port=$(brctl show $name | awk "/$name/"'{print $4'})
     if [ "$port" == "" ]; then
         ip link delete $name
@@ -142,7 +147,6 @@ delete_underlay_link()
             delete_bridge_ubuntu $name
         done
     fi
-    done
     for name in $underlay_veth_list; do
         delete_veth $name
     done
@@ -163,9 +167,15 @@ delete_cluster_link()
     local name
 
     echo "Delete cluster links..."
-    for name in $cluster_br_list; do
-        delete_bridge $name
-    done
+    if [ "$host_os" == "CentOS Linux" ]; then
+        for name in $cluster_br_list; do
+            delete_bridge_centos $name
+        done
+    elif [ "$host_os" == "Ubuntu" ]; then
+        for name in $cluster_br_list; do
+            delete_bridge_ubuntu $name
+        done
+    fi
 }
 
 enable_snat()

@@ -1,0 +1,19 @@
+declare -A role
+
+# VM role       vCPU  memory(GB)  disk(GB)  image
+role[contrail]="  5       64      100       volume"
+role[openstack]=" 5       48      100       volume"
+role[compute]="   4       16       60       volume"
+role[csn]="       1        8       40       volume"
+role[master]="    2       16       60       volume"
+
+role[vqfx-re]="   1        1        0       file"
+role[vqfx-pfe]="  1        2        0       file"
+role[vmx-re]="    1        1        0       file"
+role[vmx-pfe]="   4        4        0       file"
+
+role[cirros]="    1        1        0       file"
+role[centos]="    1        1        0       file"
+
+role[bms]="       1        1       20       file"
+

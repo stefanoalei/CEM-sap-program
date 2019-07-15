@@ -1,59 +1,9 @@
 
+vm_role_arg=()
 vm_disk_arg=""
 vm_disk_img=""
 vm_net_arg=""
 vm_os_arg=""
-
-declare -A vm_flavor
-declare -A vm_cpu
-declare -A vm_ram
-declare -A vm_disk
-declare -A vm_image_type
-declare -A vm_os
-declare -A vm_address_list
-declare -A vm_netmask_list
-declare -A vm_gateway_list
-declare -A vm_nic_list
-declare -A vm_nic_model
-declare -A vm_disk_bus
-declare -A vm_spec_arg
-
-## CentOS cloud image based, on volume, disk resize, customized.
-#vm_cpu[controller]=4
-#vm_ram[controller]=32768
-#vm_disk[controller]=100G
-#vm_os[controller]=centos
-#vm_image_type[controller]=volume
-#vm_address_list[controller]="10.6.8.10       10.6.11.10"
-#vm_netmask_list[controller]="255.255.255.0   255.255.255.0"
-#vm_gateway_list[controller]="10.6.8.254      null"
-#vm_nic_list[controller]="br-int br-l1-xe1"
-
-## CentOS cloud image based, on file, disk resize, customized.
-#vm_cpu[controller]=4
-#vm_ram[controller]=32768
-#vm_disk[controller]=100G
-#vm_os[controller]=centos
-#vm_image_type[controller]=file
-#vm_address_list[controller]="10.6.8.10       10.6.11.10"
-#vm_netmask_list[controller]="255.255.255.0   255.255.255.0"
-#vm_gateway_list[controller]="10.6.8.254      null"
-#vm_nic_list[controller]="br-int br-l1-xe1"
-
-## Cirros cloud image based, on file, no resize, no customiztion.
-#vm_cpu[bms21]=1
-#vm_ram[bms21]=1024
-#vm_os[bms21]=cirros
-#vm_image_type[bms21]=file
-#vm_nic_list[bms21]="br-l2-xe1"
-
-## No host OS, VM is defined only, on file, with size, no customiztion.
-#vm_cpu[bms-dh]=1
-#vm_ram[bms-dh]=2048
-#vm_disk[bms-dh]=40G
-#vm_os[bms-dh]=none
-#vm_image_type[bms-dh]=file
-#vm_nic_list[bms-dh]="br-int br-l2-xe2"
 
 
 wait_for_host()
@@ -228,9 +178,9 @@ build_vm_image_on_file()
 
     vm_disk_img=$instance_path/$name.qcow2
     vm_disk_arg="--disk path=$vm_disk_img,format=qcow2"
-    if [ ${vm_disk[$name]} ]; then
+    if (( ${vm_role_arg[2]} > 0 )); then
         qemu-img create -f qcow2 -o preallocation=metadata \
-          $vm_disk_img ${vm_disk[$name]}
+          $vm_disk_img "${vm_role_arg[2]}"G
         virt-resize --expand /dev/sda1 $src_img $vm_disk_img
     else
         cp $src_img $vm_disk_img
@@ -244,7 +194,7 @@ build_vm_image_on_volume()
 
     vm_disk_img=/dev/$volume_pool/$name
     vm_disk_arg="--disk bus=virtio,vol=$volume_pool/$name,cache=none"
-    virsh vol-create-as $volume_pool $name ${vm_disk[$name]}
+    virsh vol-create-as $volume_pool $name "${vm_role_arg[2]}"G
     virt-resize --expand /dev/sda1 $src_img $vm_disk_img
 }
 
@@ -253,12 +203,12 @@ build_vm_image()
     local name=$1
     local src_img=$2
 
-    if [ ${vm_image_type[$name]} == "volume" ]; then
+    if [ ${vm_role_arg[3]} == "volume" ]; then
         # Volume is only supported by CentOS, Ubuntu and RHEL,
         # disk size is mandatory.
         pool_state=$(virsh pool-info $volume_pool 2> /dev/null | \
                 awk "/State/"'{print $2 }')
-        if [ "$pool_state" ==  "running" ]]; then
+        if [ "$pool_state" ==  "running" ]; then
             # Pool is available.
             build_vm_image_on_volume $name $src_img
         else
@@ -314,37 +264,39 @@ build_vm_net_arg()
 build_vm_args()
 {
     local name=$1
-    local args
+    local args=$2
+    local virt_args
 
     build_vm_net_arg $name
-    args="--connect qemu:///system --virt-type kvm "
-    args+="--name $name --vcpus ${vm_cpu[$name]} --ram ${vm_ram[$name]} "
-    args+="$vm_os_arg $vm_disk_arg $vm_net_arg "
-    args+="--graphics vnc,listen=0.0.0.0 --noautoconsole --boot hd "
+    virt_args="--connect qemu:///system --virt-type kvm "
+    virt_args+="--name $name --vcpus ${vm_role_arg[0]} "
+    virt_args+="--ram $((${vm_role_arg[1]} * 1024)) "
+    virt_args+="$vm_os_arg $vm_disk_arg $vm_net_arg "
+    virt_args+="--graphics vnc,listen=0.0.0.0 --noautoconsole --boot hd "
     if [ "${vm_spec_arg[$name]}" ]; then
-        args+=${vm_spec_arg[$name]}
+        virt_args+=${vm_spec_arg[$name]}
     fi
-    echo $args
+    echo $virt_args
 }
 
 define_vm()
 {
     local name=$1
-    local args
+    local virt_args
 
-    args=$(build_vm_args $name)
+    virt_args=$(build_vm_args $name)
     virsh define /dev/stdin << __EOT__
-$(virt-install $args --print-xml)
+$(virt-install $virt_args --print-xml)
 __EOT__
 }
 
 create_vm()
 {
     local name=$1
-    local args
+    local virt_args
 
-    args=$(build_vm_args $name)
-    virt-install $args
+    virt_args=$(build_vm_args $name)
+    virt-install $virt_args
 }
 
 launch_vm()
@@ -353,57 +305,78 @@ launch_vm()
     local dst_img
     local np=""
     local br
+    local role_name
 
     virsh domstate $name > /dev/null 2>&1
     if (( $? == 0 )); then
         echo "VM $name exists."
         return 0
     fi
+    role_name=${vm_role[$name]}
+    for i in ${role[$role_name]}; do
+        vm_role_arg+=("$i")
+    done
     echo "Launch $name..."
-    if [ ${vm_os[$name]} == "centos" ]; then
-        vm_os_arg="--os-variant centos7.0"
-        build_vm_image $name $image_path/$image_centos
-        customize_vm_centos $name
-        create_vm $name
-    elif [ ${vm_os[$name]} == "ubuntu" ]; then
-        build_vm_image $name $image_path/$image_ubuntu
-        customize_vm_centos $name
-        create_vm $name
-    elif [ ${vm_os[$name]} == "rhel" ]; then
-        build_vm_image $name $image_path/$image_rhel
-        customize_vm_centos $name
-        create_vm $name
-    elif [ ${vm_os[$name]} == "cirros" ]; then
-        build_vm_image $name $image_path/$image_cirros
-        create_vm $name
-    elif [ ${vm_os[$name]} == "none" ]; then
-        create_vm_image $name
-        define_vm $name
-    elif [ ${vm_os[$name]} == "vqfx-re" ]; then
-        vm_os_arg="--os-variant none"
-        build_vm_image $name $image_path/$image_vqfx_re
-        define_vm $name
-        build_dhcp_conf
-        virsh start $name
-    elif [ ${vm_os[$name]} == "vqfx-pfe" ]; then
-        vm_os_arg="--os-variant none"
-        build_vm_image $name $image_path/$image_vqfx_pfe
-        create_vm $name
-    elif [ ${vm_os[$name]} == "vmx-re" ]; then
-        vm_os_arg="--os-variant none"
-        build_vmx_re_image $name
-        define_vm $name
-        build_dhcp_conf
-        virsh start $name
-    elif [ ${vm_os[$name]} == "vmx-pfe" ]; then
-        vm_os_arg="--os-variant none"
-        build_vm_image $name $image_path/$image_vmx_pfe
-        create_vm $name
-    else
-        echo "ERROR: OS ${vm_os[$name]} is not supported!"
-        return 1
-    fi
-
+    case "$role_name" in
+        contrail | openstack | csn | compute | master)
+            vm_os_arg="--os-variant centos7.0"
+            build_vm_image $name $image_path/$image_centos
+            customize_vm_centos $name
+            create_vm $name
+        ;;
+        centos )
+            vm_os_arg="--os-variant centos7.0"
+            build_vm_image $name $image_path/$image_centos
+            customize_vm_centos $name
+            create_vm $name
+        ;;
+        ubuntu )
+            build_vm_image $name $image_path/$image_ubuntu
+            customize_vm_ubuntu $name
+            create_vm $name
+        ;;
+        rhel)
+            build_vm_image $name $image_path/$image_rhel
+            customize_vm_rhel $name
+            create_vm $name
+        ;;
+        cirros )
+            build_vm_image $name $image_path/$image_cirros
+            create_vm $name
+        ;;
+        bms )
+            create_vm_image $name
+            define_vm $name
+        ;;
+        vqfx-re )
+            vm_os_arg="--os-variant none"
+            build_vm_image $name $image_path/$image_vqfx_re
+            define_vm $name
+            build_dhcp_conf
+            virsh start $name
+        ;;
+        vqfx-pfe )
+            vm_os_arg="--os-variant none"
+            build_vm_image $name $image_path/$image_vqfx_pfe
+            create_vm $name
+        ;;
+        vmx-re )
+            vm_os_arg="--os-variant none"
+            build_vmx_re_image $name
+            define_vm $name
+            build_dhcp_conf
+            virsh start $name
+        ;;
+        vmx-pfe )
+            vm_os_arg="--os-variant none"
+            build_vm_image $name $image_path/$image_vmx_pfe
+            create_vm $name
+        ;;
+        * )
+            echo "ERROR: Role $role_name is not supported!"
+            return 1
+        ;;
+    esac
 }
 
 check_vm()
@@ -418,14 +391,19 @@ check_vm()
 delete_vm()
 {
     local name=$1
+    local role_name
 
     echo "Delete VM $name..."
+    role_name=${vm_role[$name]}
+    for i in ${role[$role_name]}; do
+        vm_role_arg+=("$i")
+    done
     virsh domstate $name > /dev/null 2>&1
     if (( $? == 0 )); then
         virsh destroy $name
         virsh undefine $name
     fi
-    if [ ${vm_image_type[$name]} == "volume" ]; then
+    if [ ${vm_role_arg[3]} == "volume" ]; then
         virsh vol-list $volume_pool | grep $name > /dev/null 2>&1
         if (( $? == 0 )); then
             virsh vol-delete $name $volume_pool
