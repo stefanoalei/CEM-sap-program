@@ -8,7 +8,7 @@ server_list="contrail-1 openstack-1 csn-1 compute-1"
 
 launch_builder()
 {
-    local arr=(${vm_address_list[contrail]})
+    local arr=(${vm_address_list[contrail-1]})
     local host=${arr[0]}
 
     echo "Launch builder..."
@@ -30,7 +30,7 @@ pre_deployment()
 
 deploy()
 {
-    local arr=(${vm_address_list[contrail]})
+    local arr=(${vm_address_list[contrail-1]})
     local host=${arr[0]}
 
     upload_instances_yaml $host
@@ -42,7 +42,7 @@ deploy()
 
 patch_nova_compute()
 {
-    local arr=(${vm_address_list[compute]})
+    local arr=(${vm_address_list[compute-1]})
     local host=${arr[0]}
 
     ssh $host "sed -i '/\[libvirt\]/ a\cpu_mode=none' \
@@ -54,7 +54,7 @@ patch_nova_compute()
 
 patch_fabric_playbook()
 {
-    local arr=(${vm_address_list[contrail]})
+    local arr=(${vm_address_list[contrail-1]})
     local host=${arr[0]}
     local list=$(cat playbook.patch | awk "/\+\+\+/"'{print $2}')
     local file
@@ -74,7 +74,7 @@ patch_fabric_playbook()
 
 setup_openstack()
 {
-    local arr=(${vm_address_list[openstack]})
+    local arr=(${vm_address_list[openstack-1]})
     local host=${arr[0]}
 
     scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
@@ -92,7 +92,7 @@ setup_openstack()
 
 configure_poc()
 {
-    local arr=(${vm_address_list[controller]})
+    local arr=(${vm_address_list[openstack-1]})
     local host=${arr[0]}
 
     scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
@@ -135,7 +135,7 @@ post_deployment()
     setup_openstack
     #configure_poc
     add_static_route
-    arr=(${vm_address_list[contrail]})
+    arr=(${vm_address_list[contrail-1]})
     install_command ${arr[0]}
     launch_command ${arr[0]} instances.yaml
 }
