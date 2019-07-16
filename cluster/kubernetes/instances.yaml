@@ -5,7 +5,7 @@ provider_config:
     ntpserver: 10.6.8.254
     domainsuffix: poc
 instances:
-  master-1:
+  kmaster-1:
     provider: bms
     ip: 10.6.8.1
     roles:
@@ -19,13 +19,13 @@ instances:
       k8s_master:
   node-1:
     provider: bms
-    ip: 10.6.8.2
+    ip: 10.6.8.7
     roles:
       vrouter:
       k8s_node:
   node-2:
     provider: bms
-    ip: 10.6.8.3
+    ip: 10.6.8.8
     roles:
       vrouter:
       k8s_node:

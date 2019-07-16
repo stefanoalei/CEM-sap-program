@@ -3,12 +3,12 @@ cluster_path=cluster/kubernetes
 
 cluster_br_list="br-int br-r1"
 
-server_list="master-1 node-1 node-2"
+server_list="kmaster-1 node-1 node-2"
 
 
 launch_builder()
 {
-    local arr=(${vm_address_list[master-1]})
+    local arr=(${vm_address_list[kmaster-1]})
     local host=${arr[0]}
 
     echo "Launch builder..."
@@ -28,7 +28,7 @@ pre_deployment()
     local host
 
     echo "Pre-Deployment"
-    arr=(${vm_address_list[master-1]})
+    arr=(${vm_address_list[kmaster-1]})
     host=${arr[0]}
     ssh $host "echo \"net.ipv4.ip_forward = 1\" >> /etc/sysctl.conf"
     ssh $host "sysctl -p /etc/sysctl.conf"
@@ -36,7 +36,7 @@ pre_deployment()
 
 deploy()
 {
-    local arr=(${vm_address_list[master-1]})
+    local arr=(${vm_address_list[kmaster-1]})
     local host=${arr[0]}
 
     upload_instances_yaml $host

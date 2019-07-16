@@ -70,9 +70,9 @@ ntpserver=10.6.8.254
 
 [nodes]
 10.6.8.1 openshift_hostname=master-1
-10.6.8.2 openshift_hostname=infra-1 openshift_node_labels="{'region': 'infra'}"
-10.6.8.3 openshift_hostname=node-1
-10.6.8.4 openshift_hostname=node-2
+10.6.8.4 openshift_hostname=infra-1 openshift_node_labels="{'region': 'infra'}"
+10.6.8.7 openshift_hostname=node-1
+10.6.8.8 openshift_hostname=node-2
 
 [openshift_ca]
 10.6.8.1 openshift_hostname=master-1

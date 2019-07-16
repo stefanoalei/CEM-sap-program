@@ -3,12 +3,12 @@ cluster_path=cluster/openstack
 
 cluster_br_list="br-int br-r1"
 
-server_list="contrail openstack compute-1 compute-2"
+server_list="contrail-1 openstack-1 compute-1 compute-2"
 
 
 launch_builder()
 {
-    local arr=(${vm_address_list[contrail]})
+    local arr=(${vm_address_list[contrail-1]})
     local host=${arr[0]}
 
     echo "Launch builder..."
@@ -28,7 +28,7 @@ pre_deployment()
 
 deploy()
 {
-    local arr=(${vm_address_list[contrail]})
+    local arr=(${vm_address_list[contrail-1]})
     local host=${arr[0]}
 
     load_playbook $contrail_playbook $host
@@ -37,7 +37,7 @@ deploy()
 
 setup_openstack()
 {
-    local arr=(${vm_address_list[openstack]})
+    local arr=(${vm_address_list[openstack-1]})
     local host=${arr[0]}
 
     scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
