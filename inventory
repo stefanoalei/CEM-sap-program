@@ -212,7 +212,7 @@ vm_nic_list[node-2]="br=br-int br=br-r1"
 
 vm_role[mc-gw]=csn
 vm_os[mc-gw]=centos
-vm_address_list[mc-gw]="10.6.8.9        10.6.12.1"
+vm_address_list[mc-gw]="10.6.8.9        10.6.12.9"
 vm_netmask_list[mc-gw]="255.255.255.0   255.255.255.0"
 vm_gateway_list[mc-gw]="10.6.8.254      null"
 vm_nic_list[mc-gw]="br=br-int br=br-r2"
