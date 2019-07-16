@@ -149,9 +149,11 @@ poc build-cluster
 To access server or underlay device, login onto the host, then ssh to the hostname or management address.
 
 HAProxy is configured to provide access to the cluster.
-*Contrail web UI:   https://<host>:8143
-*Contrail Command:  https://<host>:9091
-*OpenStack Horizon: http://<host>
+* Contrail web UI:   https://<host>:8143
+* Contrail Command:  https://<host>:9091
+* OpenStack Horizon: http://<host>
+
+Default username and password for vQFX and vMX is `root` / `Juniper`.
 
 
 # 6 Notes
