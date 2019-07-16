@@ -24,13 +24,15 @@ Pick cluster and underlay to build the POC.
 
 ### Cluster
 * [Contrail and Openstack](#a1-openstack)
-* [Contrail and Openstack HA](cluster/openstack-ha/openstack-ha.md)
-* [Contrail and Kubernetes](cluster/kubernetes/kubernetes.md)
-* [Contrail and Kubernetes HA](cluster/kubernetes-ha/kubernetes-ha.md)
-* [Contrail and OpenShift Origin](cluster/openshift-origin/openshift-origin.md)
-* [Contrail Fabric Management](cluster/cfm/cfm.md)
-* [Contrail Fabric Management HA](cluster/cfm-ha/cfm-ha.md)
-* [Multi-Site](cluster/multi-site/multi-site.md)
+* [Contrail and Openstack HA](#a2-openstack-ha)
+* [Contrail Fabric Management](#a3-cfm)
+* [Contrail and Kubernetes](#a4-kubernetes)
+* [Contrail and Kubernetes HA](#a5-kubernetes-ha)
+* [Contrail and OpenShift Origin](#a6-openshift)
+* [Contrail and OpenShift Origin HA](#a7-openshift-ha)
+* [Multi-site 1](#a8-multi-site)
+* [Multi-site 2](#a9-multi-site-2)
+* [Multi-cloud Kubernetes](#a10-multi-cloud-kubernetes)
 
 
 # 2 Hypervisor
@@ -293,6 +295,7 @@ compute-c2-r1   10.6.8.58    10.6.14.8     4      16     60  CentOS 7.5-1805
 Total                                     19     152    360
 ```
 
+# Appendix B Management address
 
 ## B.1 Underlay management address
 ```
@@ -312,35 +315,25 @@ Total                                     19     152    360
 
 ## B.2 Cluster management address
 ```
-            openstack-ha  openstack     cfm           kubernetes-ha  kubernetes  openshift  multi-site   multi-site-2
+            openstack-ha  openstack     cfm           kubernetes-ha  kubernetes  openshift  multi-cloud-kubernetes  multi-site   multi-site-2
 ------------------------------------------------------------------------------------------------------------------------
-10.6.8.1    contrail-1    contrail-1    contrail-1    master-1       master-1    master-1   contrail-1
-10.6.8.2    openstack-1   openstack-1   openstack-1   master-2                              openstack-1
-10.6.8.3    contrail-2                  csn-1         master-3                              csn-1
-10.6.8.4    openstack-2                                                          infra-1    csn-r1
+10.6.8.1    contrail-1    contrail-1    contrail-1    kmaster-1      kmaster-1   master-1   kmaster-1               contrail-1
+10.6.8.2    openstack-1   openstack-1   openstack-1   kmaster-2                                                     openstack-1
+10.6.8.3    contrail-2                  csn-1         kmaster-3                                                     csn-1
+10.6.8.4    openstack-2                                                          infra-1                            csn-r1
 10.6.8.5    contrail-3
 10.6.8.6    openstack-3
-10.6.8.7    compute-1     compute-1     compute-1     node-1         node-1      node-1     compute-1
-10.6.8.8    compute-2     compute-2                   node-2         node-2      node-2     compute-r1
+10.6.8.7    compute-1     compute-1     compute-1     node-1         node-1      node-1     node-1                  compute-1
+10.6.8.8    compute-2     compute-2                   node-2         node-2      node-2     node-2                  compute-r1
+10.6.8.9                                                                                    mc-gw
+10.6.8.10                                                                                   command
 
-10.6.8.51                                                                                                contrail-c2-1
-10.6.8.52                                                                                                openstack-c2-1
-10.6.8.53                                                                                                csn-c2-1
-10.6.8.54                                                                                                csn-c2-r1
-10.6.8.57                                                                                                compute-c2-1
-10.6.8.58                                                                                                compute-c2-r1
-```
-
-## B.3 Resource
-```
-                  vCPU    memory(GB)    disk(GB)    OS
-contrail            5        64            100      CentOS 7.5-1805
-openstack           5        48            100      CentOS 7.5-1805
-csn                 1         8             40      CentOS 7.5-1805
-compute             4        16             60      CentOS 7.5-1805
-master              2        16             60      CentOS 7.5-1805
-infra               5        64            100      CentOS 7.5-1805
-node                4        16             60      CentOS 7.5-1805
+10.6.8.51                                                                                                                        contrail-c2-1
+10.6.8.52                                                                                                                        openstack-c2-1
+10.6.8.53                                                                                                                        csn-c2-1
+10.6.8.54                                                                                                                        csn-c2-r1
+10.6.8.57                                                                                                                        compute-c2-1
+10.6.8.58                                                                                                                        compute-c2-r1
 ```
 
 
