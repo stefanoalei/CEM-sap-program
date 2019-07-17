@@ -160,6 +160,12 @@ hv_enable_ipv4_forward()
     fi
 }
 
+hv_disable_selinux()
+{
+    sed -i 's/SELINUX=enforcing/SELINUX=permissive/g' /etc/selinux/config
+    setenforce 0
+}
+
 hv_setup_centos()
 {
     hv_install_packages_centos
@@ -171,6 +177,7 @@ hv_setup_centos()
     hv_create_volume_pool
     hv_generate_ssh_key
     hv_enable_ipv4_forward
+    hv_disable_selinux
     systemctl stop firewalld
     systemctl disable firewalld
 }
@@ -186,6 +193,7 @@ hv_setup_ubuntu()
     hv_create_volume_pool
     hv_generate_ssh_key
     hv_enable_ipv4_forward
+    hv_disable_selinux
     #systemctl stop ufw
     #systemctl disable ufw
 }
