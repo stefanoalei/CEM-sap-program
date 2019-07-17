@@ -3,53 +3,12 @@ cluster_path=cluster/cfm
 
 cluster_br_list="br-int br-r1"
 
-server_list="contrail openstack csn compute"
-
-vm_cpu[contrail]=6
-vm_ram[contrail]=65535
-vm_disk[contrail]=100G
-vm_os[contrail]=centos
-vm_image_type[contrail]=volume
-vm_address_list[contrail]="10.6.8.1        10.6.11.1"
-vm_netmask_list[contrail]="255.255.255.0   255.255.255.0"
-vm_gateway_list[contrail]="10.6.8.254      null"
-vm_nic_list[contrail]="br=br-int br=br-r1"
-
-vm_cpu[openstack]=5
-vm_ram[openstack]=49152
-vm_disk[openstack]=100G
-vm_os[openstack]=centos
-vm_image_type[openstack]=volume
-vm_address_list[openstack]="10.6.8.2        10.6.11.2"
-vm_netmask_list[openstack]="255.255.255.0   255.255.255.0"
-vm_gateway_list[openstack]="10.6.8.254      null"
-vm_nic_list[openstack]="br=br-int br=br-r1"
-
-vm_cpu[csn]=1
-vm_ram[csn]=8192
-vm_disk[csn]=40G
-vm_os[csn]=centos
-vm_image_type[csn]=volume
-vm_address_list[csn]="10.6.8.3        10.6.11.3"
-vm_netmask_list[csn]="255.255.255.0   255.255.255.0"
-vm_gateway_list[csn]="10.6.8.254      null"
-vm_nic_list[csn]="br=br-int br=br-r1"
-
-vm_cpu[compute]=4
-vm_ram[compute]=16384
-vm_disk[compute]=60G
-vm_os[compute]=centos
-vm_image_type[compute]=volume
-vm_address_list[compute]="10.6.8.4        10.6.11.4"
-vm_netmask_list[compute]="255.255.255.0   255.255.255.0"
-vm_gateway_list[compute]="10.6.8.254      null"
-vm_nic_list[compute]="br=br-int br=br-r1"
-vm_spec_arg[compute]="--cpu host"
+server_list="contrail-1 openstack-1 csn-1 compute-1"
 
 
 launch_builder()
 {
-    local arr=(${vm_address_list[contrail]})
+    local arr=(${vm_address_list[contrail-1]})
     local host=${arr[0]}
 
     echo "Launch builder..."
@@ -71,7 +30,7 @@ pre_deployment()
 
 deploy()
 {
-    local arr=(${vm_address_list[contrail]})
+    local arr=(${vm_address_list[contrail-1]})
     local host=${arr[0]}
 
     upload_instances_yaml $host
@@ -83,7 +42,7 @@ deploy()
 
 patch_nova_compute()
 {
-    local arr=(${vm_address_list[compute]})
+    local arr=(${vm_address_list[compute-1]})
     local host=${arr[0]}
 
     ssh $host "sed -i '/\[libvirt\]/ a\cpu_mode=none' \
@@ -95,7 +54,7 @@ patch_nova_compute()
 
 patch_fabric_playbook()
 {
-    local arr=(${vm_address_list[contrail]})
+    local arr=(${vm_address_list[contrail-1]})
     local host=${arr[0]}
     local list=$(cat playbook.patch | awk "/\+\+\+/"'{print $2}')
     local file
@@ -115,7 +74,7 @@ patch_fabric_playbook()
 
 setup_openstack()
 {
-    local arr=(${vm_address_list[openstack]})
+    local arr=(${vm_address_list[openstack-1]})
     local host=${arr[0]}
 
     scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
@@ -133,7 +92,7 @@ setup_openstack()
 
 configure_poc()
 {
-    local arr=(${vm_address_list[controller]})
+    local arr=(${vm_address_list[openstack-1]})
     local host=${arr[0]}
 
     scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
@@ -176,7 +135,7 @@ post_deployment()
     setup_openstack
     #configure_poc
     add_static_route
-    arr=(${vm_address_list[contrail]})
+    arr=(${vm_address_list[contrail-1]})
     install_command ${arr[0]}
     launch_command ${arr[0]} instances.yaml
 }

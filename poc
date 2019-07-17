@@ -1,7 +1,15 @@
 
 image_path=/opt/vm-image
 instance_path=/var/lib/libvirt/instance
-volume_pool=lv
+
+virsh pool-info lv 2>&1 > /dev/null
+if (( $?  )); then
+    # No pool 'lv', use the new name.
+    volume_pool=poc
+else
+    # Pool 'lv' is already created, stay with it.
+    volume_pool=lv
+fi
 
 image_cirros=cirros-0.4.0-x86_64-disk.img
 image_centos=CentOS-7-x86_64-GenericCloud-1805.qcow2
@@ -13,6 +21,8 @@ image_vmx_re_usb=metadata-usb-re.img
 image_vmx_pfe=vFPC-20180829.img
 
 source poc.conf
+source role
+source inventory
 source utils/vm.func
 source hypervisor/hypervisor.func
 source underlay/$poc_underlay.func
@@ -26,7 +36,7 @@ get_host_os()
 
 host_os=$(get_host_os)
 
-create_bridge()
+create_bridge_centos()
 {
     local name=$1
     local output
@@ -35,7 +45,10 @@ create_bridge()
     if (( $? == 0 )); then
         return
     fi
+
     echo "Create bridge $name..."
+    brctl addbr $name
+    ip link set dev $name up
     cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
 DEVICE=$name
 TYPE=Bridge
@@ -46,27 +59,38 @@ IPADDR=10.6.8.254
 NETMASK=255.255.255.0
 __EOF__
     if [ "$name" == "br-int" ]; then
-    cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
+    ip addr add 10.6.8.254/24 dev $name
+    cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
 BOOTPROTO=static
 IPADDR=10.6.8.254
 NETMASK=255.255.255.0
 __EOF__
     elif [ "$name" == "br-r1" ]; then
-    cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
+    ip addr add 10.6.11.100/24 dev $name
+    cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
 BOOTPROTO=static
 IPADDR=10.6.11.100
 NETMASK=255.255.255.0
 __EOF__
     else
-    cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
+    cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
 BOOTPROTO=none
 __EOF__
     fi
-    ifup $name
-
 }
 
-delete_bridge()
+create_bridge()
+{
+    local name=$1
+
+    if [ "$host_os" == "CentOS Linux" ]; then
+        create_bridge_centos $name
+    elif [ "$host_os" == "Ubuntu" ]; then
+        create_bridge_ubuntu $name
+    fi
+}
+
+delete_bridge_centos()
 {
     local name=$1
     local port
@@ -75,10 +99,22 @@ delete_bridge()
     ip -br link show dev $name > /dev/null 2>&1
     if (( $? )); then
         return
+    fi
     port=$(brctl show $name | awk "/$name/"'{print $4'})
     if [ "$port" == "" ]; then
         ip link delete $name
         rm -f /etc/sysconfig/network-scripts/ifcfg-$name
+    fi
+}
+
+delete_bridge()
+{
+    local name=$1
+
+    if [ "$host_os" == "CentOS Linux" ]; then
+        delete_bridge_centos $name
+    elif [ "$host_os" == "Ubuntu" ]; then
+        delete_bridge_ubuntu $name
     fi
 }
 

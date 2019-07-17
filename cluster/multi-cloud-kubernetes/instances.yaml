@@ -5,7 +5,7 @@ provider_config:
     ntpserver: 10.6.8.254
     domainsuffix: poc
 instances:
-  master-1:
+  kmaster-1:
     provider: bms
     ip: 10.6.8.1
     roles:
@@ -17,22 +17,22 @@ instances:
       webui:
       kubemanager:
       k8s_master:
-  csn:
+  csn-1:
     provider: bms
-    ip: 10.6.8.2
+    ip: 10.6.8.3
     roles:
       vrouter:
         TSN_EVPN_MODE: True
-        TSN_NODES: 10.6.11.2
+        TSN_NODES: 10.6.11.3
   node-1:
     provider: bms
-    ip: 10.6.8.3
+    ip: 10.6.8.7
     roles:
       vrouter:
       k8s_node:
   node-2:
     provider: bms
-    ip: 10.6.8.4
+    ip: 10.6.8.8
     roles:
       vrouter:
       k8s_node:

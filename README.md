@@ -23,14 +23,16 @@ Pick cluster and underlay to build the POC.
 
 
 ### Cluster
-* [Contrail and Openstack](cluster/openstack/openstack.md)
-* [Contrail and Openstack HA](cluster/openstack-ha/openstack-ha.md)
-* [Contrail and Kubernetes](cluster/kubernetes/kubernetes.md)
-* [Contrail and Kubernetes HA](cluster/kubernetes-ha/kubernetes-ha.md)
-* [Contrail and OpenShift Origin](cluster/openshift-origin/openshift-origin.md)
-* [Contrail Fabric Management](cluster/cfm/cfm.md)
-* [Contrail Fabric Management HA](cluster/cfm-ha/cfm-ha.md)
-* [Multi-Site](cluster/multi-site/multi-site.md)
+* [Contrail and Openstack](#a1-openstack)
+* [Contrail and Openstack HA](#a2-openstack-ha)
+* [Contrail Fabric Management](#a3-cfm)
+* [Contrail and Kubernetes](#a4-kubernetes)
+* [Contrail and Kubernetes HA](#a5-kubernetes-ha)
+* [Contrail and OpenShift Origin](#a6-openshift)
+* [Contrail and OpenShift Origin HA](#a7-openshift-ha)
+* [Multi-site 1](#a8-multi-site)
+* [Multi-site 2](#a9-multi-site-2)
+* [Multi-cloud Kubernetes](#a10-multi-cloud-kubernetes)
 
 
 # 2 Hypervisor
@@ -142,9 +144,23 @@ poc build-cluster
 ```
 
 
-# 5 Notes
+# 5 Access
 
-## 5.1 vQFX
+To access server or underlay device, login onto the host, then ssh to the hostname or management address.
+
+HAProxy is configured to provide access to the cluster.
+```
+Contrail web UI:   https://<host>:8143
+Contrail Command:  https://<host>:9091
+OpenStack Horizon: http://<host>
+```
+
+Default username and password for vQFX and vMX is `root` / `Juniper`.
+
+
+# 6 Notes
+
+## 6.1 vQFX
 
 This POC is using these vQFX RE and PFE image.
 ```
@@ -154,5 +170,174 @@ cosim_20180212.qcow2
 
 With `jinstall-vqfx-10-f-18.4R1.8.qcow2`, EVPN type-2 MAC/IP route with IP shows up in `default-switch.evpn.0`. ARP request from BMS is resolved by vQFX, not being multicasted anymore. When VM sends out ARP request for BMS, vrouter doesn't resolve it, but multicasts ARP request. When vQFX resolves request and sends reply back to vrouter, it sets VNI to 0. This is invalid VNI for vrouter. So the reply is dropped by vrouter.
 
+
+# Appendix A Cluster
+
+## A.1 openstack
+```
+host          management   data       vCPU  memory   disk  OS
+---------------------------------------------------------------------------
+contrail-1    10.6.8.1     10.6.11.1     5      64    100  CentOS 7.5-1805
+openstack-1   10.6.8.2     10.6.11.2     5      48    100  CentOS 7.5-1805
+compute-1     10.6.8.7     10.6.11.7     4      16     60  CentOS 7.5-1805
+compute-2     10.6.8.8     10.6.11.8     4      16     60  CentOS 7.5-1805
+---------------------------------------------------------------------------
+Total                                   18     144    320
+```
+
+
+## A.2 openstack-ha
+```
+host          management   data       vCPU  memory   disk  OS
+---------------------------------------------------------------------------
+contrail-1    10.6.8.1     10.6.11.1     5      64    100  CentOS 7.5-1805
+contrail-2    10.6.8.3     10.6.11.3     5      64    100  CentOS 7.5-1805
+contrail-3    10.6.8.5     10.6.11.5     5      64    100  CentOS 7.5-1805
+openstack-1   10.6.8.2     10.6.11.2     5      48    100  CentOS 7.5-1805
+openstack-2   10.6.8.4     10.6.11.4     5      48    100  CentOS 7.5-1805
+openstack-3   10.6.8.6     10.6.11.6     5      48    100  CentOS 7.5-1805
+compute-1     10.6.8.7     10.6.11.7     4      16     60  CentOS 7.5-1805
+compute-2     10.6.8.8     10.6.11.8     4      16     60  CentOS 7.5-1805
+---------------------------------------------------------------------------
+Total                                   38     368    720
+```
+
+
+## A.3 cfm
+```
+host          management   data       vCPU  memory   disk  OS
+---------------------------------------------------------------------------
+contrail-1    10.6.8.1     10.6.11.1     5      64    100  CentOS 7.5-1805
+openstack-1   10.6.8.2     10.6.11.2     5      48    100  CentOS 7.5-1805
+csn-1         10.6.8.3     10.6.11.3     1       8     40  CentOS 7.5-1805
+compute-1     10.6.8.7     10.6.11.7     4      16     60  CentOS 7.5-1805
+---------------------------------------------------------------------------
+Total                                   15     136    300
+```
+
+
+## A.4 kubernetes
+```
+host          management   data       vCPU  memory   disk  OS
+---------------------------------------------------------------------------
+kmaster-1     10.6.8.1     10.6.11.1     5      64    100  CentOS 7.5-1805
+node-1        10.6.8.7     10.6.11.7     4      16     60  CentOS 7.5-1805
+node-2        10.6.8.8     10.6.11.8     4      16     60  CentOS 7.5-1805
+---------------------------------------------------------------------------
+Total                                   13      96    220
+```
+
+
+## A.5 kubernetes-ha
+```
+host          management   data       vCPU  memory   disk  OS
+---------------------------------------------------------------------------
+kmaster-1     10.6.8.1     10.6.11.1     5      64    100  CentOS 7.5-1805
+kmaster-1     10.6.8.2     10.6.11.2     5      64    100  CentOS 7.5-1805
+kmaster-1     10.6.8.3     10.6.11.3     5      64    100  CentOS 7.5-1805
+node-1        10.6.8.7     10.6.11.7     4      16     60  CentOS 7.5-1805
+node-2        10.6.8.8     10.6.11.8     4      16     60  CentOS 7.5-1805
+---------------------------------------------------------------------------
+Total                                   23     224    420
+```
+
+
+## A.6 openshift
+```
+host          management   data       vCPU  memory   disk  OS
+---------------------------------------------------------------------------
+master-1      10.6.8.1     10.6.11.1     2      16     60  CentOS 7.5-1805
+infra-1       10.6.8.4     10.6.11.4     5      64    100  CentOS 7.5-1805
+node-1        10.6.8.7     10.6.11.7     4      16     60  CentOS 7.5-1805
+node-2        10.6.8.8     10.6.11.8     4      16     60  CentOS 7.5-1805
+---------------------------------------------------------------------------
+Total                                   15     112    280
+```
+
+
+## A.7 openshift-ha
+```
+host          management   data       vCPU  memory   disk  OS
+---------------------------------------------------------------------------
+master-1      10.6.8.1     10.6.11.1     2      16     60  CentOS 7.5-1805
+master-2      10.6.8.2     10.6.11.2     2      16     60  CentOS 7.5-1805
+master-3      10.6.8.3     10.6.11.3     2      16     60  CentOS 7.5-1805
+infra-1       10.6.8.4     10.6.11.4     5      64    100  CentOS 7.5-1805
+infra-2       10.6.8.5     10.6.11.5     5      64    100  CentOS 7.5-1805
+infra-3       10.6.8.6     10.6.11.6     5      64    100  CentOS 7.5-1805
+node-1        10.6.8.7     10.6.11.7     4      16     60  CentOS 7.5-1805
+node-2        10.6.8.8     10.6.11.8     4      16     60  CentOS 7.5-1805
+---------------------------------------------------------------------------
+Total                                   29     272    600
+```
+
+
+## A.8 multi-site
+```
+host          management   data       vCPU  memory   disk  OS
+---------------------------------------------------------------------------
+contrail-1    10.6.8.1     10.6.11.1     5      64    100  CentOS 7.5-1805
+openstack-1   10.6.8.2     10.6.11.2     5      48    100  CentOS 7.5-1805
+csn-1         10.6.8.3     10.6.11.3     1       8     40  CentOS 7.5-1805
+compute-1     10.6.8.7     10.6.11.7     4      16     60  CentOS 7.5-1805
+compute-r1    10.6.8.8     10.6.12.8     4      16     60  CentOS 7.5-1805
+---------------------------------------------------------------------------
+Total                                   19     152    360
+```
+
+
+## A.9 multi-site-2
+```
+host            management   data       vCPU  memory   disk  OS
+---------------------------------------------------------------------------
+contrail-c2-1   10.6.8.51    10.6.13.1     5      64    100  CentOS 7.5-1805
+openstack-c2-1  10.6.8.52    10.6.13.2     5      48    100  CentOS 7.5-1805
+csn-c2-1        10.6.8.53    10.6.13.3     1       8     40  CentOS 7.5-1805
+compute-c2-1    10.6.8.57    10.6.13.7     4      16     60  CentOS 7.5-1805
+compute-c2-r1   10.6.8.58    10.6.14.8     4      16     60  CentOS 7.5-1805
+---------------------------------------------------------------------------
+Total                                     19     152    360
+```
+
+# Appendix B Management address
+
+## B.1 Underlay management address
+```
+            fabric-ha     fabric         multi-site     multi-site-2
+-------------------------------------------------------------------------
+10.6.8.11  vqfx-leaf-1    vqfx-leaf-1    vqfx-leaf-1
+10.6.8.12  vqfx-leaf-2    vqfx-leaf-2    vqfx-leaf-2
+10.6.8.13                                               vqfx-leaf-3
+10.6.8.14                                               vqfx-leaf-4
+10.6.8.21  vqfx-spine-1   vqfx-spine-1   vqfx-spine-1
+10.6.8.22  vqfx-spine-2                                 vqfx-spine-2
+10.6.8.31  vmx-1          vmx-1          vmx-1
+10.6.8.32  vmx-2                         vmx-2
+10.6.8.33                                               vmx-3
+10.6.8.34                                               vmx-4
+```
+
+## B.2 Cluster management address
+```
+            openstack-ha  openstack     cfm           kubernetes-ha  kubernetes  openshift  multi-cloud-kubernetes  multi-site   multi-site-2
+------------------------------------------------------------------------------------------------------------------------
+10.6.8.1    contrail-1    contrail-1    contrail-1    kmaster-1      kmaster-1   master-1   kmaster-1               contrail-1
+10.6.8.2    openstack-1   openstack-1   openstack-1   kmaster-2                                                     openstack-1
+10.6.8.3    contrail-2                  csn-1         kmaster-3                                                     csn-1
+10.6.8.4    openstack-2                                                          infra-1                            csn-r1
+10.6.8.5    contrail-3
+10.6.8.6    openstack-3
+10.6.8.7    compute-1     compute-1     compute-1     node-1         node-1      node-1     node-1                  compute-1
+10.6.8.8    compute-2     compute-2                   node-2         node-2      node-2     node-2                  compute-r1
+10.6.8.9                                                                                    mc-gw
+10.6.8.10                                                                                   command
+
+10.6.8.51                                                                                                                        contrail-c2-1
+10.6.8.52                                                                                                                        openstack-c2-1
+10.6.8.53                                                                                                                        csn-c2-1
+10.6.8.54                                                                                                                        csn-c2-r1
+10.6.8.57                                                                                                                        compute-c2-1
+10.6.8.58                                                                                                                        compute-c2-r1
+```
 
 
