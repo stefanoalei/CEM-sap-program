@@ -14,7 +14,7 @@ launch_builder()
     echo "Launch builder..."
     #copy_ssh_key $host
     #ssh $host yum install -y ansible git
-    install_kubernetes_deployer $host
+    #install_kubernetes_deployer $host
 }
 
 delete_builder()
@@ -43,7 +43,7 @@ deploy()
     if [ -n "$contrail_playbook" ]; then
         load_playbook $contrail_playbook $host
     fi
-    run_playbook_kubernetes $host
+    #run_playbook_kubernetes $host
 }
 
 add_static_route()
@@ -53,6 +53,9 @@ add_static_route()
     local name
 
     for name in $server_list; do
+        if [ "$name" == "mc-gw" ]; then
+            continue
+        fi
         arr=(${vm_address_list[$name]})
         host=${arr[0]}
         ssh $host ip route add 10.6.0.0/24 via 10.6.11.254
@@ -66,6 +69,7 @@ update_mc_gw()
     local host=${arr[0]}
 
     ssh $host "yum erase -y python-requests"
+    ssh $host ip route add 10.6.11.0/24 via 10.6.12.254
 }
 
 launch_command()
