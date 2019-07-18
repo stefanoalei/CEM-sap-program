@@ -222,6 +222,26 @@ check_command()
             grep -A 10 "PLAY RECAP" | awk "/failed/"'{print}'
 }
 
+check_command_prov()
+{
+    local rc_list
+    local rc
+
+    let "count = 2"
+    while (( "$count" > "0"  )); do
+        sleep 10
+        echo "Check Contrail Command provisioning..."
+        docker exec contrail_command tail -n 10 /var/log/ansible.log | \
+                grep "PLAY RECAP" > /dev/null 2>&1
+        if (( "$?" == "0" )); then
+            let "count -= 1"
+        fi
+    done
+
+    docker exec contrail_command tail -n 10 /var/log/ansible.log | \
+            grep -A 10 "PLAY RECAP" | awk "/failed/"'{print}'
+}
+
 launch_command()
 {
     local host=$1
@@ -244,6 +264,9 @@ launch_command()
             --name contrail_command_deployer \
             $command_image
     check_command
+    if [ "$action" == "provision_cluster" ]; then
+        check_command_prov
+    fi
     systemctl status iptables > /dev/null 2>&1
     if (( "$?" == "0" )); then
         systemctl stop iptables
