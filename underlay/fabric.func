@@ -116,6 +116,7 @@ configure_vqfx_spine_1()
     local host=${arr[0]}
 
     cat << __EOF__ > /tmp/conf
+set system services netconf ssh
 set interfaces lo0 unit 0 family inet address 10.6.0.21/32
 set interfaces xe-0/0/0 unit 0 family inet address 10.6.30.0/31
 set interfaces xe-0/0/1 unit 0 family inet address 10.6.20.0/31
@@ -142,6 +143,7 @@ configure_vqfx_leaf_1()
     local host=${arr[0]}
 
     cat << __EOF__ > /tmp/conf
+set system services netconf ssh
 set interfaces lo0 unit 0 family inet address 10.6.0.11/32
 set interfaces xe-0/0/0 unit 0 family inet address 10.6.20.1/31
 set interfaces xe-0/0/3 unit 0 family ethernet-switching vlan members vlan-11
@@ -168,6 +170,7 @@ configure_vqfx_leaf_2()
     local host=${arr[0]}
 
     cat << __EOF__ > /tmp/conf
+set system services netconf ssh
 set interfaces lo0 unit 0 family inet address 10.6.0.12/32
 set interfaces xe-0/0/0 unit 0 family inet address 10.6.20.3/31
 set interfaces xe-0/0/3 unit 0 family ethernet-switching vlan members vlan-12
