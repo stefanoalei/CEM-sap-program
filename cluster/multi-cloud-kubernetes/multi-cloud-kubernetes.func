@@ -73,7 +73,7 @@ launch_command()
     local host=$1
 
     echo "Launch Contrail Command..."
-    scp instances.yaml $host:./instances.yaml
+    scp $cluster_path/instances.yaml $host:./instances.yaml
     ssh $host "./builder launch-command $host kubernetes provision_cluster"
 }
  
