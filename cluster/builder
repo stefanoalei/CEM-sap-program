@@ -226,20 +226,18 @@ launch_command()
 {
     local host=$1
     local orch=$2
+    local action=$3
     local append=""
 
     build_instances_yaml
     build_command_yaml "$host"
 
-    if [ -n "$3" ]; then
+    if [ -n "$4" ]; then
         append="-e delete_db=no"
-    fi
-    if [ -z "$orch" ]; then
-        orch=openstack
     fi
     docker run -t --net host -d --privileged \
             -e orchestrator=$orch \
-            -e action=import_cluster \
+            -e action=$action \
             $append \
             -v /root/instances.yaml:/instances.yml \
             -v /root/command_servers.yml:/command_servers.yml \

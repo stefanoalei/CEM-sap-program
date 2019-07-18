@@ -126,17 +126,26 @@ add_static_route()
     done
 }
 
+launch_command()
+{
+    local host=$1
+
+    echo "Launch Contrail Command..."
+    scp instances.yaml $host:./instances.yaml
+    ssh $host "./builder launch-command $host openstack import_cluster"
+}
+ 
 post_deployment()
 {
-    local arr
+    local arr=(${vm_address_list[contrail-1]})
+    local host=${arr[0]}
 
     echo "Post-Deployment"
     configure_haproxy
     setup_openstack
     #configure_poc
     add_static_route
-    arr=(${vm_address_list[contrail-1]})
-    install_command ${arr[0]}
-    launch_command ${arr[0]} instances.yaml
+    install_command $host
+    launch_command $host
 }
 

@@ -68,14 +68,26 @@ update_mc_gw()
     ssh $host "yum erase -y python-requests"
 }
 
+launch_command()
+{
+    local host=$1
+
+    echo "Launch Contrail Command..."
+    scp instances.yaml $host:./instances.yaml
+    ssh $host "./builder launch-command $host kubernetes provision_cluster"
+}
+ 
 post_deployment()
 {
+    local arr=(${vm_address_list[command]})
+    local host=${arr[0]}
+
     echo "Post-Deployment"
+    install_command $host
+    launch_command $host
+
     update_mc_gw
     add_static_route
     configure_haproxy
-    arr=(${vm_address_list[command]})
-    install_command ${arr[0]}
-    launch_command ${arr[0]} instances.yaml kubernetes
 }
 
