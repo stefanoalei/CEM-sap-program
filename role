@@ -6,6 +6,7 @@ role[openstack]=" 5       48       80       volume"
 role[compute]="   4       16       40       volume"
 role[csn]="       1        8       30       volume"
 role[master]="    2       16       40       volume"
+role[appformix]=" 4       16       60       volume"
 
 role[vqfx-re]="   1        1        0       file"
 role[vqfx-pfe]="  1        2        0       file"
