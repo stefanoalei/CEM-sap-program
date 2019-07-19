@@ -322,7 +322,7 @@ launch_vm()
     role_name=${vm_role[$name]}
     echo "Launch $name with role $role_name..."
     case "$role_name" in
-        contrail | openstack | csn | compute | master)
+        contrail | openstack | csn | compute | master | appformix )
             vm_os_arg="--os-variant centos7.0"
             build_vm_image $name $image_path/$image_centos $role_name
             customize_vm_centos $name
