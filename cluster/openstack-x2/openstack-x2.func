@@ -128,42 +128,6 @@ deploy()
     run_playbook_openstack $host
 }
 
-setup_openstack_a()
-{
-    local arr=(${vm_address_list[openstack-a]})
-    local host=${arr[0]}
-
-    scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
-    ssh $host "docker exec kolla_toolbox \
-      bash -c \"source /var/lib/kolla/config_files/admin-openrc.sh; \
-        openstack flavor create \
-          --id 1 --disk 1 --ram 512 --vcpus 1 --public m1.tiny\""
-    ssh $host "docker exec kolla_toolbox \
-      bash -c \"source /var/lib/kolla/config_files/admin-openrc.sh; \
-        openstack image create \
-          --container-format bare --disk-format qcow2 --public \
-          --file /var/lib/kolla/config_files/$image_cirros cirros\""
-    ssh $host "rm -f /etc/kolla/kolla-toolbox/$image_cirros"
-}
-
-setup_openstack_b()
-{
-    local arr=(${vm_address_list[openstack-b]})
-    local host=${arr[0]}
-
-    scp $image_path/$image_cirros $host:/etc/kolla/kolla-toolbox/
-    ssh $host "docker exec kolla_toolbox \
-      bash -c \"source /var/lib/kolla/config_files/admin-openrc.sh; \
-        openstack flavor create \
-          --id 1 --disk 1 --ram 512 --vcpus 1 --public m1.tiny\""
-    ssh $host "docker exec kolla_toolbox \
-      bash -c \"source /var/lib/kolla/config_files/admin-openrc.sh; \
-        openstack image create \
-          --container-format bare --disk-format qcow2 --public \
-          --file /var/lib/kolla/config_files/$image_cirros cirros\""
-    ssh $host "rm -f /etc/kolla/kolla-toolbox/$image_cirros"
-}
-
 add_static_route()
 {
     local arr
@@ -189,8 +153,10 @@ post_deployment()
     echo "Post-Deployment"
     add_static_route
     configure_haproxy
-    setup_openstack_a
-    setup_openstack_b
+    arr=(${vm_address_list[openstack-a]})
+    configure_openstack ${arr[0]}
+    arr=(${vm_address_list[openstack-b]})
+    configure_openstack ${arr[0]}
 
     arr=(${vm_address_list[command-a]})
     install_command ${arr[0]}
