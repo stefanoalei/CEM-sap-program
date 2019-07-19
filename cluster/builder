@@ -286,6 +286,28 @@ delete_command()
     docker volume rm $vol
 }
 
+install_appformix()
+{
+    #yum install -y python-devel
+    #yum install -y \
+    #    https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    #yum repolist
+    #yum install -y python-pip
+    #yum groupinstall -y 'Development Tools'
+    #pip install ansible==2.3
+
+    tar -xzf appformix-3.0.0.tar.gz
+    mkdir -p appformix-3.0.0/inventory/group_vars
+}
+
+launch_appformix()
+{
+    scp 10.6.8.2:/etc/kolla/kolla-toolbox/admin-openrc.sh ./
+    source admin-openrc.sh
+    cd appformix-3.0.0
+    ansible-playbook -i inventory appformix_openstack.yml
+}
+
 main()
 {
     case "$1" in
@@ -307,6 +329,12 @@ main()
             ;;
         delete-command)
             delete_command
+            ;;
+        install-appformix)
+            install_appformix
+            ;;
+        launch-appformix)
+            launch_appformix
             ;;
         delete)
             delete
