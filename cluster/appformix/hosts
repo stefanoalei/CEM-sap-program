@@ -1,0 +1,9 @@
+[compute]
+10.6.8.7 ansible_ssh_user=root
+
+[appformix_controller]
+10.6.8.81 ansible_ssh_user=root
+
+[openstack_controller]
+10.6.8.2 ansible_ssh_user=root
+

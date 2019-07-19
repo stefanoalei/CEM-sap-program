@@ -1,0 +1,17 @@
+openstack_platform_enabled: true
+
+appformix_version: 3.0.0
+appformix_manager_version: 3.0.0-1
+appformix_license: /root/appformix-internal-openstack-3.0.sig
+
+appformix_docker_images:
+  - /root/appformix-dependencies-images-3.0.0.tar.gz
+  - /root/appformix-openstack-images-3.0.0.tar.gz
+  - /root/appformix-platform-images-3.0.0.tar.gz
+
+appformix_plugins: '{{ appformix_contrail_factory_plugins }} + {{ appformix_network_device_factory_plugins }} + {{ appformix_openstack_factory_plugins }} + {{ appformix_application_factory_plugins }} + {{ appformix_remote_host_factory_plugins }}'
+
+appformix_network_device_monitoring_enabled: true
+appformix_remote_host_monitoring_enabled: true
+appformix_jti_network_device_monitoring_enabled: true
+
