@@ -128,24 +128,48 @@ add_static_route()
 
 launch_command()
 {
-    local host=$1
+    local arr=(${vm_address_list[contrail-1]})
+    local host=${arr[0]}
+
+    install_command $host
 
     echo "Launch Contrail Command..."
     scp $cluster_path/instances.yaml $host:./instances.yaml
     ssh $host "./builder launch-command $host openstack import_cluster"
 }
  
+launch_appformix()
+{
+    local arr=(${vm_address_list[appformix-1]})
+    local host=${arr[0]}
+
+    pkg_list="
+        appformix-3.0.0.tar.gz
+        appformix-dependencies-images-3.0.0.tar.gz
+        appformix-internal-openstack-3.0.sig
+        appformix-openstack-images-3.0.0.tar.gz
+        appformix-platform-images-3.0.0.tar.gz"
+
+    echo "Launch AppFormix..."
+    #copy_ssh_key $host
+    #for pkg in $pkg_list; do
+    #    scp /opt/package/$pkg $host:.
+    #done
+    scp cluster/builder $host:.
+    #ssh $host "./builder install-appformix"
+    scp cluster/appformix/hosts $host:./appformix-3.0.0/inventory/
+    scp cluster/appformix/all $host:./appformix-3.0.0/inventory/group_vars/
+    ssh $host "./builder launch-appformix"
+}
+
 post_deployment()
 {
-    local arr=(${vm_address_list[contrail-1]})
-    local host=${arr[0]}
 
     echo "Post-Deployment"
     configure_haproxy
     setup_openstack
     #configure_poc
     add_static_route
-    install_command $host
     launch_command $host
 }
 
