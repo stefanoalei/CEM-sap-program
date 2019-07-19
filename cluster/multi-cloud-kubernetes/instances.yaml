@@ -8,8 +8,6 @@ instances:
   kmaster-1:
     provider: bms
     ip: 10.6.8.1
-    ssh_user: root
-    ssh_pwd: c0ntrail123
     roles:
       config_database:
       config:
@@ -22,8 +20,6 @@ instances:
   csn-1:
     provider: bms
     ip: 10.6.8.3
-    ssh_user: root
-    ssh_pwd: c0ntrail123
     roles:
       vrouter:
         TSN_EVPN_MODE: True
@@ -31,16 +27,12 @@ instances:
   node-1:
     provider: bms
     ip: 10.6.8.7
-    ssh_user: root
-    ssh_pwd: c0ntrail123
     roles:
       vrouter:
       k8s_node:
   node-2:
     provider: bms
     ip: 10.6.8.8
-    ssh_user: root
-    ssh_pwd: c0ntrail123
     roles:
       vrouter:
       k8s_node:
