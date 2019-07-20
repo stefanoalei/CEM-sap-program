@@ -12,9 +12,9 @@ launch_builder()
     local host=${arr[0]}
 
     echo "Launch builder..."
-    #copy_ssh_key $host
-    #ssh $host yum install -y ansible git
-    #install_kubernetes_deployer $host
+    copy_ssh_key $host
+    ssh $host yum install -y ansible git
+    install_kubernetes_deployer $host
 }
 
 delete_builder()
@@ -43,7 +43,7 @@ deploy()
     if [ -n "$contrail_playbook" ]; then
         load_playbook $contrail_playbook $host
     fi
-    #run_playbook_kubernetes $host
+    run_playbook_kubernetes $host
 }
 
 add_static_route()
@@ -78,7 +78,8 @@ launch_command()
 
     echo "Launch Contrail Command..."
     scp $cluster_path/instances.yaml $host:./instances.yaml
-    ssh $host "./builder launch-command $host kubernetes provision_cluster"
+    #ssh $host "./builder launch-command $host kubernetes provision_cluster"
+    ssh $host "./builder launch-command $host kubernetes import_cluster"
 }
  
 post_deployment()
