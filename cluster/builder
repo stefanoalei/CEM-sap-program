@@ -94,6 +94,18 @@ check_playbook_result()
 
 build_instances_yaml()
 {
+    local orch
+    local tag
+
+    # Contrail container tag is with OpenStack release only for OpenStack.
+    orch=$(cat cluster/multi-cloud-kubernetes/instances.yaml | \
+            awk "/CLOUD_ORCHESTRATOR/"'{print $2}')
+    if [ "$orch" == "openstack" ]; then
+        tag=$contrail_version-$openstack_version
+    else
+        tag=$contrail_version
+    fi
+
     if [ "${registry_url:0:15}" == "hub.juniper.net" ]; then
         sed -i \
             -e "s|__registry_url__|$registry_url|" \
@@ -101,8 +113,8 @@ build_instances_yaml()
             -e "s|__registry_username__|$registry_username|" \
             -e "s|__registry_password__|$registry_password|" \
             -e "s|__contrail_version__|$contrail_version|" \
-            -e "s|__contrail_tag__|$contrail_version-$openstack_version|" \
             -e "s|__openstack_version__|$openstack_version|" \
+            -e "s|__contrail_tag__|$tag|" \
             instances.yaml
     else
         sed -i \
@@ -110,7 +122,7 @@ build_instances_yaml()
             -e "s|__registry_insecure__|True|" \
             -e "s|__contrail_version__|$contrail_version|" \
             -e "s|__openstack_version__|$openstack_version|" \
-            -e "s|__contrail_tag__|$openstack_version-$contrail_version|" \
+            -e "s|__contrail_tag__|$tag|" \
             instances.yaml
     fi
 }
