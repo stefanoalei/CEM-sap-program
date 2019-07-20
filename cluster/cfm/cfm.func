@@ -3,7 +3,7 @@ cluster_path=cluster/cfm
 
 cluster_br_list="br-int br-r1"
 
-server_list="contrail-1 openstack-1 csn-1 compute-1"
+server_list="contrail-1 openstack-1 csn-1 compute-1 appformix-1"
 
 
 launch_builder()
@@ -125,20 +125,20 @@ launch_appformix()
     local arr=(${vm_address_list[appformix-1]})
     local host=${arr[0]}
 
-    pkg_list="
+    file_list="
+        appformix-internal-openstack-3.0.sig
         appformix-3.0.0.tar.gz
         appformix-dependencies-images-3.0.0.tar.gz
-        appformix-internal-openstack-3.0.sig
         appformix-openstack-images-3.0.0.tar.gz
         appformix-platform-images-3.0.0.tar.gz"
 
     echo "Launch AppFormix..."
-    #copy_ssh_key $host
-    #for pkg in $pkg_list; do
-    #    scp /opt/package/$pkg $host:.
-    #done
+    copy_ssh_key $host
+    for file in $file_list; do
+        scp /opt/appformix/$file $host:.
+    done
     scp cluster/builder $host:.
-    #ssh $host "./builder install-appformix"
+    ssh $host "./builder install-appformix"
     scp cluster/appformix/hosts $host:./appformix-3.0.0/inventory/
     scp cluster/appformix/all $host:./appformix-3.0.0/inventory/group_vars/
     ssh $host "./builder launch-appformix"
@@ -154,5 +154,6 @@ post_deployment()
     #configure_poc
     add_static_route
     launch_command $host
+    #launch_appformix
 }
 

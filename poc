@@ -891,6 +891,10 @@ main()
             shift
             delete_command "$@"
             ;;
+        launch-appformix)
+            shift
+            launch_appformix "$@"
+            ;;
         rebuild-fabric)
             rebuild_fabric
             ;;
