@@ -288,13 +288,13 @@ delete_command()
 
 install_appformix()
 {
-    #yum install -y python-devel
-    #yum install -y \
-    #    https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
-    #yum repolist
-    #yum install -y python-pip
-    #yum groupinstall -y 'Development Tools'
-    #pip install ansible==2.3
+    yum install -y python-devel
+    yum install -y \
+        https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    yum repolist
+    yum install -y python-pip
+    yum groupinstall -y 'Development Tools'
+    pip install ansible==2.3
 
     tar -xzf appformix-3.0.0.tar.gz
     mkdir -p appformix-3.0.0/inventory/group_vars
