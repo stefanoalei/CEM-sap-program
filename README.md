@@ -60,7 +60,9 @@ Here are prerequisites for the hypervisor.
   * Upgrade kernel and reboot, after installation.
 
 
-# 3 Setup hypervisor
+# 3 Build enviroment
+
+## 3.1 Setup hypervisor
 
 * Install `git`.
 ```
@@ -75,6 +77,7 @@ git clone https://github.com/tonyliu0592/contrail-poc.git
 * Update the followings variables in `poc.conf`.
   * `volume_dev`
   * `ntp_server`
+Note, comment out `volume_dev` if no partition is reserved.
 
 * Setup the hypervisor.
 ```
@@ -82,7 +85,10 @@ cd contrail-poc
 poc setup-hypervisor
 ```
 
-* Copy `vm-image` to `/opt` directory.
+
+## 3.2 VM image
+
+Copy the following VM images `/opt/vm-image` directory.
 ```
 CentOS-7-x86_64-GenericCloud-1805.qcow2
 cirros-0.4.0-x86_64-disk.img
@@ -93,6 +99,25 @@ vFPC-20180829.img
 vqfx-pfe.qcow2
 vqfx-re.qcow2
 ```
+
+
+## 3.3 AppFormix
+
+AppFormix is integrated with cluster `cfm`.
+
+* Download the following packages from Juniper and upload them to `/opt/appformix` directory on the hypervisor host.
+```
+appformix-3.0.0.tar.gz
+appformix-dependencies-images-3.0.0.tar.gz
+appformix-openstack-images-3.0.0.tar.gz
+appformix-platform-images-3.0.0.tar.gz
+```
+
+* Send request to `AppFormix-Key-Request.juniper.net` for AppFormix license.
+
+* Copy the license to `/opt/appformix` directory on the hypervisor host.
+
+* Update `appformix_license` in `poc.conf`.
 
 
 # 4 Deploy
