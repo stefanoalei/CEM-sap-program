@@ -98,8 +98,7 @@ build_instances_yaml()
     local tag
 
     # Contrail container tag is with OpenStack release only for OpenStack.
-    orch=$(cat cluster/multi-cloud-kubernetes/instances.yaml | \
-            awk "/CLOUD_ORCHESTRATOR/"'{print $2}')
+    orch=$(cat instances.yaml | awk "/CLOUD_ORCHESTRATOR/"'{print $2}')
     if [ "$orch" == "openstack" ]; then
         tag=$contrail_version-$openstack_version
     else
