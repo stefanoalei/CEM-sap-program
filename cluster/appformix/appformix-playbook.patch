@@ -1,0 +1,13 @@
+--- appformix-3.0.0/roles/appformix_docker_images/tasks/main.yml.orig	2019-07-22 02:07:20.482182419 +0000
++++ appformix-3.0.0/roles/appformix_docker_images/tasks/main.yml	2019-07-22 02:07:40.192215901 +0000
+@@ -34,9 +34,6 @@
+   with_items: "{{ appformix_docker_images | default([]) }}"
+ 
+ - name: Load AppFormix Docker images from file
+-  docker_image:
+-    name: "{{ item }}"
+-    state: "{{ (appformix_state == 'absent') | ternary('absent', 'present') }}"
+-    load_path: "{{ item.dest }}"
++  shell: docker load < {{ item.dest }}
+   when: appformix_docker_images is defined and item is defined and item.dest is defined and result.load == True
+   with_items: "{{ image_copy.results | default([]) }}"

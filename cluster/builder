@@ -297,6 +297,20 @@ delete_command()
     docker volume rm $vol
 }
 
+build_appformix_var()
+{
+    sed -i \
+        -e "s|__appformix_license__|$appformix_license|" \
+        all
+}
+
+patch_appformix_playbook()
+{
+    #sed -i '/load_path/a \    timeout: 120' \
+    #        appformix-3.0.0/roles/appformix_docker_images/tasks/main.yml
+    patch -p 0 < appformix-playbook.patch
+}
+
 install_appformix()
 {
     yum install -y python-devel
@@ -313,6 +327,10 @@ install_appformix()
 
 launch_appformix()
 {
+    build_appformix_var
+    patch_appformix_playbook
+    cp hosts appformix-3.0.0/inventory/
+    cp all appformix-3.0.0/inventory/group_vars/
     scp 10.6.8.2:/etc/kolla/kolla-toolbox/admin-openrc.sh ./
     source admin-openrc.sh
     cd appformix-3.0.0

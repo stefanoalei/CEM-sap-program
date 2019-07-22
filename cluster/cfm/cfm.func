@@ -126,7 +126,7 @@ launch_appformix()
     local host=${arr[0]}
 
     file_list="
-        appformix-internal-openstack-3.0.sig
+        $appformix_license
         appformix-3.0.0.tar.gz
         appformix-dependencies-images-3.0.0.tar.gz
         appformix-openstack-images-3.0.0.tar.gz
@@ -137,10 +137,12 @@ launch_appformix()
     for file in $file_list; do
         scp /opt/appformix/$file $host:.
     done
+    scp poc.conf $host:.
     scp cluster/builder $host:.
     ssh $host "./builder install-appformix"
-    scp cluster/appformix/hosts $host:./appformix-3.0.0/inventory/
-    scp cluster/appformix/all $host:./appformix-3.0.0/inventory/group_vars/
+    scp cluster/appformix/hosts $host:.
+    scp cluster/appformix/all $host:.
+    scp cluster/appformix/appformix-playbook.patch $host:.
     ssh $host "./builder launch-appformix"
 }
 
@@ -154,6 +156,6 @@ post_deployment()
     #configure_poc
     add_static_route
     launch_command $host
-    #launch_appformix
+    launch_appformix
 }
 

@@ -120,7 +120,7 @@ appformix-platform-images-3.0.0.tar.gz
 * Update `appformix_license` in `poc.conf`.
 
 #### Note
-For the first time to open AppFormix UI, skip license and installation.
+For the first time to open AppFormix UI, select `skip license upload` and `skip the installation`.
 
 
 # 4 Deploy
