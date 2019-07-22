@@ -119,6 +119,9 @@ appformix-platform-images-3.0.0.tar.gz
 
 * Update `appformix_license` in `poc.conf`.
 
+#### Note
+For the first time to open AppFormix UI, skip license and installation.
+
 
 # 4 Deploy
 
@@ -178,6 +181,7 @@ HAProxy is configured to provide access to the cluster.
 Contrail web UI:   https://<host>:8143
 Contrail Command:  https://<host>:9091
 OpenStack Horizon: http://<host>
+AppFormix UI:      http://<host>:9000
 ```
 
 Default username and password for vQFX and vMX is `root` / `Juniper`.
