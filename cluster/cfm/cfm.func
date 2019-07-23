@@ -156,6 +156,6 @@ post_deployment()
     #configure_poc
     add_static_route
     launch_command $host
-    launch_appformix
+    #launch_appformix
 }
 
