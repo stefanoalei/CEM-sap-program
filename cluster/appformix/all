@@ -9,9 +9,33 @@ appformix_docker_images:
   - /root/appformix-openstack-images-3.0.0.tar.gz
   - /root/appformix-platform-images-3.0.0.tar.gz
 
-appformix_plugins: '{{ appformix_contrail_factory_plugins }} + {{ appformix_network_device_factory_plugins }} + {{ appformix_openstack_factory_plugins }} + {{ appformix_application_factory_plugins }} + {{ appformix_remote_host_factory_plugins }}'
+appformix_plugins:
+  - { plugin_info: 'certified_plugins/heavy_hitters.json' }
+  - { plugin_info: 'certified_plugins/cassandra_node_usage.json' }
+  - { plugin_info: 'certified_plugins/contrail_vrouter.json' }
+  - { plugin_info: 'certified_plugins/contrail_vrouter_flows.json' }
+  - { plugin_info: 'certified_plugins/contrail_vrouter_5x.json' }
+    
+appformix_openstack_log_plugins:
+  - { plugin_info: 'certified_plugins/glance_logparser.json',log_file_path: '/var/lib/docker/volumes/kolla_logs/_data/glance/glance-api.log'}
+  - { plugin_info: 'certified_plugins/keystone_logparser.json', log_file_path: '/var/lib/docker/volumes/kolla_logs/_data/keystone/keystone.log'}
+  - { plugin_info: 'certified_plugins/neutron_logparser.json', log_file_path: '/var/lib/docker/volumes/kolla_logs/_data/neutron/neutron-server.log'}
+  - { plugin_info: 'certified_plugins/nova_logparser.json', log_file_path: '/var/lib/docker/volumes/kolla_logs/_data/nova/nova-api.log'}
 
-appformix_network_device_monitoring_enabled: true
-appformix_remote_host_monitoring_enabled: true
-appformix_jti_network_device_monitoring_enabled: true
+contrail_cluster_name: poc-contrail
+contrail_config_url: http://10.6.11.1:8082
+contrail_analytics_url: http://10.6.11.1:8081
+
+cassandra_cluster_name: poc-cassandra
+cassandra_username: cassandra
+cassandra_password: cassandra
+cassandra_host: 10.6.8.1
+
+appformix_rabbitmq_cluster_name: poc-rabbitmq
+appformix_rabbitmq_username: openstack
+appformix_rabbitmq_password: contrail123
+appformix_rabbitmq_nodes:
+ - { "RabbitUrl": "http://10.6.8.2:15672",  
+     "RabbitNode": "rabbit@openstack-1",
+     "AgentUrl": "" }
 
