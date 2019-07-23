@@ -26,16 +26,3 @@ contrail_cluster_name: poc-contrail
 contrail_config_url: http://10.6.11.1:8082
 contrail_analytics_url: http://10.6.11.1:8081
 
-cassandra_cluster_name: poc-cassandra
-cassandra_username: cassandra
-cassandra_password: cassandra
-cassandra_host: 10.6.8.1
-
-appformix_rabbitmq_cluster_name: poc-rabbitmq
-appformix_rabbitmq_username: openstack
-appformix_rabbitmq_password: contrail123
-appformix_rabbitmq_nodes:
- - { "RabbitUrl": "http://10.6.8.2:15672",  
-     "RabbitNode": "rabbit@openstack-1",
-     "AgentUrl": "" }
-
