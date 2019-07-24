@@ -61,6 +61,7 @@ configure_vmx_1()
     local host=${arr[0]}
 
     ssh $host "cli -c 'configure; \
+set chassis fpc 0 pic 0 tunnel-services bandwidth 1g; \
 set interfaces lo0 unit 0 family inet address 10.6.0.31/32; \
 set interfaces ge-0/0/0 unit 0 family inet address 10.6.30.0/31; \
 set interfaces ge-0/0/1 unit 0 family inet address 10.6.11.254/24; \
@@ -81,6 +82,7 @@ configure_vmx_2()
     local host=${arr[0]}
 
     ssh $host "cli -c 'configure; \
+set chassis fpc 0 pic 0 tunnel-services bandwidth 1g; \
 set interfaces lo0 unit 0 family inet address 10.6.0.41/32; \
 set interfaces ge-0/0/0 unit 0 family inet address 10.6.30.1/31; \
 set interfaces ge-0/0/1 unit 0 family inet address 10.6.12.254/24; \

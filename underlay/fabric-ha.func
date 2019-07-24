@@ -132,6 +132,7 @@ configure_vmx_1()
     local host=${arr[0]}
 
     cat << __EOF__ > /tmp/conf
+set chassis fpc 0 pic 0 tunnel-services bandwidth 1g
 set interfaces lo0 unit 0 family inet address 10.6.0.31/32
 set interfaces ge-0/0/2 unit 0 family inet address 10.6.30.1/31
 set interfaces ge-0/0/3 unit 0 family inet address 10.6.30.5/31
@@ -156,6 +157,7 @@ configure_vmx_2()
     local host=${arr[0]}
 
     cat << __EOF__ > /tmp/conf
+set chassis fpc 0 pic 0 tunnel-services bandwidth 1g
 set interfaces lo0 unit 0 family inet address 10.6.0.32/32
 set interfaces ge-0/0/2 unit 0 family inet address 10.6.30.3/31
 set interfaces ge-0/0/3 unit 0 family inet address 10.6.30.7/31
