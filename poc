@@ -79,6 +79,21 @@ __EOF__
     fi
 }
 
+create_bridge_ubuntu()
+{
+    local name=$1
+    local output
+
+    ip -br link show dev $name > /dev/null 2>&1
+    if (( $? == 0 )); then
+        return
+    fi
+
+    echo "Create bridge $name..."
+    brctl addbr $name
+    ip link set dev $name up
+}
+
 create_bridge()
 {
     local name=$1
@@ -104,6 +119,22 @@ delete_bridge_centos()
     if [ "$port" == "" ]; then
         ip link delete $name
         rm -f /etc/sysconfig/network-scripts/ifcfg-$name
+    fi
+}
+
+delete_bridge_centos()
+{
+    local name=$1
+    local port
+
+    echo "Delete bridge $name..."
+    ip -br link show dev $name > /dev/null 2>&1
+    if (( $? )); then
+        return
+    fi
+    port=$(brctl show $name | awk "/$name/"'{print $4'})
+    if [ "$port" == "" ]; then
+        ip link delete $name
     fi
 }
 
