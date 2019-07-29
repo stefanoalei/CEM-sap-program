@@ -84,7 +84,8 @@ set interfaces lo0 unit 0 family inet address 10.6.0.11/32
 set interfaces xe-0/0/0 unit 0 family inet address 10.6.20.1/31
 set interfaces xe-0/0/1 unit 0 family ethernet-switching vlan members vlan-11
 set interfaces irb unit 11 family inet address 10.6.11.254/24
-set vlans vlan-11 vlan-id 11;set vlans vlan-11 l3-interface irb.11
+set vlans vlan-11 vlan-id 11
+set vlans vlan-11 l3-interface irb.11
 set routing-options route-distinguisher-id 10.6.0.11
 set routing-options autonomous-system 64011
 set protocols bgp group fabric type external
