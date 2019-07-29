@@ -248,4 +248,8 @@ __EOF__
     ssh $host "cli -c 'configure; load set conf; commit'"
 }
 
+post_underlay()
+{
+    echo "Post underlay deployment..."
+}
 

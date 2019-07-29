@@ -23,7 +23,7 @@ delete_builder()
 }
 
 
-pre_deployment()
+pre_cluster()
 {
     echo "Pre-Deployment"
 }
@@ -146,7 +146,7 @@ launch_appformix()
     ssh $host "./builder launch-appformix"
 }
 
-post_deployment()
+post_cluster()
 {
 
     echo "Post-Deployment"

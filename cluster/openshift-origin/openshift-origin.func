@@ -58,7 +58,7 @@ build_hosts()
     done
 }
 
-pre_deployment()
+pre_cluster()
 {
     echo "Pre-Deployment"
     install_network_manager
@@ -78,7 +78,7 @@ deploy()
     run_playbook_openshift $host
 }
 
-post_deployment()
+post_cluster()
 {
     return 0
     echo "Post-Deployment"

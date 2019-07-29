@@ -111,7 +111,7 @@ delete_builder()
     delete_vm "command-b"
 }
 
-pre_deployment()
+pre_cluster()
 {
     echo "Pre-Deployment"
 }
@@ -146,7 +146,7 @@ add_static_route()
     done
 }
 
-post_deployment()
+post_cluster()
 {
     local arr
 

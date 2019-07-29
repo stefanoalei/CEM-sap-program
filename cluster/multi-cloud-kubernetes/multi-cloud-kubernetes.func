@@ -22,7 +22,7 @@ delete_builder()
     echo "Delete builder..."
 }
 
-pre_deployment()
+pre_cluster()
 {
     local arr
     local host
@@ -82,7 +82,7 @@ launch_command()
     ssh $host "./builder launch-command $host kubernetes import_cluster"
 }
  
-post_deployment()
+post_cluster()
 {
     local arr=(${vm_address_list[command]})
     local host=${arr[0]}

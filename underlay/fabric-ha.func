@@ -4,12 +4,11 @@ underlay_br_list="br-int br-r1 br-dummy br-ext
     br-l1-int br-l2-int br-s1-int br-s2-int br-gw1-int br-gw2-int
     br-s1-xe0 br-s1-xe1 br-s1-xe2 br-s1-xe3
     br-s2-xe0 br-s2-xe1 br-s2-xe2 br-s2-xe3
-    br-l1-xe2 br-l1-xe3
-    br-l2-xe2 br-l2-xe3"
+    br-l1-xe2 br-l2-xe2"
 
 underlay_veth_list="
-  l1-xe3,bms-dh1
-  l2-xe3,bms-dh2"
+  l1-xe3,bms-dh-1
+  l2-xe3,bms-dh-2"
 
 #underlay_veth_list="
 #  gw1-re,gw1-pfe
@@ -19,14 +18,13 @@ underlay_veth_list="
 #  s2-re-em1,s2-pfe-em1
 #  s2-xe0,gw1-ge3 s2-xe1,gw2-ge3 s2-xe2,l1-xe1 s2-xe3,l2-xe1
 #  l1-re-em1,l1-pfe-em1
-#  l1-xe2,bms12 l1-xe3,bms-dh1
+#  l1-xe2,bms12 l1-xe3,bms-dh-1
 #  l2-re-em1,l2-pfe-em1
-#  l2-xe2,bms22 l2-xe3,bms-dh2"
+#  l2-xe2,bms22 l2-xe3,bms-dh-2"
 
 vqfx_list="vqfx-spine-1 vqfx-spine-2 vqfx-leaf-1 vqfx-leaf-2"
 vmx_list="vmx-1 vmx-2"
-#bms_list="bms-12 bms-22 bms-dh"
-bms_list="bms-12 bms-22"
+bms_list="bms-12 bms-22 bms-dh"
 
 #####################################################
 vm_role[vqfx-spine-1-re]=vqfx-re
@@ -58,7 +56,7 @@ vm_address_list[vqfx-leaf-1-re]="10.6.8.11"
 #vm_nic_list[vqfx-leaf-1-re]="br=br-int dir=l1-re-em1 br=br-dummy
 #  dir=l1-xe0 dir=l1-xe1 dir=l1-xe2 dir=l1-xe3 br=br-r1"
 vm_nic_list[vqfx-leaf-1-re]="br=br-int br=br-l1-int br=br-dummy
-  br=br-s1-xe2 br=br-s2-xe2 br=br-l1-xe2 br=br-l1-xe3 br=br-r1"
+  br=br-s1-xe2 br=br-s2-xe2 br=br-l1-xe2 dir=l1-xe3 br=br-r1"
 
 vm_role[vqfx-leaf-1-pfe]=vqfx-pfe
 vm_nic_model[vqfx-leaf-1-pfe]=e1000
@@ -70,7 +68,7 @@ vm_address_list[vqfx-leaf-2-re]="10.6.8.12"
 #vm_nic_list[vqfx-leaf-2-re]="br=br-int dir=l2-re-em1 br=br-dummy
 #  dir=l2-xe0 dir=l2-xe1 dir=l2-xe2 dir=l2-xe3"
 vm_nic_list[vqfx-leaf-2-re]="br=br-int br=br-l2-int br=br-dummy
-  br=br-s1-xe3 br=br-s2-xe3 br=br-l2-xe2 br=br-l2-xe3"
+  br=br-s1-xe3 br=br-s2-xe3 br=br-l2-xe2 dir=l2-xe3"
 
 vm_role[vqfx-leaf-2-pfe]=vqfx-pfe
 vm_nic_model[vqfx-leaf-2-pfe]=e1000
@@ -115,8 +113,8 @@ vm_role[bms-22]=cirros
 vm_nic_list[bms-22]="br=br-l2-xe2"
 
 vm_role[bms-dh]=centos
-#vm_nic_list[bms-dh]="dir=bms-dh1 dir=bms-dh2"
-vm_nic_list[bms-dh]="br=br-l1-xe3 br=br-l2-xe3"
+vm_nic_model[bms-dh]=e1000
+vm_nic_list[bms-dh]="dir=bms-dh-1 dir=bms-dh-2"
 
 vm_role[bms-lcm]=bms
 #vm_nic_list[bms-lcm]="dir=bms-lcm"
@@ -282,5 +280,10 @@ __EOF__
 
     scp /tmp/conf $host:.
     ssh $host "cli -c 'configure; load set conf; commit'"
+}
+
+post_underlay()
+{
+    echo "Post underlay deployment..."
 }
 

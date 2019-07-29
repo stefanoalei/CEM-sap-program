@@ -22,7 +22,7 @@ delete_builder()
     echo "Delete builder..."
 }
 
-pre_deployment()
+pre_cluster()
 {
     echo "Pre-Deployment"
 }
@@ -36,7 +36,7 @@ deploy()
     run_playbook_openstack $host
 }
 
-post_deployment()
+post_cluster()
 {
     echo "Post-Deployment"
     configure_haproxy

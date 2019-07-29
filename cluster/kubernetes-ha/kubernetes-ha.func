@@ -22,7 +22,7 @@ delete_builder()
     echo "Delete builder..."
 }
 
-pre_deployment()
+pre_cluster()
 {
     echo "Pre-Deployment"
     for name in kmaster-1 kmaster-2 kmaster-3; do
@@ -45,7 +45,7 @@ deploy()
     run_playbook_kubernetes $host
 }
 
-post_deployment()
+post_cluster()
 {
     echo "Post-Deployment"
     configure_haproxy

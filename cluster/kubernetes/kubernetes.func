@@ -22,7 +22,7 @@ delete_builder()
     echo "Delete builder..."
 }
 
-pre_deployment()
+pre_cluster()
 {
     local arr
     local host
@@ -46,7 +46,7 @@ deploy()
     run_playbook_kubernetes $host
 }
 
-post_deployment()
+post_cluster()
 {
     echo "Post-Deployment"
     configure_haproxy

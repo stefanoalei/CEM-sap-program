@@ -520,6 +520,7 @@ build_underlay()
     configure_vqfx_all
     configure_vmx_all
     update_hosts_underlay
+    post_underlay
 }
 
 delete_underlay()
@@ -717,10 +718,10 @@ build_cluster()
         wait_for_host $name
     done
     launch_builder
-    pre_deployment
+    pre_cluster
     deploy
     if (( $? )); then return 1; fi
-    post_deployment
+    post_cluster
     update_hosts_cluster
 }
 
@@ -939,8 +940,11 @@ main()
         deploy)
             deploy
             ;;
-        post-deployment)
-            post_deployment
+        post-cluster)
+            post_cluster
+            ;;
+        post-underlay)
+            post_underlay
             ;;
         *)
             help
