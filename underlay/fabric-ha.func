@@ -285,5 +285,9 @@ __EOF__
 post_underlay()
 {
     echo "Post underlay deployment..."
+    ip link set dev macvtap0 promisc on
+    ip link set dev macvtap1 promisc on
+    ip link set dev macvtap2 promisc on
+    ip link set dev macvtap3 promisc on
 }
 
