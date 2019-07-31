@@ -350,25 +350,40 @@ Total                                     19     152    360
 
 ## B.2 Cluster management address
 ```
-            openstack-ha  openstack     cfm           kubernetes-ha  kubernetes  openshift  multi-cloud-kubernetes  multi-site   multi-site-2
-------------------------------------------------------------------------------------------------------------------------
-10.6.8.1    contrail-1    contrail-1    contrail-1    kmaster-1      kmaster-1   master-1   kmaster-1               contrail-1
-10.6.8.2    openstack-1   openstack-1   openstack-1   kmaster-2                                                     openstack-1
-10.6.8.3    contrail-2                  csn-1         kmaster-3                                                     csn-1
-10.6.8.4    openstack-2                                                          infra-1                            csn-r1
+            openstack-ha  openstack     cfm           multi-site
+----------------------------------------------------------------
+10.6.8.1    contrail-1    contrail-1    contrail-1    contrail-1
+10.6.8.2    openstack-1   openstack-1   openstack-1   openstack-1
+10.6.8.3    contrail-2                  csn-1         csn-1
+10.6.8.4    openstack-2                               csn-r1
 10.6.8.5    contrail-3
 10.6.8.6    openstack-3
-10.6.8.7    compute-1     compute-1     compute-1     node-1         node-1      node-1     node-1                  compute-1
-10.6.8.8    compute-2     compute-2                   node-2         node-2      node-2     node-2                  compute-r1
-10.6.8.9                                                                                    mc-gw
-10.6.8.10                                                                                   command
+10.6.8.7    compute-1     compute-1     compute-1     compute-1
+10.6.8.8    compute-2     compute-2     compute-2     compute-r1
 
-10.6.8.51                                                                                                                        contrail-c2-1
-10.6.8.52                                                                                                                        openstack-c2-1
-10.6.8.53                                                                                                                        csn-c2-1
-10.6.8.54                                                                                                                        csn-c2-r1
-10.6.8.57                                                                                                                        compute-c2-1
-10.6.8.58                                                                                                                        compute-c2-r1
+            multi-site-2
+-------------------------------
+10.6.8.51   contrail-c2-1
+10.6.8.52   openstack-c2-1
+10.6.8.53   csn-c2-1
+10.6.8.54   csn-c2-r1
+10.6.8.57   compute-c2-1
+10.6.8.58   compute-c2-r1
+
+            kubernetes-ha  kubernetes  openshift-ha  openshift
+--------------------------------------------------------------
+10.6.8.61   master-1       master-1    master-1      master-1
+10.6.8.62   master-2                   master-2
+10.6.8.63   master-3                   master-3
+10.6.8.64                              infra-1       infra-1
+10.6.8.65                              infra-2
+10.6.8.66                              infra-3
+10.6.8.67   node-1         node-1      node-1        node-1
+10.6.8.68   node-2         node-2      node-2        node-2
+
+10.6.8.71   appformix-1
+10.6.8.81   mc-gw
+10.6.8.91   command
 ```
 
 
