@@ -5,9 +5,9 @@ provider_config:
     ntpserver: 10.6.8.254
     domainsuffix: poc
 instances:
-  kmaster-1:
+  cmaster-1:
     provider: bms
-    ip: 10.6.8.1
+    ip: 10.6.8.61
     roles:
       config_database:
       config:
@@ -17,9 +17,9 @@ instances:
       webui:
       kubemanager:
       k8s_master:
-  kmaster-2:
+  cmaster-2:
     provider: bms
-    ip: 10.6.8.2
+    ip: 10.6.8.62
     roles:
       config_database:
       config:
@@ -29,9 +29,9 @@ instances:
       webui:
       kubemanager:
       k8s_master:
-  kmaster-3:
+  cmaster-3:
     provider: bms
-    ip: 10.6.8.3
+    ip: 10.6.8.63
     roles:
       config_database:
       config:
@@ -43,13 +43,13 @@ instances:
       k8s_master:
   node-1:
     provider: bms
-    ip: 10.6.8.7
+    ip: 10.6.8.67
     roles:
       vrouter:
       k8s_node:
   node-2:
     provider: bms
-    ip: 10.6.8.8
+    ip: 10.6.8.68
     roles:
       vrouter:
       k8s_node:
@@ -61,9 +61,9 @@ contrail_configuration:
   CONTRAIL_VERSION: __contrail_version__
   CONTRAIL_CONTAINER_TAG: __contrail_tag__
   CLOUD_ORCHESTRATOR: kubernetes
-  CONTROLLER_NODES: 10.6.11.1,10.6.11.2,10.6.11.3
-  CONTROL_NODES: 10.6.11.1,10.6.11.2,10.6.11.3
-  WEBUI_NODES: 10.6.8.1,10.6.8.2,10.6.8.3
+  CONTROLLER_NODES: 10.6.11.61,10.6.11.62,10.6.11.63
+  CONTROL_NODES: 10.6.11.61,10.6.11.62,10.6.11.63
+  WEBUI_NODES: 10.6.8.61,10.6.8.62,10.6.8.63
   VROUTER_GATEWAY: 10.6.11.254
   CONFIG_DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: 20
   DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: 20

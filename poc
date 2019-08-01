@@ -544,7 +544,7 @@ upload_instances_yaml()
     local src=$2
 
     if [ -z "$src" ]; then src=instances.yaml; fi
-    scp $cluster_path/$src $host:.
+    scp cluster/$poc_cluster/$src $host:.
 }
 
 check_playbook_result()
@@ -575,7 +575,7 @@ configure_haproxy()
     IFS='/'; a=(${cidr}); unset IFS
 
     rm -f /etc/haproxy/haproxy.cfg 
-    cp $cluster_path/haproxy.cfg /etc/haproxy/haproxy.cfg 
+    cp cluster/$poc_cluster/haproxy.cfg /etc/haproxy/haproxy.cfg 
     sed -i -e "s/__address__/${a[0]}/" /etc/haproxy/haproxy.cfg
     systemctl restart haproxy
 }
@@ -637,7 +637,7 @@ run_playbook_openshift()
     local host=$1
 
     echo "Run playbook......"
-    scp $cluster_path/poc.yaml $host:./openshift-ansible/inventory/
+    scp cluster/$poc_cluster/poc.yaml $host:./openshift-ansible/inventory/
     ssh $host sed -i \
             -e "s/__registry_username__/$registry_username/" \
             -e "s/__registry_password__/$registry_password/" \

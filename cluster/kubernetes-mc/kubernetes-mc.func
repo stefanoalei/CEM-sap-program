@@ -1,6 +1,4 @@
 
-cluster_path=cluster/multi-cloud-kubernetes
-
 cluster_br_list="br-int br-r1 br-r2"
 
 server_list="kmaster-1 csn-1 node-1 node-2 command mc-gw"
@@ -77,7 +75,7 @@ launch_command()
     local host=$1
 
     echo "Launch Contrail Command..."
-    scp $cluster_path/instances.yaml $host:./instances.yaml
+    scp cluster/$poc_cluster/instances.yaml $host:./instances.yaml
     #ssh $host "./builder launch-command $host kubernetes provision_cluster"
     ssh $host "./builder launch-command $host kubernetes import_cluster"
 }

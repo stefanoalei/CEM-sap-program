@@ -22,7 +22,3 @@ appformix_openstack_log_plugins:
   - { plugin_info: 'certified_plugins/neutron_logparser.json', log_file_path: '/var/lib/docker/volumes/kolla_logs/_data/neutron/neutron-server.log'}
   - { plugin_info: 'certified_plugins/nova_logparser.json', log_file_path: '/var/lib/docker/volumes/kolla_logs/_data/nova/nova-api.log'}
 
-contrail_cluster_name: poc-contrail
-contrail_config_url: http://10.6.11.1:8082
-contrail_analytics_url: http://10.6.11.1:8081
-

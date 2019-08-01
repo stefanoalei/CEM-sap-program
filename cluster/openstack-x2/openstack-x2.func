@@ -1,6 +1,4 @@
 
-cluster_path=cluster/openstack-x2
-
 cluster_br_list="br-int br-r1 br-r2"
 
 server_list="contrail-a openstack-a compute-a

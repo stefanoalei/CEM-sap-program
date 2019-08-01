@@ -1,6 +1,4 @@
 
-cluster_path=cluster/openstack-ha
-
 cluster_br_list="br-int br-r1"
 
 server_list="contrail-1 contrail-2 contrail-3

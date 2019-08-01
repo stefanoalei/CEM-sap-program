@@ -1,6 +1,4 @@
 
-cluster_path=cluster/multi-site-2
-
 cluster_br_list="br-int br-r1 br-r2"
 
 server_list="contrail-c2-1 openstack-c2-1 csn-c2-1 compute-c2-1 compute-c2-r1"
@@ -71,7 +69,7 @@ launch_command()
     local host=$1
 
     echo "Launch Contrail Command..."
-    scp $cluster_path/instances.yaml $host:./instances.yaml
+    scp cluster/$poc_cluster/instances.yaml $host:./instances.yaml
     ssh $host "./builder launch-command $host openstack import_cluster"
 }
  

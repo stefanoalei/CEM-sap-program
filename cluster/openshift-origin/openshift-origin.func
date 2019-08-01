@@ -1,6 +1,4 @@
 
-cluster_path=cluster/openshift-origin
-
 cluster_br_list="br-int br-r1"
 
 server_list="master-1 infra-1 node-1 node-2"

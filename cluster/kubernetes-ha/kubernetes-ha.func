@@ -1,14 +1,12 @@
 
-cluster_path=cluster/kubernetes-ha
-
 cluster_br_list="br-int br-r1"
 
-server_list="kmaster-1 kmaster-2 kmaster-3 node-1 node-2"
+server_list="cmaster-1 cmaster-2 cmaster-3 node-1 node-2"
 
 
 launch_builder()
 {
-    local arr=(${vm_address_list[kmaster-1]})
+    local arr=(${vm_address_list[cmaster-1]})
     local host=${arr[0]}
 
     echo "Launch builder..."
@@ -25,7 +23,7 @@ delete_builder()
 pre_cluster()
 {
     echo "Pre-Deployment"
-    for name in kmaster-1 kmaster-2 kmaster-3; do
+    for name in cmaster-1 cmaster-2 cmaster-3; do
         arr=(${vm_address_list[$name]})
         host=${arr[0]}
         ssh $host "echo \"net.ipv4.ip_forward = 1\" >> /etc/sysctl.conf"
@@ -35,7 +33,7 @@ pre_cluster()
 
 deploy()
 {
-    local arr=(${vm_address_list[kmaster-1]})
+    local arr=(${vm_address_list[cmaster-1]})
     local host=${arr[0]}
 
     upload_instances_yaml $host
