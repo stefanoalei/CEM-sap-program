@@ -128,60 +128,36 @@ build_instances_yaml()
 
 run_playbook()
 {
-    local cmd1=$1
-    local cmd2=$2
-    local cmd3=$3
+    local pb_list=$1
+    local dst
 
     exec > >(tee builder.log)
     exec 2>&1
     echo "Deploy..."
 
     build_instances_yaml
-    if [ "${contrail_version:0:3}" == "5.0" ]; then
-        cp -f instances.yaml contrail-ansible-deployer/config/
-        cd contrail-ansible-deployer
-        $cmd1
-        check_playbook_result; if (( $? )); then return 1; fi
-        $cmd2
-        check_playbook_result; if (( $? )); then return 1; fi
-        $cmd3
-        check_playbook_result; if (( $? )); then return 1; fi
-    else
-        docker cp instances.yaml contrail_kolla_ansible_deployer:/root/contrail-ansible-deployer/config/instances.yaml
+    dst=/root/contrail-ansible-deployer/config/instances.yaml
+    docker cp instances.yaml contrail_kolla_ansible_deployer:$dst
+    for pb in $pb_list; do
         docker exec contrail_kolla_ansible_deployer bash -c \
-                "cd /root/contrail-ansible-deployer; $cmd1"
+                "cd /root/contrail-ansible-deployer;
+                 ansible-playbook -i inventory playbooks/$pb"
         check_playbook_result; if (( $? )); then return 1; fi
-        docker exec contrail_kolla_ansible_deployer bash -c \
-                "cd /root/contrail-ansible-deployer; $cmd2"
-        check_playbook_result; if (( $? )); then return 1; fi
-        docker exec contrail_kolla_ansible_deployer bash -c \
-                "cd /root/contrail-ansible-deployer; $cmd3"
-        check_playbook_result; if (( $? )); then return 1; fi
-    fi
+    done
 }
 
 deploy_openstack()
 {
-    local cmd1="ansible-playbook -i inventory/ -e orchestrator=openstack \
-            playbooks/configure_instances.yml"
-    local cmd2="ansible-playbook -i inventory/ -e orchestrator=openstack \
-            playbooks/install_openstack.yml"
-    local cmd3="ansible-playbook -i inventory/ -e orchestrator=openstack \
-            playbooks/install_contrail.yml"
-
-    run_playbook "$cmd1" "$cmd2" "$cmd3"
+    run_playbook "configure_instances.yml
+            install_openstack.yml
+            install_contrail.yml"
 }
 
 deploy_kubernetes()
 {
-    local cmd1="ansible-playbook -i inventory/ -e orchestrator=kubernetes \
-            playbooks/configure_instances.yml"
-    local cmd2="ansible-playbook -i inventory/ -e orchestrator=kubernetes \
-            playbooks/install_k8s.yml"
-    local cmd3="ansible-playbook -i inventory/ -e orchestrator=kubernetes \
-            playbooks/install_contrail.yml"
-
-    run_playbook "$cmd1" "$cmd2" "$cmd3"
+    run_playbook "configure_instances.yml
+            install_k8s.yml
+            install_contrail.yml"
 }
 
 build_command_yaml()
