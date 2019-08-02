@@ -25,7 +25,7 @@ Pick cluster and underlay to build the POC.
 ### Cluster
 * [Contrail and Openstack](#a1-openstack)
 * [Contrail and Openstack HA](#a2-openstack-ha)
-* [Contrail Fabric Management](#a3-cfm) 
+* [Contrail Fabric Management](#a3-cfm)
   (Contrail + OpenStack + CSN)
 * [Contrail and Kubernetes](#a4-kubernetes)
 * [Contrail and Kubernetes HA](#a5-kubernetes-ha)
@@ -33,7 +33,7 @@ Pick cluster and underlay to build the POC.
 * [Contrail and OpenShift Origin HA](#a7-openshift-ha)
 * [Multi-site 1](#a8-multi-site)
 * [Multi-site 2](#a9-multi-site-2)
-* [Contrail Fabric Management and Kubernetes](#a10-cfm-and-kubernetes) 
+* [Contrail Fabric Management and Kubernetes](#a10-cfm-and-kubernetes)
   (Contrail + OpenStack + CSN + Kubernetes)
 * [Kubernetes Multi-Cloud](#a11-kubernetes-multi-cloud)
   (Contrail + Kubernetes + MC-GW)
