@@ -51,14 +51,16 @@ Here are prerequisites for the hypervisor.
   * CentOS 7.5 and Ubuntu 16.04.3 are validated.
 
 * Disk partition
-  * This has to be done during host OS installation.
   * Optionally, for better disk performance, reserve a partition (1TB) for libvirt volume.
+  * Partition reservation has to be done during host OS installation.
   * Here is the recommended partition schema for a 2TB disk.
     * Partition 1, 250MB, `/boot`.
     * Partition 2, 1TB, volume group `system`.
       * Logical volume `swap`, 256GB.
       * Logical volume `root`, the rest space.
     * Partition 3, the rest space (for libvirt volume).
+
+Note: In case no partition is reserved, all VM images will be on file system.
 
 * Kernel
   * Upgrade kernel and reboot, after installation.
@@ -81,6 +83,7 @@ git clone https://github.com/tonyliu0592/contrail-poc.git
 * Update the followings variables in `poc.conf`.
   * `volume_dev`
   * `ntp_server`
+
 Note, comment out `volume_dev` if no partition is reserved.
 
 * Setup the hypervisor.
