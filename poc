@@ -612,22 +612,13 @@ load_playbook()
     fi
 }
 
-run_playbook_openstack()
+run_playbook()
 {
     local host=$1
+    local op=$2
 
     echo "Run playbook......"
-    ssh $host "./builder deploy-openstack"
-    check_playbook_result
-    if (( $? )); then return 1; fi
-}
-
-run_playbook_kubernetes()
-{
-    local host=$1
-
-    echo "Run playbook......"
-    ssh $host "./builder deploy-kubernetes"
+    ssh $host "./builder $2"
     check_playbook_result
     if (( $? )); then return 1; fi
 }

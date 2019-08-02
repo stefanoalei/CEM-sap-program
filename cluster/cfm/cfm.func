@@ -35,7 +35,7 @@ deploy()
     if [ -n "$contrail_playbook" ]; then
         load_playbook $contrail_playbook $host
     fi
-    run_playbook_openstack $host
+    run_playbook $host "deploy-openstack"
 }
 
 patch_nova_compute()

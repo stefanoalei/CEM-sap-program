@@ -30,7 +30,7 @@ deploy()
     local host=${arr[0]}
 
     load_playbook $contrail_playbook $host
-    run_playbook_openstack $host
+    run_playbook $host "deploy-openstack"
 }
 
 post_cluster()

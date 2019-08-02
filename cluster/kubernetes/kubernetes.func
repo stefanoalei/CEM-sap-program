@@ -41,7 +41,7 @@ deploy()
     if [ -n "$contrail_playbook" ]; then
         load_playbook $contrail_playbook $host
     fi
-    run_playbook_kubernetes $host
+    run_playbook $host "deploy-kubernetes"
 }
 
 post_cluster()

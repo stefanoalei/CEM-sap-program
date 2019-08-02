@@ -160,6 +160,14 @@ deploy_kubernetes()
             install_contrail.yml"
 }
 
+deploy_openstack_kubernetes()
+{
+    run_playbook "configure_instances.yml
+            install_openstack.yml
+            install_k8s.yml
+            install_contrail.yml"
+}
+
 build_command_yaml()
 {
     local host=$1
@@ -324,6 +332,9 @@ main()
             ;;
         deploy-kubernetes)
             deploy_kubernetes
+            ;;
+        deploy-openstack-kubernetes)
+            deploy_openstack_kubernetes
             ;;
         install-command)
             install_command

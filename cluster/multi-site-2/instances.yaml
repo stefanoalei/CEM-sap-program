@@ -30,7 +30,7 @@ instances:
       vrouter:
         VROUTER_GATEWAY: 10.6.13.254
         TSN_EVPN_MODE: True
-        TSN_NODES: 10.6.13.3
+        TSN_NODES: 10.6.13.53
   compute-c2-1:
     provider: bms
     ip: 10.6.8.57
@@ -63,8 +63,8 @@ contrail_configuration:
   CONTRAIL_CONTAINER_TAG: __contrail_tag__
   CLOUD_ORCHESTRATOR: openstack
   OPENSTACK_VERSION: __openstack_version__
-  CONTROLLER_NODES: 10.6.13.1
-  CONTROL_NODES: 10.6.13.1
+  CONTROLLER_NODES: 10.6.13.51
+  CONTROL_NODES: 10.6.13.51
   WEBUI_NODES: 10.6.8.51
   ENCAP_PRIORITY: VXLAN,MPLSoUDP,MPLSoGRE
   CONFIG_DATABASE_NODEMGR__DEFAULTS__minimum_diskGB: 20

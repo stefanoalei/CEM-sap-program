@@ -121,9 +121,9 @@ deploy()
 
     load_playbook $contrail_playbook $host
     upload_instances_yaml $host instances-a.yaml
-    run_playbook_openstack $host
+    run_playbook $host "deploy-openstack"
     upload_instances_yaml $host instances-b.yaml
-    run_playbook_openstack $host
+    run_playbook $host "deploy-openstack"
 }
 
 add_static_route()

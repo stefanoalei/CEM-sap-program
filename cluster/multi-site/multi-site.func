@@ -32,7 +32,7 @@ deploy()
     if [ -n "$playbook" ]; then
         load_playbook $contrail_playbook $host
     fi
-    run_playbook_openstack $host
+    run_playbook $host "deploy-openstack"
 }
 
 add_static_route()
