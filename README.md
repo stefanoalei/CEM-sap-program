@@ -128,6 +128,8 @@ appformix-platform-images-3.0.0.tar.gz
 
 * Update `appformix_license` in `poc.conf`.
 
+* Run `poc launch-appformix` after building cluster `cfm`.
+
 #### Note
 For the first time to open AppFormix UI, select `skip license upload` and `skip the installation`.
 
