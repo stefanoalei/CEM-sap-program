@@ -193,7 +193,6 @@ hv_setup_ubuntu()
     hv_create_volume_pool
     hv_generate_ssh_key
     hv_enable_ipv4_forward
-    hv_disable_selinux
     #systemctl stop ufw
     #systemctl disable ufw
 }
