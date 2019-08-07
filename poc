@@ -59,21 +59,21 @@ IPADDR=10.6.8.254
 NETMASK=255.255.255.0
 __EOF__
     if [ "$name" == "br-int" ]; then
-    ip addr add 10.6.8.254/24 dev $name
-    cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
+        ip addr add 10.6.8.254/24 dev $name
+        cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
 BOOTPROTO=static
 IPADDR=10.6.8.254
 NETMASK=255.255.255.0
 __EOF__
     elif [ "$name" == "br-r1" ]; then
-    ip addr add 10.6.11.100/24 dev $name
-    cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
+        ip addr add 10.6.11.100/24 dev $name
+        cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
 BOOTPROTO=static
 IPADDR=10.6.11.100
 NETMASK=255.255.255.0
 __EOF__
     else
-    cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
+        cat << __EOF__ >> /etc/sysconfig/network-scripts/ifcfg-$name
 BOOTPROTO=none
 __EOF__
     fi
@@ -92,6 +92,11 @@ create_bridge_ubuntu()
     echo "Create bridge $name..."
     brctl addbr $name
     ip link set dev $name up
+    if [ "$name" == "br-int" ]; then
+        ip addr add 10.6.8.254/24 dev $name
+    elif [ "$name" == "br-r1" ]; then
+        ip addr add 10.6.11.100/24 dev $name
+    fi
 }
 
 create_bridge()
