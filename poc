@@ -122,7 +122,7 @@ delete_bridge_centos()
     fi
 }
 
-delete_bridge_centos()
+delete_bridge_ubuntu()
 {
     local name=$1
     local port
