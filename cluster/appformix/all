@@ -15,10 +15,20 @@ appformix_plugins:
   - { plugin_info: 'certified_plugins/contrail_vrouter.json' }
   - { plugin_info: 'certified_plugins/contrail_vrouter_flows.json' }
   - { plugin_info: 'certified_plugins/contrail_vrouter_5x.json' }
-    
+  - { plugin_info: 'certified_plugins/snmp_network_device_usage.json' }
+  - { plugin_info: 'certified_plugins/snmp_config_ifxtable_mib.json' }
+  - { plugin_info: 'certified_plugins/snmp_config_juniper_device_mib.json' }
+  - { plugin_info: 'certified_plugins/snmp_config_tcp_mib.json' }
+  - { plugin_info: 'certified_plugins/snmp_config_juniper_alarm_mib.json' }
+  - { plugin_info: 'certified_plugins/snmp_config_device_resources_mib.json' }
+  - { plugin_info: 'certified_plugins/jti_config_all_sensors.json' }
+  - { plugin_info: 'certified_plugins/grpc_config_all_sensors.json' }
+
 appformix_openstack_log_plugins:
   - { plugin_info: 'certified_plugins/glance_logparser.json',log_file_path: '/var/lib/docker/volumes/kolla_logs/_data/glance/glance-api.log'}
   - { plugin_info: 'certified_plugins/keystone_logparser.json', log_file_path: '/var/lib/docker/volumes/kolla_logs/_data/keystone/keystone.log'}
   - { plugin_info: 'certified_plugins/neutron_logparser.json', log_file_path: '/var/lib/docker/volumes/kolla_logs/_data/neutron/neutron-server.log'}
   - { plugin_info: 'certified_plugins/nova_logparser.json', log_file_path: '/var/lib/docker/volumes/kolla_logs/_data/nova/nova-api.log'}
+
+appformix_network_device_monitoring_enabled: true
 
