@@ -128,7 +128,8 @@ launch_appformix()
         appformix-3.0.0.tar.gz
         appformix-dependencies-images-3.0.0.tar.gz
         appformix-openstack-images-3.0.0.tar.gz
-        appformix-platform-images-3.0.0.tar.gz"
+        appformix-platform-images-3.0.0.tar.gz
+        appformix-network_device-images-3.0.0.tar.gz"
 
     echo "Launch AppFormix..."
     copy_ssh_key $host
@@ -139,7 +140,7 @@ launch_appformix()
     scp cluster/builder $host:.
     ssh $host "./builder install-appformix"
     scp cluster/$poc_cluster/appformix-hosts $host:./hosts
-    scp cluster/appformix/all $host:.
+    scp cluster/$poc_cluster/appformix-all $host:./all
     scp cluster/appformix/appformix-playbook.patch $host:.
     ssh $host "./builder launch-appformix"
 }

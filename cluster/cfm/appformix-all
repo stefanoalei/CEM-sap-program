@@ -34,3 +34,6 @@ appformix_openstack_log_plugins:
 appformix_network_device_monitoring_enabled: true
 network_device_discovery_enabled: true
 
+contrail_analytics_url: http://10.6.11.1:8081
+contrail_config_url: http://10.6.11.1:8082
+

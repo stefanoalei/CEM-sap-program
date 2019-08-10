@@ -12,8 +12,10 @@ instances:
       config_database:
       config:
       control:
-      analytics_database:
       analytics:
+      analytics_alarm:
+      analytics_snmp:
+      analytics_database:
       webui:
   openstack-1:
     provider: bms
