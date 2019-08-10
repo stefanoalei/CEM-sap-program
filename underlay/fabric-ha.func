@@ -143,6 +143,8 @@ set protocols bgp group fabric neighbor 10.6.30.0 peer-as 64021
 set protocols bgp group fabric neighbor 10.6.30.4 peer-as 64022
 set policy-options policy-statement direct term t1 from protocol direct
 set policy-options policy-statement direct term t1 then accept
+set snmp community public authorization read-only
+set protocols lldp interface all
 __EOF__
 
     scp /tmp/conf $host:.
@@ -168,6 +170,8 @@ set protocols bgp group fabric neighbor 10.6.30.2 peer-as 64021
 set protocols bgp group fabric neighbor 10.6.30.6 peer-as 64022
 set policy-options policy-statement direct term t1 from protocol direct
 set policy-options policy-statement direct term t1 then accept
+set snmp community public authorization read-only
+set protocols lldp interface all
 __EOF__
 
     scp /tmp/conf $host:.
@@ -196,6 +200,8 @@ set protocols bgp group fabric neighbor 10.6.20.1 peer-as 64011
 set protocols bgp group fabric neighbor 10.6.20.3 peer-as 64012
 set policy-options policy-statement direct term t1 from protocol direct
 set policy-options policy-statement direct term t1 then accept
+set snmp community public authorization read-only
+set protocols lldp interface all
 __EOF__
 
     scp /tmp/conf $host:.
@@ -224,6 +230,8 @@ set protocols bgp group fabric neighbor 10.6.20.5 peer-as 64011
 set protocols bgp group fabric neighbor 10.6.20.7 peer-as 64012
 set policy-options policy-statement direct term t1 from protocol direct
 set policy-options policy-statement direct term t1 then accept
+set snmp community public authorization read-only
+set protocols lldp interface all
 __EOF__
 
     scp /tmp/conf $host:.
@@ -252,6 +260,8 @@ set protocols bgp group fabric neighbor 10.6.20.0 peer-as 64021
 set protocols bgp group fabric neighbor 10.6.20.4 peer-as 64022
 set policy-options policy-statement direct term t1 from protocol direct
 set policy-options policy-statement direct term t1 then accept
+set snmp community public authorization read-only
+set protocols lldp interface all
 __EOF__
 
     scp /tmp/conf $host:.
@@ -276,6 +286,8 @@ set protocols bgp group fabric neighbor 10.6.20.2 peer-as 64021
 set protocols bgp group fabric neighbor 10.6.20.6 peer-as 64022
 set policy-options policy-statement direct term t1 from protocol direct
 set policy-options policy-statement direct term t1 then accept
+set snmp community public authorization read-only
+set protocols lldp interface all
 __EOF__
 
     scp /tmp/conf $host:.
