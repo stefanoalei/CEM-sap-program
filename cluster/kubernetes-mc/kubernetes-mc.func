@@ -80,6 +80,16 @@ launch_command()
     ssh $host "./builder launch-command $host kubernetes import_cluster"
 }
  
+patch_cluster()
+{
+    local arr=(${vm_address_list[cmaster-1]})
+    local host=${arr[0]}
+
+    echo "Patch cluster..."
+    scp cluster/$poc_cluster/patch-cluster $host:.
+    ssh $host ./patch-cluster
+}
+
 post_cluster()
 {
     local arr=(${vm_address_list[command]})
@@ -92,5 +102,6 @@ post_cluster()
     update_mc_gw
     add_static_route
     configure_haproxy
+    patch_cluster
 }
 
