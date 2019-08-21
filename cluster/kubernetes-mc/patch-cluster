@@ -1,0 +1,12 @@
+#!/bin/bash
+
+path=/usr/lib/python2.7/site-packages/device_manager
+file=dm_server_args.py
+
+docker cp config_devicemgr_1:$path/$file ./
+sed -i 's/password1//g' $file
+docker cp $file config_devicemgr_1:$path/$file
+
+rm -f $file
+rm -f patch-cluster
+
