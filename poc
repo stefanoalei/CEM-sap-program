@@ -778,6 +778,9 @@ main()
     local start_date=$(date)
     local end_date
 
+    if [ ! -e "poc.log" ]; then
+        touch poc.log
+    fi
     max_size=5000000
     file_size=$(stat -c%s poc.log)
     if (( $file_size > $max_size )); then
