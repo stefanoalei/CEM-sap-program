@@ -138,10 +138,11 @@ customize_vm_centos()
         $upload_arg \
         --run-command 'yum remove -y cloud-init' \
         --run-command 'systemctl disable chronyd' \
-        --install 'ntp' \
-        --upload ntp.conf:/etc \
-        --run-command 'systemctl enable ntpd' \
         --selinux-relabel
+
+        #--install 'ntp' \
+        #--upload ntp.conf:/etc \
+        #--run-command 'systemctl enable ntpd' \
     clean_vm_config
 }
 
@@ -322,7 +323,7 @@ launch_vm()
     role_name=${vm_role[$name]}
     echo "Launch $name with role $role_name..."
     case "$role_name" in
-        contrail | openstack | csn | compute | master | appformix )
+        contrail | openstack | csn | compute | master | appformix | control )
             vm_os_arg="--os-variant centos7.0"
             build_vm_image $name $image_path/$image_centos $role_name
             customize_vm_centos $name
