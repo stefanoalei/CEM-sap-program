@@ -394,16 +394,16 @@ Total                                   17     112    200
 
 ## B.2 Cluster management address
 ```
-            openstack-ha  openstack     cfm           multi-site
-----------------------------------------------------------------
-10.6.8.1    contrail-1    contrail-1    contrail-1    contrail-1
-10.6.8.2    openstack-1   openstack-1   openstack-1   openstack-1
-10.6.8.3    contrail-2                  csn-1         csn-1
-10.6.8.4    openstack-2                               csn-r1
+            openstack-ha  openstack    cfm          multi-site   multi-site-int
+-------------------------------------------------------------------------------
+10.6.8.1    contrail-1    contrail-1   contrail-1   contrail-1   contrail-1
+10.6.8.2    openstack-1   openstack-1  openstack-1  openstack-1  openstack-1
+10.6.8.3    contrail-2                 csn-1        csn-1        csn-1
+10.6.8.4    openstack-2                             csn-r1       csn-r1
 10.6.8.5    contrail-3
-10.6.8.6    openstack-3
-10.6.8.7    compute-1     compute-1     compute-1     compute-1
-10.6.8.8    compute-2     compute-2     compute-2     compute-r1
+10.6.8.6    openstack-3                                          control-r1
+10.6.8.7    compute-1     compute-1    compute-1    compute-1    compute-1
+10.6.8.8    compute-2     compute-2    compute-2    compute-r1   compute-r1
 
             multi-site-2
 -------------------------------
