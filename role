@@ -4,7 +4,8 @@ declare -A role
 role[contrail]="  5       64       80       volume"
 role[openstack]=" 5       48       80       volume"
 role[compute]="   4       16       40       volume"
-role[csn]="       1        8       30       volume"
+role[csn]="       1        4       20       volume"
+role[control]="   1        4       20       volume"
 role[master]="    2       16       40       volume"
 role[appformix]=" 4       16       60       volume"
 
