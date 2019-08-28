@@ -1,7 +1,7 @@
 
 cluster_br_list="br-int br-r1 br-r2"
 
-server_list="contrail-1 openstack-1 csn-1 compute-1 compute-r1"
+server_list="contrail-1 openstack-1 csn-1 compute-1 control-r1 compute-r1"
 
 
 launch_builder()

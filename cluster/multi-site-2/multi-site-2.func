@@ -75,15 +75,17 @@ launch_command()
  
 post_cluster()
 {
-    local arr=(${vm_address_list[contrail-c2-1]})
-    local host=${arr[0]}
+    local arr
 
     echo "Post-Deployment"
+    add_static_route
     configure_haproxy
+
     arr=(${vm_address_list[openstack-c2-1]})
     configure_openstack ${arr[0]}
-    add_static_route
-    #install_command $host
-    #launch_command $host
+
+    #arr=(${vm_address_list[contrail-c2-1]})
+    #install_command ${arr[0]}
+    #launch_command ${arr[0]}
 }
 

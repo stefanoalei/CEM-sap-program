@@ -108,10 +108,7 @@ add_static_route()
 
 launch_command()
 {
-    local arr=(${vm_address_list[contrail-1]})
-    local host=${arr[0]}
-
-    install_command $host
+    local host=$1
 
     echo "Launch Contrail Command..."
     scp cluster/$poc_cluster/instances.yaml $host:./instances.yaml
@@ -147,14 +144,19 @@ launch_appformix()
 
 post_cluster()
 {
+    local arr
 
     echo "Post-Deployment"
+    add_static_route
     configure_haproxy
+
     arr=(${vm_address_list[openstack-1]})
     configure_openstack ${arr[0]}
     #configure_poc
-    add_static_route
-    launch_command $host
+
+    arr=(${vm_address_list[contrail-1]})
+    install_command ${arr[0]}
+    launch_command ${arr[0]}
     #launch_appformix
 }
 
