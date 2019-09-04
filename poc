@@ -294,17 +294,20 @@ __EOF__
     fi
 }
 
-update_hosts()
+add_host_in_hosts()
 {
-    local name=$1
+    local arr
 
-    if [ "$2" == "add" ]; then
-        arr=(${vm_address_list[$name]})
-        addr=${arr[0]}
-        echo "$addr  $name" >> /etc/hosts
-    elif [ "$2" == "delete" ]; then
-        sed -i -e "/$name/d" /etc/hosts
+    arr=(${vm_address_list[$1]})
+    echo "${arr[0]}  $1" >> /etc/hosts
+    if [ -n "${arr[1]}" ]; then
+        echo "${arr[1]}  $1" >> /etc/hosts
     fi
+}
+
+delete_host_in_hosts()
+{
+    sed -i -e "/$1/d" /etc/hosts
 }
 
 initialize_vqfx()
@@ -505,13 +508,27 @@ delete_bms_all()
     done
 }
 
-update_hosts_underlay()
+add_underlay_host()
 {
+    local name
+
     for name in $vqfx_list; do
-        update_hosts "$name-re" "add"
+        add_host_in_hosts "$name-re"
     done
     for name in $vmx_list; do
-        update_hosts "$name-re" "add"
+        add_host_in_hosts "$name-re"
+    done
+}
+
+delete_underlay_host()
+{
+    local name
+
+    for name in $vqfx_list; do
+        delete_host_in_hosts "$name-re"
+    done
+    for name in $vmx_list; do
+        delete_host_in_hosts "$name-re"
     done
 }
 
@@ -524,8 +541,8 @@ build_underlay()
     launch_bms_all
     configure_vqfx_all
     configure_vmx_all
-    update_hosts_underlay
     post_underlay
+    add_underlay_host
 }
 
 delete_underlay()
@@ -535,12 +552,7 @@ delete_underlay()
     delete_vqfx_all
     disable_snat
     delete_underlay_link
-    for name in $vqfx_list; do
-        update_hosts "$name-re" "delete"
-    done
-    for name in $vmx_list; do
-        update_hosts "$name-re" "delete"
-    done
+    delete_underlay_host
 }
 
 upload_instances_yaml()
@@ -692,10 +704,21 @@ delete_command()
     ssh $host "./builder delete-command"
 }
  
-update_hosts_cluster()
+add_cluster_host()
 {
+    local name
+
     for name in $server_list; do
-        update_hosts "$name" "add"
+        add_host_in_hosts "$name"
+    done
+}
+
+delete_cluster_host()
+{
+    local name
+
+    for name in $server_list; do
+        delete_host_in_hosts "$name"
     done
 }
 
@@ -718,7 +741,7 @@ build_cluster()
     deploy
     if (( $? )); then return 1; fi
     post_cluster
-    update_hosts_cluster
+    add_cluster_host
 }
 
 delete_cluster()
@@ -731,9 +754,7 @@ delete_cluster()
     delete_builder
     disable_snat
     delete_cluster_link
-    for name in $server_list; do
-        update_hosts "$name" "delete"
-    done
+    delete_cluster_host
 }
 
 help()
