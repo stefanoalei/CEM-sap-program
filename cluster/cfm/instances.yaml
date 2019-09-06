@@ -30,6 +30,7 @@ instances:
     ip: 10.6.8.3
     roles:
       vrouter:
+        VROUTER_HOSTNAME: csn-1
         TSN_EVPN_MODE: True
         TSN_NODES: 10.6.11.3
   compute-1:
@@ -37,6 +38,7 @@ instances:
     ip: 10.6.8.7
     roles:
       vrouter:
+        VROUTER_HOSTNAME: compute-1
       openstack_compute:
 global_configuration:
   CONTAINER_REGISTRY: __registry_url__
