@@ -49,6 +49,10 @@ create_bridge_centos()
     echo "Create bridge $name..."
     brctl addbr $name
     ip link set dev $name up
+
+    # Enable LLDP.
+    echo 16384 > /sys/class/net/$name/bridge/group_fwd_mask
+
     cat << __EOF__ > /etc/sysconfig/network-scripts/ifcfg-$name
 DEVICE=$name
 TYPE=Bridge
@@ -97,6 +101,9 @@ create_bridge_ubuntu()
     elif [ "$name" == "br-r1" ]; then
         ip addr add 10.6.11.100/24 dev $name
     fi
+
+    # Enable LLDP.
+    echo 16384 > /sys/class/net/$name/bridge/group_fwd_mask
 }
 
 create_bridge()
