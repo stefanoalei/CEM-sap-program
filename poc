@@ -698,7 +698,8 @@ install_command()
     scp poc.conf $host:.
     scp cluster/builder $host:.
     ssh $host "./builder install-command"
-    scp cluster/contrail-command/command_servers.yml $host:.
+    #scp cluster/contrail-command/command_servers.yml $host:.
+    scp cluster/$poc_cluster/command_servers.yml $host:.
 }
 
 delete_command()
