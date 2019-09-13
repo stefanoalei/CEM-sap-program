@@ -23,20 +23,16 @@ Pick cluster and underlay to build the POC.
 
 
 ### Cluster
-* [Contrail and Openstack](#a1-openstack)
-* [Contrail and Openstack HA](#a2-openstack-ha)
-* [Contrail Fabric Management](#a3-cfm)
-  (Contrail + OpenStack + CSN)
-* [Contrail and Kubernetes](#a4-kubernetes)
-* [Contrail and Kubernetes HA](#a5-kubernetes-ha)
-* [Contrail and OpenShift Origin](#a6-openshift)
-* [Contrail and OpenShift Origin HA](#a7-openshift-ha)
-* [Multi-site 1](#a8-multi-site)
-* [Multi-site 2](#a9-multi-site-2)
-* [Contrail Fabric Management and Kubernetes](#a10-cfm-and-kubernetes)
-  (Contrail + OpenStack + CSN + Kubernetes)
-* [Kubernetes Multi-Cloud](#a11-kubernetes-multi-cloud)
-  (Contrail + Kubernetes + MC-GW)
+* [openstack](#a1-openstack)
+* [openstack-ha](#a2-openstack-ha)
+* [cfm](#a3-cfm)
+* [kubernetes](#a4-kubernetes)
+* [kubernetes-ha](#a5-kubernetes-ha)
+* [openShift-origin](#a6-openshift)
+* [multi-site](#a8-multi-site)
+* [multi-site-2](#a9-multi-site-2)
+* [cfm-kubernetes](#a10-cfm-and-kubernetes)
+* [kubernete-mc](#a11-kubernetes-multi-cloud)
 
 
 # 2 Hypervisor
@@ -219,6 +215,16 @@ This POC is using vMX 18.3R1.9 with [trial license](https://www.juniper.net/us/e
 # Appendix A Cluster
 
 ## A.1 openstack
+
+This is the integration with Openstack non-HA cluster.
+
+#### Components
+* Contrail Networking
+* OpenStack
+
+#### Workload
+* VM
+
 ```
 host          management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
@@ -232,6 +238,16 @@ Total                                   18     144    240
 
 
 ## A.2 openstack-ha
+
+This is the integration with Openstack HA cluster.
+
+#### Components
+* Contrail Networking
+* OpenStack
+
+#### Workload
+* VM
+
 ```
 host          management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
@@ -249,6 +265,20 @@ Total                                   38     368    560
 
 
 ## A.3 cfm
+
+This is Contrail Fabric Management with Openstack non-HA cluster.
+
+#### Components
+* Contrail Networking
+* OpenStack
+* CSN
+* Contrail Command
+* Appformix
+
+#### Workload
+* VM
+* LCM BMS and non-LCM BMS
+
 ```
 host          management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
@@ -262,6 +292,16 @@ Total                                   15     136    250
 
 
 ## A.4 kubernetes
+
+This is the integration with Kubernetes non-HA cluster.
+
+#### Components
+* Contrail Networking
+* Kubernetes
+
+#### Workload
+* Container
+
 ```
 host          management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
@@ -274,6 +314,16 @@ Total                                   13      96    160
 
 
 ## A.5 kubernetes-ha
+
+This is the integration with Kubernetes HA cluster.
+
+#### Components
+* Contrail Networking
+* Kubernetes
+
+#### Workload
+* Container
+
 ```
 host          management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
@@ -288,6 +338,16 @@ Total                                   23     224    320
 
 
 ## A.6 openshift
+
+This is the integration with OpenShift Origin non-HA cluster.
+
+#### Components
+* Contrail Networking
+* OpenShift Origin
+
+#### Workload
+* Container
+
 ```
 host          management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
@@ -301,6 +361,16 @@ Total                                   15     112    200
 
 
 ## A.7 openshift-ha
+
+This is the integration with OpenShift Origin HA cluster.
+
+#### Components
+* Contrail Networking
+* OpenShift Origin
+
+#### Workload
+* Container
+
 ```
 host          management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
@@ -318,6 +388,18 @@ Total                                   29     272    440
 
 
 ## A.8 multi-site
+
+This is Contrail Fabric Management with a remote site.
+
+#### Components
+* Contrail Networking
+* OpenStack
+* CSN
+* Contrail Command
+
+#### Workload
+* VM
+
 ```
 host          management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
@@ -332,6 +414,18 @@ Total                                   19     152    270
 
 
 ## A.9 multi-site-2
+
+This is Contrail Fabric Management with a remote site.
+
+#### Components
+* Contrail Networking
+* OpenStack
+* CSN
+* Contrail Command
+
+#### Workload
+* VM
+
 ```
 host            management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
@@ -346,6 +440,23 @@ Total                                     19     152    270
 
 
 ## A.10 CFM and Kubernetes
+
+This is Contrail Fabric Management and Kubernetes.
+
+#### Components
+* Contrail Networking
+* OpenStack
+* CSN
+* Kubernetes
+* Contrail Command
+
+#### Workload
+* VM
+* Container
+* LCM BMS and non-LCM BMS
+
+#### Note, this is currently not supported due to a limitation from Contrail Command.
+
 ```
 host          management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
@@ -362,6 +473,19 @@ Total                                   28     232    390
 
 
 ## A.11 Kubernetes Multi-Cloud
+
+This is Kubernetes integration with multi-cloud support.
+
+#### Components
+* Contrail Networking
+* Kubernetes
+* CSN
+* Contrail Command
+
+#### Workload
+* Container
+* non-LCM BMS
+
 ```
 host          management   data       vCPU  memory   disk  OS
 ---------------------------------------------------------------------------
