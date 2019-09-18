@@ -14,7 +14,7 @@ command_servers:
 
         container_registry: __registry_url__
         registry_insecure: __registry_insecure__
-        container_tag: __contrail_version__
+        container_tag: "__contrail_version__"
         container_registry_username: __registry_username__
         container_registry_password: __registry_password__
         container_name: contrail-command
