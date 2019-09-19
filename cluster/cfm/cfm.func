@@ -99,6 +99,7 @@ add_static_route()
     local host
     local name
 
+    echo "Add static route..."
     for name in $server_list; do
         arr=(${vm_address_list[$name]})
         host=${arr[0]}
@@ -115,18 +116,28 @@ launch_command()
     ssh $host "./builder launch-command $host openstack import_cluster"
 }
  
+install_libvirt_client()
+{
+    local arr=(${vm_address_list[compute-1]})
+
+    echo "Install libvirt-client on compute..."
+    ssh ${arr[0]} "yum install -y libvirt-client"
+}
+
 launch_appformix()
 {
     local arr=(${vm_address_list[appformix-1]})
     local host=${arr[0]}
 
+    install_libvirt_client
+
     file_list="
         $appformix_license
-        appformix-3.0.0.tar.gz
-        appformix-dependencies-images-3.0.0.tar.gz
-        appformix-openstack-images-3.0.0.tar.gz
-        appformix-platform-images-3.0.0.tar.gz
-        appformix-network_device-images-3.0.0.tar.gz"
+        appformix-3.1.2.tar.gz
+        appformix-dependencies-images-3.1.2.tar.gz
+        appformix-openstack-images-3.1.2.tar.gz
+        appformix-platform-images-3.1.2.tar.gz
+        appformix-network_device-images-3.1.2.tar.gz"
 
     echo "Launch AppFormix..."
     copy_ssh_key $host

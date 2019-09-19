@@ -1,14 +1,14 @@
 openstack_platform_enabled: true
 
-appformix_version: 3.0.0
-appformix_manager_version: 3.0.0-1
+appformix_version: 3.1.2
+appformix_manager_version: 3.1.2-1
 appformix_license: /root/__appformix_license__
 
 appformix_docker_images:
-  - /root/appformix-dependencies-images-3.0.0.tar.gz
-  - /root/appformix-openstack-images-3.0.0.tar.gz
-  - /root/appformix-platform-images-3.0.0.tar.gz
-  - /root/appformix-network_device-images-3.0.0.tar.gz
+  - /root/appformix-dependencies-images-3.1.2.tar.gz
+  - /root/appformix-openstack-images-3.1.2.tar.gz
+  - /root/appformix-platform-images-3.1.2.tar.gz
+  - /root/appformix-network_device-images-3.1.2.tar.gz
 
 appformix_plugins:
   - { plugin_info: 'certified_plugins/heavy_hitters.json' }

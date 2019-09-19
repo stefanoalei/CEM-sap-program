@@ -41,6 +41,7 @@ add_static_route()
     local host
     local name
 
+    echo "Add static route..."
     #for name in $server_list; do
     #    arr=(${vm_address_list[$name]})
     #    host=${arr[0]}

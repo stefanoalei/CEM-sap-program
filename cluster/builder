@@ -305,19 +305,19 @@ install_appformix()
     yum groupinstall -y 'Development Tools'
     pip install ansible==2.3
 
-    tar -xzf appformix-3.0.0.tar.gz
-    mkdir -p appformix-3.0.0/inventory/group_vars
+    tar -xzf appformix-3.1.2.tar.gz
+    mkdir -p appformix-3.1.2/inventory/group_vars
 }
 
 launch_appformix()
 {
     build_appformix_var
     patch_appformix_playbook
-    cp hosts appformix-3.0.0/inventory/
-    cp all appformix-3.0.0/inventory/group_vars/
+    cp hosts appformix-3.1.2/inventory/
+    cp all appformix-3.1.2/inventory/group_vars/
     scp 10.6.8.2:/etc/kolla/kolla-toolbox/admin-openrc.sh ./
     source admin-openrc.sh
-    cd appformix-3.0.0
+    cd appformix-3.1.2
     ansible-playbook -i inventory appformix_openstack.yml
 }
 

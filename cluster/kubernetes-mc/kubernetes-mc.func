@@ -49,6 +49,7 @@ add_static_route()
     local arr
     local name
 
+    echo "Add static route..."
     for name in $server_list; do
         if [ "$name" == "mc-gw" ]; then
             continue
