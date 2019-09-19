@@ -110,12 +110,12 @@ AppFormix is integrated with cluster `cfm`.
 
 * Download the following packages from Juniper and upload them to `/opt/appformix` directory on the hypervisor host.
 ```
-appformix-3.0.0.tar.gz
-appformix-dependencies-images-3.0.0.tar.gz
-appformix-kubernetes-images-3.0.0.tar.gz
-appformix-network_device-images-3.0.0.tar.gz
-appformix-openstack-images-3.0.0.tar.gz
-appformix-platform-images-3.0.0.tar.gz
+appformix-3.1.2.tar.gz
+appformix-dependencies-images-3.1.2.tar.gz
+appformix-kubernetes-images-3.1.2.tar.gz
+appformix-network_device-images-3.1.2.tar.gz
+appformix-openstack-images-3.1.2.tar.gz
+appformix-platform-images-3.1.2.tar.gz
 ```
 
 * Send request to `AppFormix-Key-Request.juniper.net` for AppFormix license.
